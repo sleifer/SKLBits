@@ -420,7 +420,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		#if os(iOS)
 			if Thread.isMainThread || Thread.isMultiThreaded() {
 				autoreleasepool {
-					let device = UIDevice.current
+					let device = UIDevice.current()
 					messageAddString(&encoder, value: device.name, key: PART_KEY_UNIQUEID);
 					messageAddString(&encoder, value: device.systemVersion, key: PART_KEY_OS_VERSION)
 					messageAddString(&encoder, value: device.systemName, key: PART_KEY_OS_NAME)
@@ -550,8 +550,8 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 			var height: UInt32 = 0
 			#if os(iOS)
 				data = UIImagePNGRepresentation(image)
-				width = image.size.width
-				height = image.size.height
+				width = UInt32(image.size.width)
+				height = UInt32(image.size.height)
 			#elseif os(OSX)
 				image.lockFocus()
 				let bitmap = NSBitmapImageRep(focusedViewRect: NSRect(x: 0, y: 0, width: image.size.width, height: image.size.height))
