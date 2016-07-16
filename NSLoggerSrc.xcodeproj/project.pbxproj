@@ -11,7 +11,6 @@
 		DB76703E1D39256D00DF7D95 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703D1D39256D00DF7D95 /* ViewController.swift */; };
 		DB7670401D39256D00DF7D95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB76703F1D39256D00DF7D95 /* Assets.xcassets */; };
 		DB7670431D39256D00DF7D95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB7670411D39256D00DF7D95 /* Main.storyboard */; };
-		DB76704B1D3925D900DF7D95 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */; };
 		DB8980181D3A7FA300BC96F4 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = DB8980171D3A7FA300BC96F4 /* test.png */; };
 		DB8980201D3A841900BC96F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB89801F1D3A841900BC96F4 /* AppDelegate.swift */; };
 		DB8980221D3A841900BC96F4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980211D3A841900BC96F4 /* ViewController.swift */; };
@@ -19,20 +18,20 @@
 		DB8980271D3A841900BC96F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB8980261D3A841900BC96F4 /* Assets.xcassets */; };
 		DB89802A1D3A841900BC96F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB8980281D3A841900BC96F4 /* LaunchScreen.storyboard */; };
 		DB89802F1D3A844100BC96F4 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = DB8980171D3A7FA300BC96F4 /* test.png */; };
-		DB8980301D3A844100BC96F4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */; };
-		DB8980311D3A844100BC96F4 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */; };
-		DBBADDD31D39D9E600C629A4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */; };
+		DB8980351D3A8A3E00BC96F4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */; };
+		DB8980361D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */; };
+		DB8980371D3A8A6100BC96F4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */; };
+		DB8980381D3A8A6500BC96F4 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */; };
 		DBFD53621D395930002B4DF5 /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		DB7670381D39256D00DF7D95 /* NSLoggerSrc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NSLoggerSrc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB7670381D39256D00DF7D95 /* macOS Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOS Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB76703B1D39256D00DF7D95 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DB76703D1D39256D00DF7D95 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		DB76703F1D39256D00DF7D95 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB7670421D39256D00DF7D95 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DB7670441D39256D00DF7D95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGNSLoggerDestination.swift; sourceTree = "<group>"; };
 		DB8980171D3A7FA300BC96F4 /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		DB89801D1D3A841900BC96F4 /* iOS Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB89801F1D3A841900BC96F4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -41,7 +40,8 @@
 		DB8980261D3A841900BC96F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB8980291D3A841900BC96F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DB89802B1D3A841900BC96F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGLogger.swift; sourceTree = "<group>"; };
+		DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGLogger.swift; sourceTree = "<group>"; };
+		DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGNSLoggerDestination.swift; sourceTree = "<group>"; };
 		DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint-Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -66,7 +66,8 @@
 		DB76702F1D39256D00DF7D95 = {
 			isa = PBXGroup;
 			children = (
-				DB76703A1D39256D00DF7D95 /* NSLoggerSrc */,
+				DB8980321D3A8A3E00BC96F4 /* logger */,
+				DB76703A1D39256D00DF7D95 /* macOS Log */,
 				DB89801E1D3A841900BC96F4 /* iOS Log */,
 				DB7670391D39256D00DF7D95 /* Products */,
 			);
@@ -75,26 +76,25 @@
 		DB7670391D39256D00DF7D95 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DB7670381D39256D00DF7D95 /* NSLoggerSrc.app */,
+				DB7670381D39256D00DF7D95 /* macOS Log.app */,
 				DB89801D1D3A841900BC96F4 /* iOS Log.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DB76703A1D39256D00DF7D95 /* NSLoggerSrc */ = {
+		DB76703A1D39256D00DF7D95 /* macOS Log */ = {
 			isa = PBXGroup;
 			children = (
 				DB76703B1D39256D00DF7D95 /* AppDelegate.swift */,
 				DB8980171D3A7FA300BC96F4 /* test.png */,
-				DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */,
-				DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */,
 				DB76703D1D39256D00DF7D95 /* ViewController.swift */,
 				DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */,
 				DB76703F1D39256D00DF7D95 /* Assets.xcassets */,
 				DB7670411D39256D00DF7D95 /* Main.storyboard */,
 				DB7670441D39256D00DF7D95 /* Info.plist */,
 			);
-			path = NSLoggerSrc;
+			name = "macOS Log";
+			path = "macOS log";
 			sourceTree = "<group>";
 		};
 		DB89801E1D3A841900BC96F4 /* iOS Log */ = {
@@ -110,12 +110,21 @@
 			path = "iOS Log";
 			sourceTree = "<group>";
 		};
+		DB8980321D3A8A3E00BC96F4 /* logger */ = {
+			isa = PBXGroup;
+			children = (
+				DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */,
+				DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */,
+			);
+			path = logger;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DB7670371D39256D00DF7D95 /* NSLoggerSrc */ = {
+		DB7670371D39256D00DF7D95 /* macOS Log */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB7670471D39256D00DF7D95 /* Build configuration list for PBXNativeTarget "NSLoggerSrc" */;
+			buildConfigurationList = DB7670471D39256D00DF7D95 /* Build configuration list for PBXNativeTarget "macOS Log" */;
 			buildPhases = (
 				DB7670341D39256D00DF7D95 /* Sources */,
 				DB7670351D39256D00DF7D95 /* Frameworks */,
@@ -125,9 +134,9 @@
 			);
 			dependencies = (
 			);
-			name = NSLoggerSrc;
+			name = "macOS Log";
 			productName = NSLoggerSrc;
-			productReference = DB7670381D39256D00DF7D95 /* NSLoggerSrc.app */;
+			productReference = DB7670381D39256D00DF7D95 /* macOS Log.app */;
 			productType = "com.apple.product-type.application";
 		};
 		DB89801C1D3A841900BC96F4 /* iOS Log */ = {
@@ -185,7 +194,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DB7670371D39256D00DF7D95 /* NSLoggerSrc */,
+				DB7670371D39256D00DF7D95 /* macOS Log */,
 				DB89801C1D3A841900BC96F4 /* iOS Log */,
 			);
 		};
@@ -221,8 +230,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB76703E1D39256D00DF7D95 /* ViewController.swift in Sources */,
-				DBBADDD31D39D9E600C629A4 /* XCGLogger.swift in Sources */,
-				DB76704B1D3925D900DF7D95 /* XCGNSLoggerDestination.swift in Sources */,
+				DB8980351D3A8A3E00BC96F4 /* XCGLogger.swift in Sources */,
+				DB8980361D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
 				DB76703C1D39256D00DF7D95 /* AppDelegate.swift in Sources */,
 				DBFD53621D395930002B4DF5 /* NSLayoutConstraint-Extension.swift in Sources */,
 			);
@@ -232,10 +241,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8980311D3A844100BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
+				DB8980381D3A8A6500BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
 				DB8980221D3A841900BC96F4 /* ViewController.swift in Sources */,
 				DB8980201D3A841900BC96F4 /* AppDelegate.swift in Sources */,
-				DB8980301D3A844100BC96F4 /* XCGLogger.swift in Sources */,
+				DB8980371D3A8A6100BC96F4 /* XCGLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,7 +369,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = NSLoggerSrc/Info.plist;
+				INFOPLIST_FILE = "macOS Log/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.droolingcat.NSLoggerSrc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -373,7 +382,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = NSLoggerSrc/Info.plist;
+				INFOPLIST_FILE = "macOS Log/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.droolingcat.NSLoggerSrc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -426,7 +435,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB7670471D39256D00DF7D95 /* Build configuration list for PBXNativeTarget "NSLoggerSrc" */ = {
+		DB7670471D39256D00DF7D95 /* Build configuration list for PBXNativeTarget "macOS Log" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB7670481D39256D00DF7D95 /* Debug */,
