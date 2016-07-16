@@ -70,6 +70,31 @@ func toByteArray<T>(_ value: T) -> [UInt8] {
 
 class NSLoggerDestination: NSObject, NetServiceBrowserDelegate {
 	
+	
+	
+	
+	
+	
+/*
+	public protocol XCGLogDestinationProtocol: CustomDebugStringConvertible {
+	var owner: XCGLogger {get set}
+	var identifier: String {get set}
+	var outputLogLevel: XCGLogger.LogLevel {get set}
+	
+	func processLogDetails(_ logDetails: XCGLogDetails)
+	func processInternalLogDetails(_ logDetails: XCGLogDetails) // Same as processLogDetails but should omit function/file/line info
+	func isEnabledForLogLevel(_ logLevel: XCGLogger.LogLevel) -> Bool
+	}
+*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	If set, will only connect to receiver with name 'hostName'
 	*/
