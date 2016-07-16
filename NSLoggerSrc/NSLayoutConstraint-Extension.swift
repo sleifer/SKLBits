@@ -16,7 +16,7 @@
 
 extension NSLayoutConstraint {
 
-	func referes(toView: ViewType) -> Bool {
+	func referes(_ toView: ViewType) -> Bool {
 		if self.firstItem as! NSObject == toView {
 			return true
 		}
@@ -32,7 +32,7 @@ extension NSLayoutConstraint {
 	func install() {
 		let first = self.firstItem as? ViewType
 		let second = self.secondItem as? ViewType
-		let target = first?.nearestCommonAncestor(view: second)
+		let target = first?.nearestCommonAncestor(second)
 		if target != nil {
 			if target != first {
 				first?.translatesAutoresizingMaskIntoConstraints = false
@@ -67,7 +67,7 @@ extension ViewType {
 				if constraint.isMember(of:object_getClass(NSLayoutConstraint.self)) == false && constraint.shouldBeArchived == false {
 					continue
 				}
-				if constraint.referes(toView: self) {
+				if constraint.referes(self) {
 					constraints.append(constraint)
 				}
 			}
@@ -81,29 +81,29 @@ extension ViewType {
 			if constraint.isMember(of:object_getClass(NSLayoutConstraint.self)) == false && constraint.shouldBeArchived == false {
 				continue
 			}
-			if constraint.referes(toView: self) {
+			if constraint.referes(self) {
 				constraints.append(constraint)
 			}
 		}
 		return constraints
 	}
 	
-	func isAncestorOf(view: ViewType?) -> Bool {
+	func isAncestorOf(_ view: ViewType?) -> Bool {
 		if let view = view {
 			return view.allSuperviews().contains(self)
 		}
 		return false
 	}
 	
-	func nearestCommonAncestor(view: ViewType?) -> ViewType? {
+	func nearestCommonAncestor(_ view: ViewType?) -> ViewType? {
 		if let view = view {
 			if self == view {
 				return self
 			}
-			if self.isAncestorOf(view: view) {
+			if self.isAncestorOf(view) {
 				return self
 			}
-			if view.isAncestorOf(view: self) {
+			if view.isAncestorOf(self) {
 				return view
 			}
 			

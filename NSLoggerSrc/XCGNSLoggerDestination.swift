@@ -384,7 +384,7 @@ class NSLoggerDestination: NSObject, NetServiceBrowserDelegate {
 		writeMoreData()
 	}
 
-	func logMessage(filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?, message: String?) {
+	func logMessage(_ message: String?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		var encoder = messageCreate(seq)
 		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)

@@ -104,6 +104,7 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 5886TSL9MF;
 						DevelopmentTeamName = "Simeon Leifer";
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 				};

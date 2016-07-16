@@ -22,7 +22,7 @@ class ViewController: NSViewController {
 		connectBtn.setButtonType(.momentaryChange)
 		connectBtn.title = "Connect"
 		connectBtn.target = self
-		connectBtn.action = #selector(connectAction(sender:))
+		connectBtn.action = #selector(connectAction(_:))
 		connectBtn.translatesAutoresizingMaskIntoConstraints = false
 		connectBtn.sizeToFit()
 		self.view.addSubview(connectBtn)
@@ -34,7 +34,7 @@ class ViewController: NSViewController {
 		disconnectBtn.setButtonType(.momentaryChange)
 		disconnectBtn.title = "Disonnect"
 		disconnectBtn.target = self
-		disconnectBtn.action = #selector(disconnectAction(sender:))
+		disconnectBtn.action = #selector(disconnectAction(_:))
 		disconnectBtn.translatesAutoresizingMaskIntoConstraints = false
 		disconnectBtn.sizeToFit()
 		self.view.addSubview(disconnectBtn)
@@ -46,7 +46,7 @@ class ViewController: NSViewController {
 		logBtn.setButtonType(.momentaryChange)
 		logBtn.title = "Log Message"
 		logBtn.target = self
-		logBtn.action = #selector(logAction(sender:))
+		logBtn.action = #selector(logAction(_:))
 		logBtn.translatesAutoresizingMaskIntoConstraints = false
 		logBtn.sizeToFit()
 		self.view.addSubview(logBtn)
@@ -61,22 +61,22 @@ class ViewController: NSViewController {
 		}
 	}
 	
-	func connectAction(sender: AnyObject) {
+	func connectAction(_ sender: AnyObject) {
 		if let delegate = appDelegate {
 			if delegate.logger.tryConnect() {
 			}
 		}
 	}
 	
-	func disconnectAction(sender: AnyObject) {
+	func disconnectAction(_ sender: AnyObject) {
 		if let delegate = appDelegate {
 			delegate.logger.disconnect()
 		}
 	}
 	
-	func logAction(sender: AnyObject) {
+	func logAction(_ sender: AnyObject) {
 		if let delegate = appDelegate {
-			delegate.logger.logMessage(filename: "the_filename", lineNumber: 25, functionName: "func_me", domain: "domain_knowledge", level: 1, message: "got something to say?")
+			delegate.logger.logMessage("got something to say?", filename: "the_filename", lineNumber: 25, functionName: "func_me", domain: "domain_knowledge", level: 1)
 		}
 	}
 
