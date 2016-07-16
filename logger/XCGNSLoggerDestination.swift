@@ -647,10 +647,22 @@ extension XCGLogger {
 		}
 	}
 	
-	func onAllNSLogger(closure: @noescape (XCGNSLoggerDestination) -> Void) {
+	func onAllNSLogger(_ level: XCGLogger.LogLevel, closure: @noescape (XCGNSLoggerDestination) -> Void) {
 		for logDestination in self.logDestinations {
-			if let logger = logDestination as? XCGNSLoggerDestination {
-				closure(logger)
+			if logDestination.isEnabledForLogLevel(level) {
+				if let logger = logDestination as? XCGNSLoggerDestination {
+					closure(logger)
+				}
+			}
+		}
+	}
+	
+	func onAllNonNSLogger(_ level: XCGLogger.LogLevel, closure: @noescape (XCGLogDestinationProtocol) -> Void) {
+		for logDestination in self.logDestinations {
+			if logDestination.isEnabledForLogLevel(level) {
+				if logDestination is XCGNSLoggerDestination == false {
+					closure(logDestination)
+				}
 			}
 		}
 	}
@@ -658,342 +670,448 @@ extension XCGLogger {
 	// MARK: mark
 	
 	public class func mark( _ closure: @autoclosure () -> String?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logMark(closure())
-		}
+		self.defaultInstance().mark(closure)
 	}
 	
 	public func mark( _ closure: @autoclosure () -> String?) {
-		onAllNSLogger { logger in
-			logger.logMark(closure())
+		if let value = closure() {
+			onAllNSLogger(.none) { logger in
+				logger.logMark(value)
+			}
+			onAllNonNSLogger(.none) { logger in
+				let logDetails = XCGLogDetails(logLevel: .none, date: Date(), logMessage: "<mark: \(value)>", functionName: "", fileName: "", lineNumber: 0)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	// MARK: block start
 	
 	public class func blockStart( _ closure: @autoclosure () -> String?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logBlockStart(closure())
-		}
+		self.defaultInstance().blockStart(closure)
 	}
 	
 	public func blockStart( _ closure: @autoclosure () -> String?) {
-		onAllNSLogger { logger in
-			logger.logBlockStart(closure())
+		if let value = closure() {
+			onAllNSLogger(.none) { logger in
+				logger.logBlockStart(value)
+			}
+			onAllNonNSLogger(.none) { logger in
+				let logDetails = XCGLogDetails(logLevel: .none, date: Date(), logMessage: "<block start: \(value)>", functionName: "", fileName: "", lineNumber: 0)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	// MARK: block end
 	
 	public class func blockEnd() {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logBlockEnd()
-		}
+		self.defaultInstance().blockEnd()
 	}
 	
 	public func blockEnd() {
-		onAllNSLogger { logger in
+		onAllNSLogger(.none) { logger in
 			logger.logBlockEnd()
+		}
+		onAllNonNSLogger(.none) { logger in
+			let logDetails = XCGLogDetails(logLevel: .none, date: Date(), logMessage: "<block end>", functionName: "", fileName: "", lineNumber: 0)
+			logger.processLogDetails(logDetails)
 		}
 	}
 	
 	// MARK: verbose
 	
 	public class func verbose( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
-		}
+		self.defaultInstance().verbose(closure())
 	}
 	
 	public class func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
-		}
+		self.defaultInstance().verbose(closure())
 	}
 	
 	public func verbose( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+		if let value = closure() {
+			onAllNSLogger(.verbose) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+			}
+			onAllNonNSLogger(.verbose) { logger in
+				let logDetails = XCGLogDetails(logLevel: .verbose, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+		if let value = closure() {
+			onAllNSLogger(.verbose) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+			}
+			onAllNonNSLogger(.verbose) { logger in
+				let logDetails = XCGLogDetails(logLevel: .verbose, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public class func verbose( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
-		}
+		self.defaultInstance().verbose(closure())
 	}
 	
 	public class func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
-		}
+		self.defaultInstance().verbose(closure())
 	}
 	
 	public func verbose( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+		if let value = closure() {
+			onAllNSLogger(.verbose) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+			}
+			onAllNonNSLogger(.verbose) { logger in
+				let logDetails = XCGLogDetails(logLevel: .verbose, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+		if let value = closure() {
+			onAllNSLogger(.verbose) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
+			}
+			onAllNonNSLogger(.verbose) { logger in
+				let logDetails = XCGLogDetails(logLevel: .verbose, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	// MARK: debug
-	
+
 	public class func debug( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
-		}
+		self.defaultInstance().debug(closure())
 	}
 	
 	public class func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
-		}
+		self.defaultInstance().debug(closure())
 	}
 	
 	public func debug( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+		if let value = closure() {
+			onAllNSLogger(.debug) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+			}
+			onAllNonNSLogger(.debug) { logger in
+				let logDetails = XCGLogDetails(logLevel: .debug, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+		if let value = closure() {
+			onAllNSLogger(.debug) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+			}
+			onAllNonNSLogger(.debug) { logger in
+				let logDetails = XCGLogDetails(logLevel: .debug, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public class func debug( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
-		}
+		self.defaultInstance().debug(closure())
 	}
 	
 	public class func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
-		}
+		self.defaultInstance().debug(closure())
 	}
 	
 	public func debug( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+		if let value = closure() {
+			onAllNSLogger(.debug) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+			}
+			onAllNonNSLogger(.debug) { logger in
+				let logDetails = XCGLogDetails(logLevel: .debug, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+		if let value = closure() {
+			onAllNSLogger(.debug) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
+			}
+			onAllNonNSLogger(.debug) { logger in
+				let logDetails = XCGLogDetails(logLevel: .debug, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	// MARK: info
 	
 	public class func info( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
-		}
+		self.defaultInstance().info(closure())
 	}
 	
 	public class func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
-		}
+		self.defaultInstance().info(closure())
 	}
 	
 	public func info( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+		if let value = closure() {
+			onAllNSLogger(.info) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+			}
+			onAllNonNSLogger(.info) { logger in
+				let logDetails = XCGLogDetails(logLevel: .info, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+		if let value = closure() {
+			onAllNSLogger(.info) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+			}
+			onAllNonNSLogger(.info) { logger in
+				let logDetails = XCGLogDetails(logLevel: .info, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public class func info( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
-		}
+		self.defaultInstance().info(closure())
 	}
 	
 	public class func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
-		}
+		self.defaultInstance().info(closure())
 	}
 	
 	public func info( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+		if let value = closure() {
+			onAllNSLogger(.info) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+			}
+			onAllNonNSLogger(.info) { logger in
+				let logDetails = XCGLogDetails(logLevel: .info, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+		if let value = closure() {
+			onAllNSLogger(.info) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
+			}
+			onAllNonNSLogger(.info) { logger in
+				let logDetails = XCGLogDetails(logLevel: .verbose, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
-	
+
 	// MARK: warning
 	
 	public class func warning( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
-		}
+		self.defaultInstance().warning(closure())
 	}
 	
 	public class func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
-		}
+		self.defaultInstance().warning(closure())
 	}
 	
 	public func warning( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+		if let value = closure() {
+			onAllNSLogger(.warning) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+			}
+			onAllNonNSLogger(.warning) { logger in
+				let logDetails = XCGLogDetails(logLevel: .warning, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+		if let value = closure() {
+			onAllNSLogger(.warning) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+			}
+			onAllNonNSLogger(.warning) { logger in
+				let logDetails = XCGLogDetails(logLevel: .warning, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public class func warning( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
-		}
+		self.defaultInstance().warning(closure())
 	}
 	
 	public class func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
-		}
+		self.defaultInstance().warning(closure())
 	}
 	
 	public func warning( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+		if let value = closure() {
+			onAllNSLogger(.warning) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+			}
+			onAllNonNSLogger(.warning) { logger in
+				let logDetails = XCGLogDetails(logLevel: .warning, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+		if let value = closure() {
+			onAllNSLogger(.warning) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
+			}
+			onAllNonNSLogger(.warning) { logger in
+				let logDetails = XCGLogDetails(logLevel: .warning, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
-	
+
 	// MARK: error
 	
 	public class func error( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
-		}
+		self.defaultInstance().error(closure())
 	}
 	
 	public class func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
-		}
+		self.defaultInstance().error(closure())
 	}
 	
 	public func error( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+		if let value = closure() {
+			onAllNSLogger(.error) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+			}
+			onAllNonNSLogger(.error) { logger in
+				let logDetails = XCGLogDetails(logLevel: .error, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+		if let value = closure() {
+			onAllNSLogger(.error) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+			}
+			onAllNonNSLogger(.error) { logger in
+				let logDetails = XCGLogDetails(logLevel: .error, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public class func error( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
-		}
+		self.defaultInstance().error(closure())
 	}
 	
 	public class func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
-		}
+		self.defaultInstance().error(closure())
 	}
 	
 	public func error( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+		if let value = closure() {
+			onAllNSLogger(.error) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+			}
+			onAllNonNSLogger(.error) { logger in
+				let logDetails = XCGLogDetails(logLevel: .error, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+		if let value = closure() {
+			onAllNSLogger(.error) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
+			}
+			onAllNonNSLogger(.error) { logger in
+				let logDetails = XCGLogDetails(logLevel: .error, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
-	
+
 	// MARK: severe
 	
 	public class func severe( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
-		}
+		self.defaultInstance().severe(closure())
 	}
 	
 	public class func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
-		}
+		self.defaultInstance().severe(closure())
 	}
 	
 	public func severe( _ closure: @autoclosure () -> ImageType?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+		if let value = closure() {
+			onAllNSLogger(.severe) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+			}
+			onAllNonNSLogger(.severe) { logger in
+				let logDetails = XCGLogDetails(logLevel: .severe, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
-		onAllNSLogger { logger in
-			logger.logImage(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+		if let value = closure() {
+			onAllNSLogger(.severe) { logger in
+				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+			}
+			onAllNonNSLogger(.severe) { logger in
+				let logDetails = XCGLogDetails(logLevel: .severe, date: Date(), logMessage: "<image>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public class func severe( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
-		}
+		self.defaultInstance().severe(closure())
 	}
 	
 	public class func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		self.defaultInstance().onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
-		}
+		self.defaultInstance().severe(closure())
 	}
 	
 	public func severe( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+		if let value = closure() {
+			onAllNSLogger(.severe) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+			}
+			onAllNonNSLogger(.severe) { logger in
+				let logDetails = XCGLogDetails(logLevel: .severe, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
 	public func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
-		onAllNSLogger { logger in
-			logger.logData(closure(), filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+		if let value = closure() {
+			onAllNSLogger(.severe) { logger in
+				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
+			}
+			onAllNonNSLogger(.severe) { logger in
+				let logDetails = XCGLogDetails(logLevel: .severe, date: Date(), logMessage: "<data>", functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+				logger.processLogDetails(logDetails)
+			}
 		}
 	}
 	
