@@ -68,32 +68,69 @@ func toByteArray<T>(_ value: T) -> [UInt8] {
 	}
 }
 
-class NSLoggerDestination: NSObject, NetServiceBrowserDelegate {
+class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBrowserDelegate {
 	
+	var owner: XCGLogger
+	var identifier: String = ""
+	var outputLogLevel: XCGLogger.LogLevel = .debug
 	
+	var showLogIdentifier: Bool = false
+	var showFunctionName: Bool = true
+	var showThreadName: Bool = false
+	var showFileName: Bool = true
+	var showLineNumber: Bool = true
+	var showLogLevel: Bool = true
+	var showDate: Bool = true
 	
-	
-	
-	
-/*
-	public protocol XCGLogDestinationProtocol: CustomDebugStringConvertible {
-	var owner: XCGLogger {get set}
-	var identifier: String {get set}
-	var outputLogLevel: XCGLogger.LogLevel {get set}
-	
-	func processLogDetails(_ logDetails: XCGLogDetails)
-	func processInternalLogDetails(_ logDetails: XCGLogDetails) // Same as processLogDetails but should omit function/file/line info
-	func isEnabledForLogLevel(_ logLevel: XCGLogger.LogLevel) -> Bool
+	override var debugDescription: String {
+		get {
+			return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel) showLogIdentifier: \(showLogIdentifier) showFunctionName: \(showFunctionName) showThreadName: \(showThreadName) showLogLevel: \(showLogLevel) showFileName: \(showFileName) showLineNumber: \(showLineNumber) showDate: \(showDate)"
+		}
 	}
-*/
 	
+	init(owner: XCGLogger, identifier: String = "") {
+		self.owner = owner
+		self.identifier = identifier
+	}
 	
+	func processLogDetails(_ logDetails: XCGLogDetails) {
+		output(logDetails)
+	}
 	
+	func processInternalLogDetails(_ logDetails: XCGLogDetails) {
+		output(logDetails)
+	}
 	
+	func isEnabledForLogLevel (_ logLevel: XCGLogger.LogLevel) -> Bool {
+		return logLevel >= self.outputLogLevel
+	}
 	
-	
-	
-	
+	private func convertLogLevel(_ level:XCGLogger.LogLevel) -> Int {
+		switch(level) {
+		case .severe:
+			return 0
+		case .error:
+			return 1
+		case .warning:
+			return 2
+		case .info:
+			return 3
+		case .debug:
+			return 4
+		case .verbose:
+			return 5
+		case .none:
+			return 3
+		}
+	}
+
+	func output(_ logDetails: XCGLogDetails) {
+		if logDetails.logLevel == .none {
+			return
+		}
+		
+		logMessage(logDetails.logMessage, filename: logDetails.fileName, lineNumber: logDetails.lineNumber, functionName: logDetails.functionName, domain: nil, level: convertLogLevel(logDetails.logLevel))
+	}
 	
 	/**
 	If set, will only connect to receiver with name 'hostName'
@@ -183,7 +220,7 @@ class NSLoggerDestination: NSObject, NetServiceBrowserDelegate {
 			let info = Unmanaged.passUnretained(self).toOpaque()
 			var context: CFStreamClientContext = CFStreamClientContext(version: 0, info: info, retain: nil, release: nil, copyDescription: nil)
 			CFWriteStreamSetClient(self.logStream, options, { (ws: CFWriteStream?, event: CFStreamEventType, info: UnsafeMutablePointer<Void>?) in
-				let me = Unmanaged<NSLoggerDestination>.fromOpaque(info!).takeUnretainedValue()
+				let me = Unmanaged<XCGNSLoggerDestination>.fromOpaque(info!).takeUnretainedValue()
 				if let logStream = me.logStream, ws = ws where ws == logStream {
 					switch event {
 					case CFStreamEventType.openCompleted:

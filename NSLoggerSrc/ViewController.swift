@@ -62,22 +62,13 @@ class ViewController: NSViewController {
 	}
 	
 	func connectAction(_ sender: AnyObject) {
-		if let delegate = appDelegate {
-			if delegate.logger.tryConnect() {
-			}
-		}
 	}
 	
 	func disconnectAction(_ sender: AnyObject) {
-		if let delegate = appDelegate {
-			delegate.logger.disconnect()
-		}
 	}
 	
 	func logAction(_ sender: AnyObject) {
-		if let delegate = appDelegate {
-			delegate.logger.logMessage("got something to say?", filename: "the_filename", lineNumber: 25, functionName: "func_me", domain: "domain_knowledge", level: 1)
-		}
+		log.debug("got something to say?")
 	}
 
 }

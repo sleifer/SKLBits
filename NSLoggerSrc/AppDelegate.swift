@@ -15,12 +15,22 @@ var appDelegate: AppDelegate?
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-	var logger: NSLoggerDestination = NSLoggerDestination()
-	
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		appDelegate = self
 		
-		log.setup(.debug, showThreadName: true)
+		log.setup(.verbose, showThreadName: true)
+
+		let logger: XCGNSLoggerDestination = XCGNSLoggerDestination(owner: log)
+		logger.outputLogLevel = .verbose
+		logger.showLogIdentifier = true
+		logger.showFunctionName = true
+		logger.showThreadName = true
+		logger.showLogLevel = true
+		logger.showFileName = true
+		logger.showLineNumber = true
+		logger.showDate = true
+		if log.addLogDestination(logger) {
+		}
 
 		log.verbose("A verbose message, usually useful when working on a specific problem")
 		log.debug("A debug message")
@@ -33,8 +43,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 
 	func applicationWillTerminate(_ aNotification: Notification) {
-		logger.stopBonjourBrowsing()
-		logger.disconnect()
 	}
 
 }
