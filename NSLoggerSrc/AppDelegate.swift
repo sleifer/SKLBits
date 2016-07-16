@@ -34,10 +34,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		log.verbose("A verbose message, usually useful when working on a specific problem")
 		log.debug("A debug message")
+		log.blockStart("a block start")
 		log.info("An info message, probably useful to power users looking in console.app")
 		log.warning("A warning message, may indicate a possible error")
+		log.blockEnd()
 		log.error("An error occurred, but it's recoverable, just info about what happened")
+		log.mark("a mark")
 		log.severe("A severe error occurred, we are likely about to crash now")
+		let image = NSImage(named: "test")
+		log.info(image)
+		let data = NSMutableData()
+		let small: [UInt8] = [1,2,3,4,5,6,7,8,9]
+		data.append(UnsafePointer<Void>(small), length: small.count)
+		log.info(data)
 
 		logger.startBonjourBrowsing()
 	}

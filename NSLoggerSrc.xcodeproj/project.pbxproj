@@ -12,6 +12,7 @@
 		DB7670401D39256D00DF7D95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB76703F1D39256D00DF7D95 /* Assets.xcassets */; };
 		DB7670431D39256D00DF7D95 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB7670411D39256D00DF7D95 /* Main.storyboard */; };
 		DB76704B1D3925D900DF7D95 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */; };
+		DB8980181D3A7FA300BC96F4 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = DB8980171D3A7FA300BC96F4 /* test.png */; };
 		DBBADDD31D39D9E600C629A4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */; };
 		DBFD53621D395930002B4DF5 /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,7 @@
 		DB7670421D39256D00DF7D95 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DB7670441D39256D00DF7D95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGNSLoggerDestination.swift; sourceTree = "<group>"; };
+		DB8980171D3A7FA300BC96F4 /* test.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = test.png; sourceTree = "<group>"; };
 		DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGLogger.swift; sourceTree = "<group>"; };
 		DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint-Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -59,6 +61,7 @@
 			isa = PBXGroup;
 			children = (
 				DB76703B1D39256D00DF7D95 /* AppDelegate.swift */,
+				DB8980171D3A7FA300BC96F4 /* test.png */,
 				DBBADDD21D39D9E600C629A4 /* XCGLogger.swift */,
 				DB76704A1D3925D900DF7D95 /* XCGNSLoggerDestination.swift */,
 				DB76703D1D39256D00DF7D95 /* ViewController.swift */,
@@ -134,6 +137,7 @@
 			files = (
 				DB7670401D39256D00DF7D95 /* Assets.xcassets in Resources */,
 				DB7670431D39256D00DF7D95 /* Main.storyboard in Resources */,
+				DB8980181D3A7FA300BC96F4 /* test.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
