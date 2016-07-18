@@ -70,6 +70,8 @@ let LOGGER_SERVICE_DOMAIN = "local."
 
 // ---
 
+let RING_BUFFER_CAPACITY: UInt32 = 5000000 // 5 MB
+
 extension Array {
 	
 	mutating func orderedInsert(_ elem: Element, isOrderedBefore: (Element, Element) -> Bool) {
@@ -112,6 +114,44 @@ struct MessageBuffer: CustomStringConvertible {
 		
 		addTimestamp()
 		addThreadID()
+	}
+	
+	init(_ fp: FileHandle?) {
+		// TODO: (SKL) whole method needs good failure handling
+		let seqData = fp?.readData(ofLength: sizeof(UInt32.self))
+		let seqValue = seqData?.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> Int32 in
+			return Int32(CFSwapInt32HostToBig(bytes.pointee))
+		}
+		self.seq = seqValue!
+		self.buffer = [UInt8]()
+
+		let lenData = fp?.readData(ofLength: sizeof(UInt32.self))
+		let lenValue = lenData?.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> Int32 in
+			return Int32(CFSwapInt32HostToBig(bytes.pointee))
+		}
+
+		let packetData = fp?.readData(ofLength: Int(lenValue!))
+
+		if let count = lenValue, let data = packetData {
+			append(toByteArray(CFSwapInt32HostToBig(UInt32(count))))
+			
+			data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
+				append(UnsafeBufferPointer(start: bytes, count: Int(count)))
+			}
+		}
+	}
+	
+	init(_ raw: [UInt8]) {
+		self.seq = Int32(CFSwapInt32HostToBig(UnsafePointer<UInt32>(raw).pointee))
+		let data = raw[4..<raw.count]
+		self.buffer = [UInt8]()
+		self.buffer.append(contentsOf: data)
+	}
+	
+	func raw() -> [UInt8] {
+		var rawArray: [UInt8] = toByteArray(CFSwapInt32HostToBig(UInt32(self.seq)))
+		rawArray.append(contentsOf: buffer)
+		return rawArray
 	}
 	
 	private func toByteArray<T>(_ value: T) -> [UInt8] {
@@ -248,6 +288,13 @@ struct MessageBuffer: CustomStringConvertible {
 	public typealias ImageType = NSImage
 #endif
 
+enum XCGNSLoggerOfflineOption {
+	case drop
+	case inMemory
+	case runFile
+	case ringFile
+}
+
 class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBrowserDelegate {
 	
 	var owner: XCGLogger
@@ -308,6 +355,16 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	If set, will only connect to receiver with name 'hostName'
 	*/
 	var hostName: String?
+	
+	var offlineBehavior: XCGNSLoggerOfflineOption = .drop
+
+	private var runFilePath: String?
+	
+	private var runFileIndex: UInt64 = 0
+	
+	private var runFileCount: Int = 0
+	
+	private var ringFile: RingBufferFile?
 	
 	private let queue = DispatchQueue(label: "message queue", attributes: .serial, target: nil)
 
@@ -453,10 +510,13 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	}
 	
 	func writeMoreData() {
-		if let logStream = self.logStream {
-			queue.async {
+		queue.async {
+			self.reconcileOfflineStatus()
+			if let logStream = self.logStream {
 				if CFWriteStreamCanAcceptBytes(logStream) == true {
+					self.reconcileOnlineStatus()
 					if self.messageBeingSent == nil && self.messageQueue.count > 0 {
+						// TODO: (SKL) don't remove from message queue until it sends fully
 						self.messageBeingSent = self.messageQueue.remove(at: 0)
 						self.sentCount = 0
 					}
@@ -540,6 +600,137 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		#endif
 		
 		pushMessageToQueue(encoder)
+	}
+	
+	func appendToRunFile(_ encoder: MessageBuffer) {
+		if runFilePath == nil {
+			do {
+				let fm = FileManager.default
+				let urls = fm.urlsForDirectory(.cachesDirectory, inDomains: .userDomainMask)
+				let identifier = Bundle.main.bundleIdentifier
+				if let identifier = identifier, urls.count > 0 {
+					let fileName = identifier + ".xcgnsrun"
+					var url = urls[0]
+					try url.appendPathComponent(fileName)
+					runFilePath = url.path
+					if let runFilePath = runFilePath {
+						if fm.fileExists(atPath: runFilePath) {
+							try fm.removeItem(atPath: runFilePath)
+						}
+						let created = fm.createFile(atPath: runFilePath, contents: nil, attributes: nil)
+						if created == false {
+							self.runFilePath = nil
+						} else {
+							self.runFileIndex = 0
+							self.runFileCount = 0
+						}
+					}
+				}
+			} catch {
+			}
+		}
+		if let runFilePath = runFilePath {
+			let fp = FileHandle(forWritingAtPath: runFilePath)
+			fp?.seekToEndOfFile()
+			var seq = CFSwapInt32HostToBig(UInt32(encoder.seq))
+			withUnsafeMutablePointer(&seq, {
+				let data1 = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>($0), count: sizeof(seq.dynamicType.self), deallocator: .none)
+				fp?.write(data1)
+			})
+			let data2 = Data(bytesNoCopy: encoder.ptr(), count: encoder.count(), deallocator: .none)
+			fp?.write(data2)
+			fp?.closeFile()
+			self.runFileCount = self.runFileCount + 1
+		}
+	}
+	
+	func readFromRunFile() -> MessageBuffer? {
+		var encoder: MessageBuffer? = nil
+		if let runFilePath = self.runFilePath, runFileCount > 0 {
+			let fp = FileHandle(forUpdatingAtPath: runFilePath)
+			fp?.seek(toFileOffset: runFileIndex)
+			encoder = MessageBuffer(fp)
+			if let encoder = encoder {
+				self.runFileCount = self.runFileCount - 1
+				self.runFileIndex = self.runFileIndex + UInt64(encoder.count() + sizeof(encoder.seq.dynamicType.self))
+				if self.runFileCount == 0 {
+					fp?.truncateFile(atOffset: 0)
+				}
+			}
+			fp?.closeFile()
+		}
+		return encoder
+	}
+	
+	func createRingFile() {
+		do {
+			let fm = FileManager.default
+			let urls = fm.urlsForDirectory(.cachesDirectory, inDomains: .userDomainMask)
+			let identifier = Bundle.main.bundleIdentifier
+			if let identifier = identifier, urls.count > 0 {
+				let fileName = identifier + ".xcgnsring"
+				var url = urls[0]
+				try url.appendPathComponent(fileName)
+				self.ringFile = RingBufferFile(capacity: RING_BUFFER_CAPACITY, filePath: url.path!)
+			}
+		} catch {
+		}
+	}
+
+	func appendToRingFile(_ encoder: MessageBuffer) {
+		if ringFile == nil {
+			createRingFile()
+		}
+		if let ringFile = self.ringFile {
+			ringFile.push(encoder.raw())
+		}
+	}
+	
+	func readFromRingFile() -> MessageBuffer? {
+		if ringFile == nil {
+			createRingFile()
+		}
+		if let ringFile = self.ringFile {
+			if let data: [UInt8] = ringFile.pop() {
+				return MessageBuffer(data)
+			}
+		}
+		return nil
+	}
+	
+	func reconcileOfflineStatus() {
+		if connected == false {
+			switch offlineBehavior {
+			case .drop:
+				self.messageQueue.removeAll()
+			case .inMemory:
+				// nothing to do, MessageBuffer(s) are put in messageQueue by default
+				break
+			case .runFile:
+				for msg in self.messageQueue {
+					appendToRunFile(msg)
+				}
+				self.messageQueue.removeAll()
+			case .ringFile:
+				for msg in self.messageQueue {
+					appendToRingFile(msg)
+				}
+				self.messageQueue.removeAll()
+			}
+		}
+	}
+	
+	func reconcileOnlineStatus() {
+		if connected == true {
+			if self.messageBeingSent == nil {
+				if offlineBehavior == .runFile, let encoder = readFromRunFile() {
+					self.messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
+				}
+				if offlineBehavior == .ringFile, let encoder = readFromRingFile() {
+					self.messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
+				}
+			}
+		}
 	}
 	
 	func pushMessageToQueue(_ encoder: MessageBuffer) {

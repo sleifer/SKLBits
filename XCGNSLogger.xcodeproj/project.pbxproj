@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB694E541D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */; };
+		DB694E551D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */; };
 		DB76703C1D39256D00DF7D95 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703B1D39256D00DF7D95 /* AppDelegate.swift */; };
 		DB76703E1D39256D00DF7D95 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703D1D39256D00DF7D95 /* ViewController.swift */; };
 		DB7670401D39256D00DF7D95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB76703F1D39256D00DF7D95 /* Assets.xcassets */; };
@@ -26,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RingBufferFile.swift; sourceTree = "<group>"; };
 		DB7670381D39256D00DF7D95 /* macOS Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOS Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB76703B1D39256D00DF7D95 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DB76703D1D39256D00DF7D95 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -115,6 +118,7 @@
 			children = (
 				DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */,
 				DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */,
+				DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */,
 			);
 			path = logger;
 			sourceTree = "<group>";
@@ -234,6 +238,7 @@
 				DB8980361D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
 				DB76703C1D39256D00DF7D95 /* AppDelegate.swift in Sources */,
 				DBFD53621D395930002B4DF5 /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB694E541D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +248,7 @@
 			files = (
 				DB8980381D3A8A6500BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
 				DB8980221D3A841900BC96F4 /* ViewController.swift in Sources */,
+				DB694E551D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */,
 				DB8980201D3A841900BC96F4 /* AppDelegate.swift in Sources */,
 				DB8980371D3A8A6100BC96F4 /* XCGLogger.swift in Sources */,
 			);
