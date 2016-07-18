@@ -114,6 +114,13 @@ struct MessageBuffer: CustomStringConvertible {
 		addThreadID()
 	}
 	
+	private func toByteArray<T>(_ value: T) -> [UInt8] {
+		var value = value
+		return withUnsafePointer(&value) {
+			Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T.self)))
+		}
+	}
+	
 	private mutating func append(_ value: UInt8) {
 		buffer.append(value)
 	}
@@ -240,13 +247,6 @@ struct MessageBuffer: CustomStringConvertible {
 	import AppKit
 	public typealias ImageType = NSImage
 #endif
-
-func toByteArray<T>(_ value: T) -> [UInt8] {
-	var value = value
-	return withUnsafePointer(&value) {
-		Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T.self)))
-	}
-}
 
 class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBrowserDelegate {
 	
