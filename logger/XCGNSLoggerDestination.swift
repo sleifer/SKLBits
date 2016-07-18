@@ -57,9 +57,181 @@ let LOGGER_SERVICE_TYPE_SSL	= "_nslogger-ssl._tcp"
 let LOGGER_SERVICE_TYPE = "_nslogger._tcp"
 let LOGGER_SERVICE_DOMAIN = "local."
 
+/*
+	NSLogger packet format
+
+	4b total packet length not including this length value
+	2b part count
+	part(s)
+		1b part key
+		1b part type
+		nb part data
+*/
+
 // ---
 
-typealias MessageBuffer = [UInt8]
+extension Array {
+	
+	mutating func orderedInsert(_ elem: Element, isOrderedBefore: (Element, Element) -> Bool) {
+		var lo = 0
+		var hi = self.count - 1
+		while lo <= hi {
+			let mid = (lo + hi)/2
+			if isOrderedBefore(self[mid], elem) {
+				lo = mid + 1
+			} else if isOrderedBefore(elem, self[mid]) {
+				hi = mid - 1
+			} else {
+				self.insert(elem, at:mid) // found at position mid
+				return
+			}
+		}
+		self.insert(elem, at:lo) // not found, would be inserted at position lo
+	}
+	
+}
+
+struct MessageBuffer: CustomStringConvertible {
+	let seq: Int32
+	private var buffer: [UInt8]
+	
+	init(_ seq: Int32) {
+		self.seq = seq
+		self.buffer = [UInt8]()
+		
+		if seq == 0 {
+			append(toByteArray(CFSwapInt32HostToBig(UInt32(2))))
+			append(toByteArray(CFSwapInt16HostToBig(UInt16(0))))
+		} else {
+			append(toByteArray(CFSwapInt32HostToBig(UInt32(8))))
+			append(toByteArray(CFSwapInt16HostToBig(UInt16(1))))
+			append(PART_KEY_MESSAGE_SEQ)
+			append(PART_TYPE_INT32)
+			append(toByteArray(CFSwapInt32HostToBig(UInt32(seq))))
+		}
+		
+		addTimestamp()
+		addThreadID()
+	}
+	
+	private mutating func append(_ value: UInt8) {
+		buffer.append(value)
+	}
+	
+	private mutating func append<C : Collection where C.Iterator.Element == UInt8>(_ newElements: C) {
+		buffer.append(contentsOf: newElements)
+	}
+	
+	private mutating func append<S : Sequence where S.Iterator.Element == UInt8>(_ newElements: S) {
+		buffer.append(contentsOf: newElements)
+	}
+	
+	func ptr() -> UnsafeMutablePointer<UInt8> {
+		return UnsafeMutablePointer<UInt8>(buffer)
+	}
+	
+	func count() -> Int {
+		return buffer.count
+	}
+	
+	private mutating func prepareForPart(ofSize byteCount: Int) {
+		var bytePtr = ptr()
+		let sizePtr = UnsafeMutablePointer<UInt32>(bytePtr)
+		let sizeValue = CFSwapInt32HostToBig(sizePtr.pointee)
+		
+		sizePtr[0] = CFSwapInt32HostToBig(sizeValue + UInt32(byteCount))
+		
+		bytePtr = bytePtr.advanced(by: 4)
+		let partPtr = UnsafeMutablePointer<UInt16>(bytePtr)
+		let partValue = CFSwapInt16HostToBig(partPtr.pointee)
+		
+		partPtr[0] = CFSwapInt16HostToBig(partValue + 1)
+	}
+
+	mutating func addInt16(_ value: UInt16, key: UInt8) {
+		prepareForPart(ofSize: 4)
+		append(key)
+		append(PART_TYPE_INT16)
+		append(toByteArray(CFSwapInt16HostToBig(value)))
+	}
+	
+	mutating func addInt32(_ value: UInt32, key: UInt8) {
+		prepareForPart(ofSize: 6)
+		append(key)
+		append(PART_TYPE_INT32)
+		append(toByteArray(CFSwapInt32HostToBig(value)))
+	}
+
+#if __LP64__
+	mutating func addInt64(_ value: UInt64, key: UInt8) {
+		prepareForPart(ofSize: 10)
+		append(key)
+		append(PART_TYPE_INT64)
+		append(toByteArray(CFSwapInt32HostToBig(UInt32(value >> 32))))
+		append(toByteArray(CFSwapInt32HostToBig(UInt32(value))))
+	}
+#endif
+	
+	mutating func addString(_ value: String, key: UInt8) {
+		let bytes = value.utf8
+		let len = bytes.count
+		
+		prepareForPart(ofSize: 6 + len)
+		append(key)
+		append(PART_TYPE_STRING)
+		append(toByteArray(CFSwapInt32HostToBig(UInt32(len))))
+		if len > 0 {
+			append(bytes)
+		}
+	}
+	
+	mutating func addData(_ value: NSData, key: UInt8, type: UInt8) {
+		let len = value.length
+		
+		prepareForPart(ofSize: 6 + len)
+		append(key)
+		append(type)
+		append(toByteArray(CFSwapInt32HostToBig(UInt32(len))))
+		if len > 0 {
+			append(UnsafeBufferPointer(start: UnsafePointer<UInt8>(value.bytes), count: len))
+		}
+	}
+	
+	mutating func addTimestamp() {
+		let t = CFAbsoluteTimeGetCurrent()
+		let s = floor(t)
+		let us = floor((t - s) * 1000000)
+		
+		#if __LP64__
+			addInt64(s, key: PART_KEY_TIMESTAMP_S)
+			addInt64(us, key: PART_KEY_TIMESTAMP_US)
+		#else
+			addInt32(UInt32(s), key: PART_KEY_TIMESTAMP_S)
+			addInt32(UInt32(us), key: PART_KEY_TIMESTAMP_US)
+		#endif
+	}
+	
+	mutating func addThreadID() {
+		var name: String = "unknown"
+		if Thread.isMainThread {
+			name = "main"
+		} else {
+			if let threadName = Thread.current.name where !threadName.isEmpty {
+				name = threadName
+			} else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)) where !queueName.isEmpty {
+				name = queueName
+			}
+			else {
+				name = String(format:"%p", Thread.current)
+			}
+		}
+		addString(name, key: PART_KEY_THREAD_ID)
+	}
+	
+	var description: String {
+		return "\(self.dynamicType), seq #\(seq)"
+	}
+}
 
 #if os(iOS)
 	import UIKit
@@ -151,9 +323,15 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	private var logStream: CFWriteStream?
 	
+	private var connected: Bool = false
+	
 	private var messageSeq: Int32 = 1
 	
-	private var sendQueue: MessageBuffer = MessageBuffer()
+	private var messageQueue: [MessageBuffer] = []
+	
+	private var messageBeingSent: MessageBuffer?
+	
+	private var sentCount: Int = 0
 	
 	func startBonjourBrowsing() {
 		self.browser = NetServiceBrowser()
@@ -197,14 +375,14 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		}
 		
 		self.service = service
-		let success = tryConnect()
-		if success == false {
+		if tryConnect() == false {
 			print("connection attempt failed")
 		}
 	}
 	
 	func disconnect(from service: NetService) {
 		if self.service == service {
+			print("NetService went away: \(service)")
 			service.stop()
 			self.service = nil
 		}
@@ -214,8 +392,6 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		if self.logStream != nil {
 			return true
 		}
-		
-		stopBonjourBrowsing()
 		
 		if let service = self.service {
 			var outputStream: NSOutputStream?
@@ -232,6 +408,8 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 				if let logStream = me.logStream, ws = ws where ws == logStream {
 					switch event {
 					case CFStreamEventType.openCompleted:
+						me.connected = true
+						me.stopBonjourBrowsing()
 						me.pushClientInfoToQueue()
 						me.writeMoreData()
 					case CFStreamEventType.canAcceptBytes:
@@ -241,6 +419,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 						print("Logger stream error: \(error)")
 						me.streamTerminated()
 					case CFStreamEventType.endEncountered:
+						print("Logger stream end encountered")
 						me.streamTerminated()
 					default:
 						break
@@ -262,6 +441,9 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 				CFWriteStreamClose(self.logStream)
 			}
 			CFWriteStreamUnscheduleFromRunLoop(self.logStream, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes)
+			
+			stopBonjourBrowsing()
+			startBonjourBrowsing()
 		}
 		
 		return false
@@ -278,153 +460,57 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func writeMoreData() {
 		if let logStream = self.logStream {
-			if CFWriteStreamCanAcceptBytes(logStream) == true && sendQueue.count > 0 {
-				let written = CFWriteStreamWrite(logStream, sendQueue, sendQueue.count)
-				if written < 0 {
-					print("CFWriteStreamWrite returned error: \(written)")
-				} else {
-					sendQueue.removeSubrange(0..<written)
+			if CFWriteStreamCanAcceptBytes(logStream) == true {
+				if messageBeingSent == nil && messageQueue.count > 0 {
+					messageBeingSent = messageQueue.remove(at: 0)
+					sentCount = 0
+				}
+				if let msg = messageBeingSent {
+					if sentCount < msg.count() {
+						let ptr = msg.ptr().advanced(by: sentCount)
+						let toWrite = msg.count() - sentCount
+						let written = CFWriteStreamWrite(logStream, ptr, toWrite)
+						if written < 0 {
+							print("CFWriteStreamWrite returned error: \(written)")
+						} else {
+							sentCount = sentCount + written
+							if sentCount == msg.count() {
+								messageBeingSent = nil
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 	
 	func streamTerminated() {
+		self.connected = false
 		disconnect()
-	}
-	
-	func messageCreate(_ seq: Int32) -> MessageBuffer {
-		var encoder = MessageBuffer()
-		if seq == 0 {
-			encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(2))))
-			encoder.append(contentsOf: toByteArray(CFSwapInt16HostToBig(UInt16(0))))
-		} else {
-			encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(8))))
-			encoder.append(contentsOf: toByteArray(CFSwapInt16HostToBig(UInt16(1))))
-			encoder.append(PART_KEY_MESSAGE_SEQ)
-			encoder.append(PART_TYPE_INT32)
-			encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(seq))))
-		}
-		
-		messageAddTimestamp(&encoder)
-		messageAddThreadID(&encoder)
-		
-		return encoder
-	}
-	
-	func messagePrepareForPart(_ encoder: inout MessageBuffer, byteCount: Int) {
-		var bytePtr = UnsafeMutablePointer<UInt8>(encoder)
-		let sizePtr = UnsafeMutablePointer<UInt32>(bytePtr)
-		let sizeValue = CFSwapInt32HostToBig(sizePtr.pointee)
-		
-		sizePtr[0] = CFSwapInt32HostToBig(sizeValue + UInt32(byteCount))
-		
-		bytePtr = bytePtr.advanced(by: 4)
-		let partPtr = UnsafeMutablePointer<UInt16>(bytePtr)
-		let partValue = CFSwapInt16HostToBig(partPtr.pointee)
-		
-		partPtr[0] = CFSwapInt16HostToBig(partValue + 1)
-	}
-	
-	func messageAddInt16(_ encoder: inout MessageBuffer, value: UInt16, key: UInt8) {
-		messagePrepareForPart(&encoder, byteCount: 4)
-		encoder.append(key)
-		encoder.append(PART_TYPE_INT16)
-		encoder.append(contentsOf: toByteArray(CFSwapInt16HostToBig(value)))
-	}
-	
-	func messageAddInt32(_ encoder: inout MessageBuffer, value: UInt32, key: UInt8) {
-		messagePrepareForPart(&encoder, byteCount: 6)
-		encoder.append(key)
-		encoder.append(PART_TYPE_INT32)
-		encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(value)))
-	}
-	
-#if __LP64__
-	func messageAddInt64(_ encoder: inout MessageBuffer, value: UInt64, key: UInt8) {
-		messagePrepareForPart(&encoder, byteCount: 10)
-		encoder.append(key)
-		encoder.append(PART_TYPE_INT64)
-		encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(value >> 32))))
-		encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(value))))
-	}
-#endif
-
-	func messageAddString(_ encoder: inout MessageBuffer, value: String, key: UInt8) {
-		let bytes = value.utf8
-		let len = bytes.count
-		
-		messagePrepareForPart(&encoder, byteCount: 6 + len)
-		encoder.append(key)
-		encoder.append(PART_TYPE_STRING)
-		encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(len))))
-		if len > 0 {
-			encoder.append(contentsOf: bytes)
+		if tryConnect() == false {
+			print("connection attempt failed")
 		}
 	}
 	
-	func messageAddData(_ encoder: inout MessageBuffer, value: NSData, key: UInt8, type: UInt8) {
-		let len = value.length
-		
-		messagePrepareForPart(&encoder, byteCount: 6 + len)
-		encoder.append(key)
-		encoder.append(type)
-		encoder.append(contentsOf: toByteArray(CFSwapInt32HostToBig(UInt32(len))))
-		if len > 0 {
-			encoder.append(contentsOf: UnsafeBufferPointer(start: UnsafePointer<UInt8>(value.bytes), count: len))
-		}
-	}
-	
-	func messageAddTimestamp(_ encoder: inout MessageBuffer) {
-		let t = CFAbsoluteTimeGetCurrent()
-		let s = floor(t)
-		let us = floor((t - s) * 1000000)
-		
-	#if __LP64__
-		messageAddInt64(&encoder, value: s, key: PART_KEY_TIMESTAMP_S)
-		messageAddInt64(&encoder, value: us, key: PART_KEY_TIMESTAMP_US)
-	#else
-		messageAddInt32(&encoder, value: UInt32(s), key: PART_KEY_TIMESTAMP_S)
-		messageAddInt32(&encoder, value: UInt32(us), key: PART_KEY_TIMESTAMP_US)
-	#endif
-	}
-	
-	func messageAddThreadID(_ encoder: inout MessageBuffer) {
-		var name: String = "unknown"
-		if Thread.isMainThread {
-			name = "main"
-		} else {
-			if let threadName = Thread.current.name where !threadName.isEmpty {
-				name = threadName
-			} else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)) where !queueName.isEmpty {
-				name = queueName
-			}
-			else {
-				name = String(format:"%p", Thread.current)
-			}
-		}
-		messageAddString(&encoder, value: name, key: PART_KEY_THREAD_ID)
-	}
-
 	func pushClientInfoToQueue() {
 		let bundle = Bundle.main
-		var encoder = messageCreate(0)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_CLIENTINFO), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(0)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_CLIENTINFO), key: PART_KEY_MESSAGE_TYPE)
 		if let version = bundle.infoDictionary?[kCFBundleVersionKey as String] as? String {
-			messageAddString(&encoder, value: version, key: PART_KEY_CLIENT_VERSION)
+			encoder.addString(version, key: PART_KEY_CLIENT_VERSION)
 		}
 		if let name = bundle.infoDictionary?[kCFBundleNameKey as String] as? String {
-			messageAddString(&encoder, value: name, key: PART_KEY_CLIENT_NAME)
+			encoder.addString(name, key: PART_KEY_CLIENT_NAME)
 		}
 		
 		#if os(iOS)
 			if Thread.isMainThread || Thread.isMultiThreaded() {
 				autoreleasepool {
 					let device = UIDevice.current()
-					messageAddString(&encoder, value: device.name, key: PART_KEY_UNIQUEID);
-					messageAddString(&encoder, value: device.systemVersion, key: PART_KEY_OS_VERSION)
-					messageAddString(&encoder, value: device.systemName, key: PART_KEY_OS_NAME)
-					messageAddString(&encoder, value: device.model, key: PART_KEY_CLIENT_MODEL)
+					encoder.addString(device.name, key: PART_KEY_UNIQUEID);
+					encoder.addString(device.systemVersion, key: PART_KEY_OS_VERSION)
+					encoder.addString(device.systemName, key: PART_KEY_OS_NAME)
+					encoder.addString(device.model, key: PART_KEY_CLIENT_MODEL)
 				}
 			}
 		#elseif os(OSX)
@@ -452,57 +538,56 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 				osVersion = ""
 			}
 			
-			messageAddString(&encoder, value: osVersion!, key: PART_KEY_OS_VERSION)
-			messageAddString(&encoder, value: osName!, key: PART_KEY_OS_NAME)
-			messageAddString(&encoder, value: "<unknown>", key: PART_KEY_CLIENT_MODEL)
+			encoder.addString(osVersion!, key: PART_KEY_OS_VERSION)
+			encoder.addString(osName!, key: PART_KEY_OS_NAME)
+			encoder.addString("<unknown>", key: PART_KEY_CLIENT_MODEL)
 		#endif
 		
 		pushMessageToQueue(encoder)
-		
 	}
 	
 	func pushMessageToQueue(_ encoder: MessageBuffer) {
-		sendQueue.append(contentsOf: encoder)
+		messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
 		writeMoreData()
 	}
 
 	func logMessage(_ message: String?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = messageCreate(seq)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(seq)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
 		if let domain = domain where domain.characters.count > 0 {
-			messageAddString(&encoder, value: domain, key: PART_KEY_TAG)
+			encoder.addString(domain, key: PART_KEY_TAG)
 		}
 		if let level = level where level != 0 {
-			messageAddInt16(&encoder, value: UInt16(level), key: PART_KEY_LEVEL)
+			encoder.addInt16(UInt16(level), key: PART_KEY_LEVEL)
 		}
 		if let filename = filename where filename.characters.count > 0 {
-			messageAddString(&encoder, value: filename, key: PART_KEY_FILENAME)
+			encoder.addString(filename, key: PART_KEY_FILENAME)
 		}
 		if let lineNumber = lineNumber where lineNumber != 0 {
-			messageAddInt32(&encoder, value: UInt32(lineNumber), key: PART_KEY_LINENUMBER)
+			encoder.addInt32(UInt32(lineNumber), key: PART_KEY_LINENUMBER)
 		}
 		if let functionName = functionName where functionName.characters.count > 0 {
-			messageAddString(&encoder, value: functionName, key: PART_KEY_FUNCTIONNAME)
+			encoder.addString(functionName, key: PART_KEY_FUNCTIONNAME)
 		}
 		if let message = message where message.characters.count > 0 {
-			messageAddString(&encoder, value: message, key: PART_KEY_MESSAGE)
+			encoder.addString(message, key: PART_KEY_MESSAGE)
 		} else {
-			messageAddString(&encoder, value: "", key: PART_KEY_MESSAGE)
+			encoder.addString("", key: PART_KEY_MESSAGE)
 		}
 		pushMessageToQueue(encoder)
 	}
 	
 	func logMark(_ message: String?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = messageCreate(seq)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_MARK), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(seq)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_MARK), key: PART_KEY_MESSAGE_TYPE)
 		if let message = message where message.characters.count > 0 {
-			messageAddString(&encoder, value: message, key: PART_KEY_MESSAGE)
+			encoder.addString(message, key: PART_KEY_MESSAGE)
 		} else {
 			let df = CFDateFormatterCreate(nil, nil, .shortStyle, .mediumStyle)
 			if let str = CFDateFormatterCreateStringWithAbsoluteTime(nil, df, CFAbsoluteTimeGetCurrent()) as String? {
-				messageAddString(&encoder, value: str, key: PART_KEY_MESSAGE)
+				encoder.addString(str, key: PART_KEY_MESSAGE)
 			}
 		}
 		pushMessageToQueue(encoder)
@@ -510,39 +595,39 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func logBlockStart(_ message: String?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = messageCreate(seq)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_BLOCKSTART), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(seq)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_BLOCKSTART), key: PART_KEY_MESSAGE_TYPE)
 		if let message = message where message.characters.count > 0 {
-			messageAddString(&encoder, value: message, key: PART_KEY_MESSAGE)
+			encoder.addString(message, key: PART_KEY_MESSAGE)
 		}
 		pushMessageToQueue(encoder)
 	}
 	
 	func logBlockEnd() {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = messageCreate(seq)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_BLOCKEND), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(seq)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_BLOCKEND), key: PART_KEY_MESSAGE_TYPE)
 		pushMessageToQueue(encoder)
 	}
 	
 	func logImage(_ image: ImageType?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = messageCreate(seq)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(seq)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
 		if let domain = domain where domain.characters.count > 0 {
-			messageAddString(&encoder, value: domain, key: PART_KEY_TAG)
+			encoder.addString(domain, key: PART_KEY_TAG)
 		}
 		if let level = level where level != 0 {
-			messageAddInt16(&encoder, value: UInt16(level), key: PART_KEY_LEVEL)
+			encoder.addInt16(UInt16(level), key: PART_KEY_LEVEL)
 		}
 		if let filename = filename where filename.characters.count > 0 {
-			messageAddString(&encoder, value: filename, key: PART_KEY_FILENAME)
+			encoder.addString(filename, key: PART_KEY_FILENAME)
 		}
 		if let lineNumber = lineNumber where lineNumber != 0 {
-			messageAddInt32(&encoder, value: UInt32(lineNumber), key: PART_KEY_LINENUMBER)
+			encoder.addInt32(UInt32(lineNumber), key: PART_KEY_LINENUMBER)
 		}
 		if let functionName = functionName where functionName.characters.count > 0 {
-			messageAddString(&encoder, value: functionName, key: PART_KEY_FUNCTIONNAME)
+			encoder.addString(functionName, key: PART_KEY_FUNCTIONNAME)
 		}
 		if let image = image {
 			var data: Data?
@@ -562,9 +647,9 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 			#endif
 			
 			if let data = data {
-				messageAddInt32(&encoder, value: width, key: PART_KEY_IMAGE_WIDTH)
-				messageAddInt32(&encoder, value: height, key: PART_KEY_IMAGE_HEIGHT)
-				messageAddData(&encoder, value: data, key: PART_KEY_MESSAGE, type: PART_TYPE_IMAGE)
+				encoder.addInt32(width, key: PART_KEY_IMAGE_WIDTH)
+				encoder.addInt32(height, key: PART_KEY_IMAGE_HEIGHT)
+				encoder.addData(data, key: PART_KEY_MESSAGE, type: PART_TYPE_IMAGE)
 			}
 		}
 		pushMessageToQueue(encoder)
@@ -572,25 +657,25 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func logData(_ data: NSData?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = messageCreate(seq)
-		messageAddInt32(&encoder, value: UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
+		var encoder = MessageBuffer(seq)
+		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
 		if let domain = domain where domain.characters.count > 0 {
-			messageAddString(&encoder, value: domain, key: PART_KEY_TAG)
+			encoder.addString(domain, key: PART_KEY_TAG)
 		}
 		if let level = level where level != 0 {
-			messageAddInt16(&encoder, value: UInt16(level), key: PART_KEY_LEVEL)
+			encoder.addInt16(UInt16(level), key: PART_KEY_LEVEL)
 		}
 		if let filename = filename where filename.characters.count > 0 {
-			messageAddString(&encoder, value: filename, key: PART_KEY_FILENAME)
+			encoder.addString(filename, key: PART_KEY_FILENAME)
 		}
 		if let lineNumber = lineNumber where lineNumber != 0 {
-			messageAddInt32(&encoder, value: UInt32(lineNumber), key: PART_KEY_LINENUMBER)
+			encoder.addInt32(UInt32(lineNumber), key: PART_KEY_LINENUMBER)
 		}
 		if let functionName = functionName where functionName.characters.count > 0 {
-			messageAddString(&encoder, value: functionName, key: PART_KEY_FUNCTIONNAME)
+			encoder.addString(functionName, key: PART_KEY_FUNCTIONNAME)
 		}
 		if let data = data {
-			messageAddData(&encoder, value: data, key: PART_KEY_MESSAGE, type: PART_TYPE_BINARY)
+			encoder.addData(data, key: PART_KEY_MESSAGE, type: PART_TYPE_BINARY)
 		}
 		pushMessageToQueue(encoder)
 	}
