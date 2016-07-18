@@ -22,13 +22,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 		let logger: XCGNSLoggerDestination = XCGNSLoggerDestination(owner: log)
 		logger.outputLogLevel = .verbose
-		logger.showLogIdentifier = true
-		logger.showFunctionName = true
-		logger.showThreadName = true
-		logger.showLogLevel = true
-		logger.showFileName = true
-		logger.showLineNumber = true
-		logger.showDate = true
 		if log.addLogDestination(logger) {
 		}
 

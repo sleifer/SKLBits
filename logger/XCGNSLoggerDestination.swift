@@ -254,17 +254,9 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	var identifier: String = ""
 	var outputLogLevel: XCGLogger.LogLevel = .debug
 	
-	var showLogIdentifier: Bool = false
-	var showFunctionName: Bool = true
-	var showThreadName: Bool = false
-	var showFileName: Bool = true
-	var showLineNumber: Bool = true
-	var showLogLevel: Bool = true
-	var showDate: Bool = true
-	
 	override var debugDescription: String {
 		get {
-			return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel) showLogIdentifier: \(showLogIdentifier) showFunctionName: \(showFunctionName) showThreadName: \(showThreadName) showLogLevel: \(showLogLevel) showFileName: \(showFileName) showLineNumber: \(showLineNumber) showDate: \(showDate)"
+			return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel)"
 		}
 	}
 	
