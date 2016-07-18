@@ -309,6 +309,8 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	*/
 	var hostName: String?
 	
+	private let queue = DispatchQueue(label: "message queue", attributes: .serial, target: nil)
+
 	private var browser: NetServiceBrowser?
 	
 	private var service: NetService?
@@ -452,22 +454,24 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func writeMoreData() {
 		if let logStream = self.logStream {
-			if CFWriteStreamCanAcceptBytes(logStream) == true {
-				if messageBeingSent == nil && messageQueue.count > 0 {
-					messageBeingSent = messageQueue.remove(at: 0)
-					sentCount = 0
-				}
-				if let msg = messageBeingSent {
-					if sentCount < msg.count() {
-						let ptr = msg.ptr().advanced(by: sentCount)
-						let toWrite = msg.count() - sentCount
-						let written = CFWriteStreamWrite(logStream, ptr, toWrite)
-						if written < 0 {
-							print("CFWriteStreamWrite returned error: \(written)")
-						} else {
-							sentCount = sentCount + written
-							if sentCount == msg.count() {
-								messageBeingSent = nil
+			queue.async {
+				if CFWriteStreamCanAcceptBytes(logStream) == true {
+					if self.messageBeingSent == nil && self.messageQueue.count > 0 {
+						self.messageBeingSent = self.messageQueue.remove(at: 0)
+						self.sentCount = 0
+					}
+					if let msg = self.messageBeingSent {
+						if self.sentCount < msg.count() {
+							let ptr = msg.ptr().advanced(by: self.sentCount)
+							let toWrite = msg.count() - self.sentCount
+							let written = CFWriteStreamWrite(logStream, ptr, toWrite)
+							if written < 0 {
+								print("CFWriteStreamWrite returned error: \(written)")
+							} else {
+								self.sentCount = self.sentCount + written
+								if self.sentCount == msg.count() {
+									self.messageBeingSent = nil
+								}
 							}
 						}
 					}
@@ -539,8 +543,10 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	}
 	
 	func pushMessageToQueue(_ encoder: MessageBuffer) {
-		messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
-		writeMoreData()
+		queue.async { 
+			self.messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
+			self.writeMoreData()
+		}
 	}
 
 	func logMessage(_ message: String?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
