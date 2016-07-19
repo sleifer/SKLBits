@@ -101,10 +101,10 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
                 extendedDetails += "[main] "
             }
             else {
-                if let threadName = Thread.current.name where !threadName.isEmpty {
+                if let threadName = Thread.current.name, !threadName.isEmpty {
                     extendedDetails += "[" + threadName + "] "
                 }
-                else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)) where !queueName.isEmpty {
+                else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
                     extendedDetails += "[" + queueName + "] "
                 }
                 else {
@@ -174,7 +174,7 @@ public class XCGConsoleLogDestination: XCGBaseLogDestination {
 
         let outputClosure = {
             let adjustedText: String
-            if let xcodeColor = (self.xcodeColors ?? self.owner.xcodeColors)[logDetails.logLevel] where self.owner.xcodeColorsEnabled {
+            if let xcodeColor = (self.xcodeColors ?? self.owner.xcodeColors)[logDetails.logLevel], self.owner.xcodeColorsEnabled {
                 adjustedText = "\(xcodeColor.format())\(text)\(XCGLogger.XcodeColor.reset)"
             }
             else {
@@ -214,7 +214,7 @@ public class XCGNSLogDestination: XCGBaseLogDestination {
 
         let outputClosure = {
             let adjustedText: String
-            if let xcodeColor = (self.xcodeColors ?? self.owner.xcodeColors)[logDetails.logLevel] where self.owner.xcodeColorsEnabled {
+            if let xcodeColor = (self.xcodeColors ?? self.owner.xcodeColors)[logDetails.logLevel], self.owner.xcodeColorsEnabled {
                 adjustedText = "\(xcodeColor.format())\(text)\(XCGLogger.XcodeColor.reset)"
             }
             else {

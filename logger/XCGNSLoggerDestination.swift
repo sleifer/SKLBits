@@ -223,9 +223,9 @@ struct MessageBuffer: CustomStringConvertible {
 		if Thread.isMainThread {
 			name = "main"
 		} else {
-			if let threadName = Thread.current.name where !threadName.isEmpty {
+			if let threadName = Thread.current.name, !threadName.isEmpty {
 				name = threadName
-			} else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)) where !queueName.isEmpty {
+			} else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
 				name = queueName
 			}
 			else {
@@ -399,7 +399,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 			var context: CFStreamClientContext = CFStreamClientContext(version: 0, info: info, retain: nil, release: nil, copyDescription: nil)
 			CFWriteStreamSetClient(self.logStream, options, { (ws: CFWriteStream?, event: CFStreamEventType, info: UnsafeMutablePointer<Void>?) in
 				let me = Unmanaged<XCGNSLoggerDestination>.fromOpaque(info!).takeUnretainedValue()
-				if let logStream = me.logStream, ws = ws where ws == logStream {
+				if let logStream = me.logStream, let ws = ws, ws == logStream {
 					switch event {
 					case CFStreamEventType.openCompleted:
 						me.connected = true
@@ -513,7 +513,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 			var osName: String?
 			var osVersion: String?
 			autoreleasepool {
-				if let versionString = NSDictionary(contentsOfFile: "/System/Library/CoreServices/SystemVersion.plist")?.object(forKey: "ProductVersion") as? String where !versionString.isEmpty {
+				if let versionString = NSDictionary(contentsOfFile: "/System/Library/CoreServices/SystemVersion.plist")?.object(forKey: "ProductVersion") as? String, !versionString.isEmpty {
 					osName = "macOS"
 					osVersion = versionString
 				}
@@ -553,22 +553,22 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		var encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
-		if let domain = domain where domain.characters.count > 0 {
+		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: PART_KEY_TAG)
 		}
-		if let level = level where level != 0 {
+		if let level = level, level != 0 {
 			encoder.addInt16(UInt16(level), key: PART_KEY_LEVEL)
 		}
-		if let filename = filename where filename.characters.count > 0 {
+		if let filename = filename, filename.characters.count > 0 {
 			encoder.addString(filename, key: PART_KEY_FILENAME)
 		}
-		if let lineNumber = lineNumber where lineNumber != 0 {
+		if let lineNumber = lineNumber, lineNumber != 0 {
 			encoder.addInt32(UInt32(lineNumber), key: PART_KEY_LINENUMBER)
 		}
-		if let functionName = functionName where functionName.characters.count > 0 {
+		if let functionName = functionName, functionName.characters.count > 0 {
 			encoder.addString(functionName, key: PART_KEY_FUNCTIONNAME)
 		}
-		if let message = message where message.characters.count > 0 {
+		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: PART_KEY_MESSAGE)
 		} else {
 			encoder.addString("", key: PART_KEY_MESSAGE)
@@ -580,7 +580,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		var encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_MARK), key: PART_KEY_MESSAGE_TYPE)
-		if let message = message where message.characters.count > 0 {
+		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: PART_KEY_MESSAGE)
 		} else {
 			let df = CFDateFormatterCreate(nil, nil, .shortStyle, .mediumStyle)
@@ -595,7 +595,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		var encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_BLOCKSTART), key: PART_KEY_MESSAGE_TYPE)
-		if let message = message where message.characters.count > 0 {
+		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: PART_KEY_MESSAGE)
 		}
 		pushMessageToQueue(encoder)
@@ -612,19 +612,19 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		var encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
-		if let domain = domain where domain.characters.count > 0 {
+		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: PART_KEY_TAG)
 		}
-		if let level = level where level != 0 {
+		if let level = level, level != 0 {
 			encoder.addInt16(UInt16(level), key: PART_KEY_LEVEL)
 		}
-		if let filename = filename where filename.characters.count > 0 {
+		if let filename = filename, filename.characters.count > 0 {
 			encoder.addString(filename, key: PART_KEY_FILENAME)
 		}
-		if let lineNumber = lineNumber where lineNumber != 0 {
+		if let lineNumber = lineNumber, lineNumber != 0 {
 			encoder.addInt32(UInt32(lineNumber), key: PART_KEY_LINENUMBER)
 		}
-		if let functionName = functionName where functionName.characters.count > 0 {
+		if let functionName = functionName, functionName.characters.count > 0 {
 			encoder.addString(functionName, key: PART_KEY_FUNCTIONNAME)
 		}
 		if let image = image {
@@ -657,19 +657,19 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		var encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
-		if let domain = domain where domain.characters.count > 0 {
+		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: PART_KEY_TAG)
 		}
-		if let level = level where level != 0 {
+		if let level = level, level != 0 {
 			encoder.addInt16(UInt16(level), key: PART_KEY_LEVEL)
 		}
-		if let filename = filename where filename.characters.count > 0 {
+		if let filename = filename, filename.characters.count > 0 {
 			encoder.addString(filename, key: PART_KEY_FILENAME)
 		}
-		if let lineNumber = lineNumber where lineNumber != 0 {
+		if let lineNumber = lineNumber, lineNumber != 0 {
 			encoder.addInt32(UInt32(lineNumber), key: PART_KEY_LINENUMBER)
 		}
-		if let functionName = functionName where functionName.characters.count > 0 {
+		if let functionName = functionName, functionName.characters.count > 0 {
 			encoder.addString(functionName, key: PART_KEY_FUNCTIONNAME)
 		}
 		if let data = data {
