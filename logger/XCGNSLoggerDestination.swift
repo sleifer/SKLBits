@@ -93,7 +93,7 @@ extension Array {
 	
 }
 
-struct MessageBuffer: CustomStringConvertible {
+class MessageBuffer: CustomStringConvertible, Equatable {
 	let seq: Int32
 	private var buffer: [UInt8]
 	
@@ -161,15 +161,15 @@ struct MessageBuffer: CustomStringConvertible {
 		}
 	}
 	
-	private mutating func append(_ value: UInt8) {
+	private func append(_ value: UInt8) {
 		buffer.append(value)
 	}
 	
-	private mutating func append<C : Collection where C.Iterator.Element == UInt8>(_ newElements: C) {
+	private func append<C : Collection where C.Iterator.Element == UInt8>(_ newElements: C) {
 		buffer.append(contentsOf: newElements)
 	}
 	
-	private mutating func append<S : Sequence where S.Iterator.Element == UInt8>(_ newElements: S) {
+	private func append<S : Sequence where S.Iterator.Element == UInt8>(_ newElements: S) {
 		buffer.append(contentsOf: newElements)
 	}
 	
@@ -181,7 +181,7 @@ struct MessageBuffer: CustomStringConvertible {
 		return buffer.count
 	}
 	
-	private mutating func prepareForPart(ofSize byteCount: Int) {
+	private func prepareForPart(ofSize byteCount: Int) {
 		var bytePtr = ptr()
 		let sizePtr = UnsafeMutablePointer<UInt32>(bytePtr)
 		let sizeValue = CFSwapInt32HostToBig(sizePtr.pointee)
@@ -195,14 +195,14 @@ struct MessageBuffer: CustomStringConvertible {
 		partPtr[0] = CFSwapInt16HostToBig(partValue + 1)
 	}
 
-	mutating func addInt16(_ value: UInt16, key: UInt8) {
+	func addInt16(_ value: UInt16, key: UInt8) {
 		prepareForPart(ofSize: 4)
 		append(key)
 		append(PART_TYPE_INT16)
 		append(toByteArray(CFSwapInt16HostToBig(value)))
 	}
 	
-	mutating func addInt32(_ value: UInt32, key: UInt8) {
+	func addInt32(_ value: UInt32, key: UInt8) {
 		prepareForPart(ofSize: 6)
 		append(key)
 		append(PART_TYPE_INT32)
@@ -210,7 +210,7 @@ struct MessageBuffer: CustomStringConvertible {
 	}
 
 #if __LP64__
-	mutating func addInt64(_ value: UInt64, key: UInt8) {
+	func addInt64(_ value: UInt64, key: UInt8) {
 		prepareForPart(ofSize: 10)
 		append(key)
 		append(PART_TYPE_INT64)
@@ -219,7 +219,7 @@ struct MessageBuffer: CustomStringConvertible {
 	}
 #endif
 	
-	mutating func addString(_ value: String, key: UInt8) {
+	func addString(_ value: String, key: UInt8) {
 		let bytes = value.utf8
 		let len = bytes.count
 		
@@ -232,7 +232,7 @@ struct MessageBuffer: CustomStringConvertible {
 		}
 	}
 	
-	mutating func addData(_ value: NSData, key: UInt8, type: UInt8) {
+	func addData(_ value: NSData, key: UInt8, type: UInt8) {
 		let len = value.length
 		
 		prepareForPart(ofSize: 6 + len)
@@ -244,7 +244,7 @@ struct MessageBuffer: CustomStringConvertible {
 		}
 	}
 	
-	mutating func addTimestamp() {
+	func addTimestamp() {
 		let t = CFAbsoluteTimeGetCurrent()
 		let s = floor(t)
 		let us = floor((t - s) * 1000000)
@@ -258,7 +258,7 @@ struct MessageBuffer: CustomStringConvertible {
 		#endif
 	}
 	
-	mutating func addThreadID() {
+	func addThreadID() {
 		var name: String = "unknown"
 		if Thread.isMainThread {
 			name = "main"
@@ -278,6 +278,10 @@ struct MessageBuffer: CustomStringConvertible {
 	var description: String {
 		return "\(self.dynamicType), seq #\(seq)"
 	}
+}
+
+func ==(lhs: MessageBuffer, rhs: MessageBuffer) -> Bool {
+	return lhs === rhs
 }
 
 #if os(iOS)
@@ -516,8 +520,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 				if CFWriteStreamCanAcceptBytes(logStream) == true {
 					self.reconcileOnlineStatus()
 					if self.messageBeingSent == nil && self.messageQueue.count > 0 {
-						// TODO: (SKL) don't remove from message queue until it sends fully
-						self.messageBeingSent = self.messageQueue.remove(at: 0)
+						self.messageBeingSent = self.messageQueue.first
 						self.sentCount = 0
 					}
 					if let msg = self.messageBeingSent {
@@ -527,9 +530,13 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 							let written = CFWriteStreamWrite(logStream, ptr, toWrite)
 							if written < 0 {
 								print("CFWriteStreamWrite returned error: \(written)")
+								self.messageBeingSent = nil
 							} else {
 								self.sentCount = self.sentCount + written
 								if self.sentCount == msg.count() {
+									if let idx = self.messageQueue.index(where: { $0 == self.messageBeingSent }) {
+										self.messageQueue.remove(at: idx)
+									}
 									self.messageBeingSent = nil
 								}
 							}
