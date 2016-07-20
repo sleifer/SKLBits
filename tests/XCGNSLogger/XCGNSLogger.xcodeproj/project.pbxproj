@@ -69,7 +69,7 @@
 		DB76702F1D39256D00DF7D95 = {
 			isa = PBXGroup;
 			children = (
-				DB8980321D3A8A3E00BC96F4 /* logger */,
+				DB8980321D3A8A3E00BC96F4 /* bits */,
 				DB76703A1D39256D00DF7D95 /* macOS Log */,
 				DB89801E1D3A841900BC96F4 /* iOS Log */,
 				DB7670391D39256D00DF7D95 /* Products */,
@@ -91,7 +91,6 @@
 				DB76703B1D39256D00DF7D95 /* AppDelegate.swift */,
 				DB8980171D3A7FA300BC96F4 /* test.png */,
 				DB76703D1D39256D00DF7D95 /* ViewController.swift */,
-				DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */,
 				DB76703F1D39256D00DF7D95 /* Assets.xcassets */,
 				DB7670411D39256D00DF7D95 /* Main.storyboard */,
 				DB7670441D39256D00DF7D95 /* Info.plist */,
@@ -113,14 +112,16 @@
 			path = "iOS Log";
 			sourceTree = "<group>";
 		};
-		DB8980321D3A8A3E00BC96F4 /* logger */ = {
+		DB8980321D3A8A3E00BC96F4 /* bits */ = {
 			isa = PBXGroup;
 			children = (
 				DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */,
 				DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */,
 				DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */,
+				DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */,
 			);
-			path = logger;
+			name = bits;
+			path = ../../bits;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
