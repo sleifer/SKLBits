@@ -116,28 +116,39 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 		addThreadID()
 	}
 	
-	init(_ fp: FileHandle?) {
-		// TODO: (SKL) whole method needs good failure handling
-		let seqData = fp?.readData(ofLength: sizeof(UInt32.self))
-		let seqValue = seqData?.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> Int32 in
-			return Int32(CFSwapInt32HostToBig(bytes.pointee))
-		}
-		self.seq = seqValue!
-		self.buffer = [UInt8]()
-
-		let lenData = fp?.readData(ofLength: sizeof(UInt32.self))
-		let lenValue = lenData?.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> Int32 in
-			return Int32(CFSwapInt32HostToBig(bytes.pointee))
-		}
-
-		let packetData = fp?.readData(ofLength: Int(lenValue!))
-
-		if let count = lenValue, let data = packetData {
-			append(toByteArray(CFSwapInt32HostToBig(UInt32(count))))
-			
-			data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
-				append(UnsafeBufferPointer(start: bytes, count: Int(count)))
+	init?(_ fp: FileHandle?) {
+		if let fp = fp {
+			let atomSize = sizeof(UInt32.self)
+			let seqData = fp.readData(ofLength: atomSize)
+			if seqData.count != atomSize {
+				return nil
 			}
+			let seqValue = seqData.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> Int32 in
+				return Int32(CFSwapInt32HostToBig(bytes.pointee))
+			}
+			self.seq = seqValue
+			self.buffer = [UInt8]()
+			
+			let lenData = fp.readData(ofLength: atomSize)
+			if lenData.count != atomSize {
+				return nil
+			}
+			let lenValue = lenData.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> Int32 in
+				return Int32(CFSwapInt32HostToBig(bytes.pointee))
+			}
+			
+			let packetData = fp.readData(ofLength: Int(lenValue))
+			if packetData.count != Int(lenValue) {
+				return nil
+			}
+			
+			append(toByteArray(CFSwapInt32HostToBig(UInt32(lenValue))))
+			
+			packetData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
+				append(UnsafeBufferPointer(start: bytes, count: Int(lenValue)))
+			}
+		} else {
+			return nil
 		}
 	}
 	
@@ -749,7 +760,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 
 	func logMessage(_ message: String?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
 		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: PART_KEY_TAG)
@@ -776,7 +787,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func logMark(_ message: String?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_MARK), key: PART_KEY_MESSAGE_TYPE)
 		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: PART_KEY_MESSAGE)
@@ -791,7 +802,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func logBlockStart(_ message: String?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_BLOCKSTART), key: PART_KEY_MESSAGE_TYPE)
 		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: PART_KEY_MESSAGE)
@@ -801,14 +812,14 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func logBlockEnd() {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_BLOCKEND), key: PART_KEY_MESSAGE_TYPE)
 		pushMessageToQueue(encoder)
 	}
 	
 	func logImage(_ image: ImageType?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
 		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: PART_KEY_TAG)
@@ -853,7 +864,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	func logData(_ data: NSData?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		var encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(LOGMSG_TYPE_LOG), key: PART_KEY_MESSAGE_TYPE)
 		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: PART_KEY_TAG)
