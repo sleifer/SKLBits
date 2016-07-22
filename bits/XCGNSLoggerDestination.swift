@@ -8,6 +8,8 @@
 
 import Foundation
 
+#if !os(watchOS)
+
 // constants from NSLogger
 
 // Constants for the "part key" field
@@ -295,7 +297,7 @@ func ==(lhs: MessageBuffer, rhs: MessageBuffer) -> Bool {
 	return lhs === rhs
 }
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 	import UIKit
 	public typealias ImageType = UIImage
 #elseif os(OSX)
@@ -1408,3 +1410,5 @@ extension XCGLogger {
 	}
 	
 }
+
+#endif

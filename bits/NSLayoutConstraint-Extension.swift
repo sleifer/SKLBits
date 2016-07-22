@@ -6,7 +6,7 @@
 //  Copyright © 2016 droolingcat.com. All rights reserved.
 //
 
-#if os(iOS)
+#if os(iOS) || os(tvOS)
 	import UIKit
 	typealias ViewType = UIView
 #elseif os(OSX)
@@ -14,6 +14,8 @@
 	typealias ViewType = NSView
 #endif
 
+#if !os(watchOS)
+	
 extension NSLayoutConstraint {
 
 	func referes(_ toView: ViewType) -> Bool {
@@ -120,4 +122,4 @@ extension ViewType {
 
 }
 
-
+#endif

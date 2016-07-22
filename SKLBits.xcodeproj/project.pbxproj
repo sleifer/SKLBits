@@ -6,6 +6,23 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		DB7EA0431D42497E000046CF /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DB7EA0441D42497E000046CF /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				DB7EA0481D424993000046CF /* PBXTargetDependency */,
+				DB7EA04A1D424993000046CF /* PBXTargetDependency */,
+				DB7EA04C1D424993000046CF /* PBXTargetDependency */,
+				DB7EA04E1D424993000046CF /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		DB7E9FFE1D41C8B9000046CF /* SKLBits.h in Headers */ = {isa = PBXBuildFile; fileRef = DB7E9FFC1D41C8B9000046CF /* SKLBits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-Extension.swift */; };
@@ -15,7 +32,50 @@
 		DB7EA0271D41CAFA000046CF /* SKLBits.h in Headers */ = {isa = PBXBuildFile; fileRef = DB7E9FFC1D41C8B9000046CF /* SKLBits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB7EA0281D41CAFB000046CF /* SKLBits.h in Headers */ = {isa = PBXBuildFile; fileRef = DB7E9FFC1D41C8B9000046CF /* SKLBits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB7EA0361D41CC14000046CF /* SKLBits.h in Headers */ = {isa = PBXBuildFile; fileRef = DB7E9FFC1D41C8B9000046CF /* SKLBits.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB7EA0371D424960000046CF /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-Extension.swift */; };
+		DB7EA0381D424960000046CF /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */; };
+		DB7EA0391D424960000046CF /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0071D41C8EE000046CF /* XCGLogger.swift */; };
+		DB7EA03A1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0081D41C8EE000046CF /* XCGNSLoggerDestination.swift */; };
+		DB7EA03B1D424960000046CF /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-Extension.swift */; };
+		DB7EA03C1D424960000046CF /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */; };
+		DB7EA03D1D424960000046CF /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0071D41C8EE000046CF /* XCGLogger.swift */; };
+		DB7EA03E1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0081D41C8EE000046CF /* XCGNSLoggerDestination.swift */; };
+		DB7EA03F1D424961000046CF /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-Extension.swift */; };
+		DB7EA0401D424961000046CF /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */; };
+		DB7EA0411D424961000046CF /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0071D41C8EE000046CF /* XCGLogger.swift */; };
+		DB7EA0421D424961000046CF /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0081D41C8EE000046CF /* XCGNSLoggerDestination.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DB7EA0471D424993000046CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB7E9FF01D41C8B9000046CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7E9FF81D41C8B9000046CF;
+			remoteInfo = "SKLBits iOS";
+		};
+		DB7EA0491D424993000046CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB7E9FF01D41C8B9000046CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7EA0111D41C939000046CF;
+			remoteInfo = "SKLBits watchOS";
+		};
+		DB7EA04B1D424993000046CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB7E9FF01D41C8B9000046CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7EA01E1D41CA92000046CF;
+			remoteInfo = "SKLBits tvOS";
+		};
+		DB7EA04D1D424993000046CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB7E9FF01D41C8B9000046CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7EA02D1D41CB79000046CF;
+			remoteInfo = "SKLBits macOS";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		DB7E9FF91D41C8B9000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -245,6 +305,12 @@
 						DevelopmentTeamName = "Simeon Leifer";
 						ProvisioningStyle = Automatic;
 					};
+					DB7EA0431D42497E000046CF = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = 5886TSL9MF;
+						DevelopmentTeamName = "Simeon Leifer";
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = DB7E9FF31D41C8B9000046CF /* Build configuration list for PBXProject "SKLBits" */;
@@ -263,6 +329,7 @@
 				DB7EA0111D41C939000046CF /* SKLBits watchOS */,
 				DB7EA01E1D41CA92000046CF /* SKLBits tvOS */,
 				DB7EA02D1D41CB79000046CF /* SKLBits macOS */,
+				DB7EA0431D42497E000046CF /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -314,6 +381,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB7EA03A1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */,
+				DB7EA0371D424960000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB7EA0381D424960000046CF /* RingBufferFile.swift in Sources */,
+				DB7EA0391D424960000046CF /* XCGLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +392,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB7EA03E1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */,
+				DB7EA03B1D424960000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB7EA03C1D424960000046CF /* RingBufferFile.swift in Sources */,
+				DB7EA03D1D424960000046CF /* XCGLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -328,10 +403,37 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB7EA0421D424961000046CF /* XCGNSLoggerDestination.swift in Sources */,
+				DB7EA03F1D424961000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB7EA0401D424961000046CF /* RingBufferFile.swift in Sources */,
+				DB7EA0411D424961000046CF /* XCGLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DB7EA0481D424993000046CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB7E9FF81D41C8B9000046CF /* SKLBits iOS */;
+			targetProxy = DB7EA0471D424993000046CF /* PBXContainerItemProxy */;
+		};
+		DB7EA04A1D424993000046CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB7EA0111D41C939000046CF /* SKLBits watchOS */;
+			targetProxy = DB7EA0491D424993000046CF /* PBXContainerItemProxy */;
+		};
+		DB7EA04C1D424993000046CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB7EA01E1D41CA92000046CF /* SKLBits tvOS */;
+			targetProxy = DB7EA04B1D424993000046CF /* PBXContainerItemProxy */;
+		};
+		DB7EA04E1D424993000046CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB7EA02D1D41CB79000046CF /* SKLBits macOS */;
+			targetProxy = DB7EA04D1D424993000046CF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DB7E9FFF1D41C8B9000046CF /* Debug */ = {
@@ -595,6 +697,20 @@
 			};
 			name = Release;
 		};
+		DB7EA0451D42497E000046CF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DB7EA0461D42497E000046CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -623,6 +739,7 @@
 				DB7EA0191D41C939000046CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DB7EA0241D41CA92000046CF /* Build configuration list for PBXNativeTarget "SKLBits tvOS" */ = {
 			isa = XCConfigurationList;
@@ -631,12 +748,22 @@
 				DB7EA0261D41CA92000046CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DB7EA0331D41CB79000046CF /* Build configuration list for PBXNativeTarget "SKLBits macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB7EA0341D41CB79000046CF /* Debug */,
 				DB7EA0351D41CB79000046CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB7EA0441D42497E000046CF /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB7EA0451D42497E000046CF /* Debug */,
+				DB7EA0461D42497E000046CF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
