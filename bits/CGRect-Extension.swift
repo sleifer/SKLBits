@@ -12,9 +12,9 @@
 	import UIKit
 #endif
 
-extension CGRect {
+public extension CGRect {
 	
-	func floored() -> CGRect {
+	public func floored() -> CGRect {
 		var r: CGRect = self
 		r.origin.x = ceil(r.origin.x)
 		r.origin.y = ceil(r.origin.y)
@@ -29,16 +29,16 @@ extension CGRect {
 		return r
 	}
 	
-	mutating func center(in rect: CGRect) {
+	mutating public func center(in rect: CGRect) {
 		self.position(in: rect, px: 0.5, py: 0.5)
 	}
 	
-	mutating func position(in rect: CGRect, px: CGFloat, py: CGFloat) {
+	mutating public func position(in rect: CGRect, px: CGFloat, py: CGFloat) {
 		let offset = offsetToPosition(in: rect, px: px, py: py)
 		self = self.offsetBy(dx: offset.x, dy: offset.y)
 	}
 	
-	func offsetToPosition(in rect: CGRect, px: CGFloat, py: CGFloat) -> CGPoint {
+	public func offsetToPosition(in rect: CGRect, px: CGFloat, py: CGFloat) -> CGPoint {
 		let xoff = floor((rect.width - self.width) * px)
 		let yoff = floor((rect.height - self.height) * py)
 		return CGPoint(x: xoff, y: yoff)

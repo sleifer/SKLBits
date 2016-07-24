@@ -305,39 +305,39 @@ func ==(lhs: MessageBuffer, rhs: MessageBuffer) -> Bool {
 	public typealias ImageType = NSImage
 #endif
 
-enum XCGNSLoggerOfflineOption {
+public enum XCGNSLoggerOfflineOption {
 	case drop
 	case inMemory
 	case runFile
 	case ringFile
 }
 
-class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBrowserDelegate {
+public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBrowserDelegate {
 	
-	var owner: XCGLogger
-	var identifier: String = ""
-	var outputLogLevel: XCGLogger.LogLevel = .debug
+	public var owner: XCGLogger
+	public var identifier: String = ""
+	public var outputLogLevel: XCGLogger.LogLevel = .debug
 	
-	override var debugDescription: String {
+	public override var debugDescription: String {
 		get {
 			return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel)"
 		}
 	}
 	
-	init(owner: XCGLogger, identifier: String = "") {
+	public init(owner: XCGLogger, identifier: String = "") {
 		self.owner = owner
 		self.identifier = identifier
 	}
 	
-	func processLogDetails(_ logDetails: XCGLogDetails) {
+	public func processLogDetails(_ logDetails: XCGLogDetails) {
 		output(logDetails)
 	}
 	
-	func processInternalLogDetails(_ logDetails: XCGLogDetails) {
+	public func processInternalLogDetails(_ logDetails: XCGLogDetails) {
 		output(logDetails)
 	}
 	
-	func isEnabledForLogLevel (_ logLevel: XCGLogger.LogLevel) -> Bool {
+	public func isEnabledForLogLevel (_ logLevel: XCGLogger.LogLevel) -> Bool {
 		return logLevel >= self.outputLogLevel
 	}
 	
@@ -371,9 +371,9 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	/**
 	If set, will only connect to receiver with name 'hostName'
 	*/
-	var hostName: String?
+	public var hostName: String?
 	
-	var offlineBehavior: XCGNSLoggerOfflineOption = .drop
+	public var offlineBehavior: XCGNSLoggerOfflineOption = .drop
 
 	private var runFilePath: String?
 	
@@ -401,7 +401,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	private var sentCount: Int = 0
 	
-	func startBonjourBrowsing() {
+	public func startBonjourBrowsing() {
 		self.browser = NetServiceBrowser()
 		if let browser = self.browser {
 			browser.delegate = self
@@ -409,7 +409,7 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 		}
 	}
 	
-	func stopBonjourBrowsing() {
+	public func stopBonjourBrowsing() {
 		if let browser = self.browser {
 			browser.stop()
 			self.browser = nil
@@ -891,11 +891,11 @@ class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetServiceBro
 	
 	// MARK: NetServiceBrowserDelegate
 	
-	func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
+	public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
 		connect(to: service)
 	}
 	
-	func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
+	public func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
 		disconnect(from: service)
 	}
 

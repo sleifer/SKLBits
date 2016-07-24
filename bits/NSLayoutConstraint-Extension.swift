@@ -8,17 +8,17 @@
 
 #if os(iOS) || os(tvOS)
 	import UIKit
-	typealias ViewType = UIView
+	public typealias ViewType = UIView
 #elseif os(OSX)
 	import AppKit
-	typealias ViewType = NSView
+	public typealias ViewType = NSView
 #endif
 
 #if !os(watchOS)
 	
-extension NSLayoutConstraint {
+public extension NSLayoutConstraint {
 
-	func referes(_ toView: ViewType) -> Bool {
+	public func referes(_ toView: ViewType) -> Bool {
 		if self.firstItem as! NSObject == toView {
 			return true
 		}
@@ -31,7 +31,7 @@ extension NSLayoutConstraint {
 		return false
 	}
 	
-	func install() {
+	public func install() {
 		let first = self.firstItem as? ViewType
 		let second = self.secondItem as? ViewType
 		let target = first?.nearestCommonAncestor(second)
@@ -49,9 +49,9 @@ extension NSLayoutConstraint {
 
 }
 
-extension ViewType {
+public extension ViewType {
 	
-	func allSuperviews() -> [ViewType] {
+	public func allSuperviews() -> [ViewType] {
 		var views = [ViewType]()
 		var view = self.superview
 		while (view != nil) {
@@ -62,7 +62,7 @@ extension ViewType {
 		return views
 	}
 	
-	func referencingConstraintsInSuperviews() -> [NSLayoutConstraint] {
+	public func referencingConstraintsInSuperviews() -> [NSLayoutConstraint] {
 		var constraints = [NSLayoutConstraint]()
 		for view in allSuperviews() {
 			for constraint in view.constraints {
@@ -77,7 +77,7 @@ extension ViewType {
 		return constraints
 	}
 	
-	func referencingConstraints() -> [NSLayoutConstraint] {
+	public func referencingConstraints() -> [NSLayoutConstraint] {
 		var constraints = referencingConstraintsInSuperviews()
 		for constraint in self.constraints {
 			if constraint.isMember(of:object_getClass(NSLayoutConstraint.self)) == false && constraint.shouldBeArchived == false {
@@ -90,14 +90,14 @@ extension ViewType {
 		return constraints
 	}
 	
-	func isAncestorOf(_ view: ViewType?) -> Bool {
+	public func isAncestorOf(_ view: ViewType?) -> Bool {
 		if let view = view {
 			return view.allSuperviews().contains(self)
 		}
 		return false
 	}
 	
-	func nearestCommonAncestor(_ view: ViewType?) -> ViewType? {
+	public func nearestCommonAncestor(_ view: ViewType?) -> ViewType? {
 		if let view = view {
 			if self == view {
 				return self

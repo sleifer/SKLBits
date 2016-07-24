@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DB694E541D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */; };
-		DB694E551D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */; };
 		DB76703C1D39256D00DF7D95 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703B1D39256D00DF7D95 /* AppDelegate.swift */; };
 		DB76703E1D39256D00DF7D95 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703D1D39256D00DF7D95 /* ViewController.swift */; };
 		DB7670401D39256D00DF7D95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB76703F1D39256D00DF7D95 /* Assets.xcassets */; };
@@ -20,15 +18,42 @@
 		DB8980271D3A841900BC96F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB8980261D3A841900BC96F4 /* Assets.xcassets */; };
 		DB89802A1D3A841900BC96F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB8980281D3A841900BC96F4 /* LaunchScreen.storyboard */; };
 		DB89802F1D3A844100BC96F4 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = DB8980171D3A7FA300BC96F4 /* test.png */; };
-		DB8980351D3A8A3E00BC96F4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */; };
-		DB8980361D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */; };
-		DB8980371D3A8A6100BC96F4 /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */; };
-		DB8980381D3A8A6500BC96F4 /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */; };
-		DBFD53621D395930002B4DF5 /* NSLayoutConstraint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */; };
+		DBBDB9D71D4462A5009B120F /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBEDC4E11D44626F00AB423C /* SKLBits.framework */; };
+		DBBDB9D81D4462B0009B120F /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBEDC4DB1D44626F00AB423C /* SKLBits.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DBEDC4DA1D44626F00AB423C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB7E9FF91D41C8B9000046CF;
+			remoteInfo = "SKLBits iOS";
+		};
+		DBEDC4DC1D44626F00AB423C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB7EA0121D41C939000046CF;
+			remoteInfo = "SKLBits watchOS";
+		};
+		DBEDC4DE1D44626F00AB423C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB7EA01F1D41CA92000046CF;
+			remoteInfo = "SKLBits tvOS";
+		};
+		DBEDC4E01D44626F00AB423C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB7EA02E1D41CB79000046CF;
+			remoteInfo = "SKLBits macOS";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RingBufferFile.swift; sourceTree = "<group>"; };
 		DB7670381D39256D00DF7D95 /* macOS Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOS Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB76703B1D39256D00DF7D95 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DB76703D1D39256D00DF7D95 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -43,9 +68,7 @@
 		DB8980261D3A841900BC96F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB8980291D3A841900BC96F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DB89802B1D3A841900BC96F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGLogger.swift; sourceTree = "<group>"; };
-		DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCGNSLoggerDestination.swift; sourceTree = "<group>"; };
-		DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint-Extension.swift"; sourceTree = "<group>"; };
+		DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SKLBits.xcodeproj; path = ../../SKLBits.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBBDB9D71D4462A5009B120F /* SKLBits.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBBDB9D81D4462B0009B120F /* SKLBits.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,10 +94,11 @@
 		DB76702F1D39256D00DF7D95 = {
 			isa = PBXGroup;
 			children = (
-				DB8980321D3A8A3E00BC96F4 /* bits */,
+				DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */,
 				DB76703A1D39256D00DF7D95 /* macOS Log */,
 				DB89801E1D3A841900BC96F4 /* iOS Log */,
 				DB7670391D39256D00DF7D95 /* Products */,
+				DBEDC4C11D4461EA00AB423C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -112,16 +138,22 @@
 			path = "iOS Log";
 			sourceTree = "<group>";
 		};
-		DB8980321D3A8A3E00BC96F4 /* bits */ = {
+		DBEDC4C11D4461EA00AB423C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DB8980331D3A8A3E00BC96F4 /* XCGLogger.swift */,
-				DB8980341D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift */,
-				DB694E531D3ED5A2008FDE19 /* RingBufferFile.swift */,
-				DBFD53611D395930002B4DF5 /* NSLayoutConstraint-Extension.swift */,
 			);
-			name = bits;
-			path = ../../bits;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DBEDC4D31D44626F00AB423C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DBEDC4DB1D44626F00AB423C /* SKLBits.framework */,
+				DBEDC4DD1D44626F00AB423C /* SKLBits.framework */,
+				DBEDC4DF1D44626F00AB423C /* SKLBits.framework */,
+				DBEDC4E11D44626F00AB423C /* SKLBits.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +229,12 @@
 			mainGroup = DB76702F1D39256D00DF7D95;
 			productRefGroup = DB7670391D39256D00DF7D95 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = DBEDC4D31D44626F00AB423C /* Products */;
+					ProjectRef = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				DB7670371D39256D00DF7D95 /* macOS Log */,
@@ -204,6 +242,37 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		DBEDC4DB1D44626F00AB423C /* SKLBits.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SKLBits.framework;
+			remoteRef = DBEDC4DA1D44626F00AB423C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DBEDC4DD1D44626F00AB423C /* SKLBits.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SKLBits.framework;
+			remoteRef = DBEDC4DC1D44626F00AB423C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DBEDC4DF1D44626F00AB423C /* SKLBits.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SKLBits.framework;
+			remoteRef = DBEDC4DE1D44626F00AB423C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		DBEDC4E11D44626F00AB423C /* SKLBits.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SKLBits.framework;
+			remoteRef = DBEDC4E01D44626F00AB423C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		DB7670361D39256D00DF7D95 /* Resources */ = {
@@ -235,11 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB76703E1D39256D00DF7D95 /* ViewController.swift in Sources */,
-				DB8980351D3A8A3E00BC96F4 /* XCGLogger.swift in Sources */,
-				DB8980361D3A8A3E00BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
 				DB76703C1D39256D00DF7D95 /* AppDelegate.swift in Sources */,
-				DBFD53621D395930002B4DF5 /* NSLayoutConstraint-Extension.swift in Sources */,
-				DB694E541D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,11 +312,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB8980381D3A8A6500BC96F4 /* XCGNSLoggerDestination.swift in Sources */,
 				DB8980221D3A841900BC96F4 /* ViewController.swift in Sources */,
-				DB694E551D3ED5A2008FDE19 /* RingBufferFile.swift in Sources */,
 				DB8980201D3A841900BC96F4 /* AppDelegate.swift in Sources */,
-				DB8980371D3A8A6100BC96F4 /* XCGLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +385,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -364,6 +427,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -378,6 +442,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "macOS Log/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.droolingcat.macOS-Log";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -391,6 +456,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "macOS Log/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.droolingcat.macOS-Log";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -403,7 +469,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "iOS Log/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.droolingcat.iOS-Log";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -419,7 +485,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "iOS Log/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.droolingcat.iOS-Log";
 				PRODUCT_NAME = "$(TARGET_NAME)";

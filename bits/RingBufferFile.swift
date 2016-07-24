@@ -22,14 +22,14 @@ dataSize: UInt32
 data: UInt8[N]
 */
 
-class RingBufferFile: CustomStringConvertible {
-	private(set) var capacity: UInt32
+public class RingBufferFile: CustomStringConvertible {
+	public private(set) var capacity: UInt32
 	
-	let filePath: String
+	public let filePath: String
 	
-	let atomSize: UInt32
+	public let atomSize: UInt32
 	
-	let headerSize: UInt32
+	public let headerSize: UInt32
 	
 	private var bufferStartIndex: UInt32 = 0
 	
@@ -41,9 +41,9 @@ class RingBufferFile: CustomStringConvertible {
 	
 	private var dataEndIndex: UInt32 = 0
 	
-	private(set) var itemCount: UInt32 = 0
+	public private(set) var itemCount: UInt32 = 0
 	
-	init(capacity: UInt32, filePath: String) {
+	public init(capacity: UInt32, filePath: String) {
 		self.capacity = capacity
 		self.filePath = filePath
 		self.atomSize = UInt32(sizeof(UInt32.self))
@@ -52,11 +52,11 @@ class RingBufferFile: CustomStringConvertible {
 		loadOrCreate()
 	}
 	
-	var description: String {
+	public var description: String {
 		return "\(self.dynamicType)\n  filePath: \(filePath)\n  capacity: \(capacity)\n  atomSize: \(atomSize)\n  headerSize: \(headerSize)\n  bufferStartIndex: \(bufferStartIndex)\n  bufferEndIndex: \(bufferEndIndex)\n  dataStartIndex: \(dataStartIndex)\n  dataEndIndex: \(dataEndIndex)\n  maxBufferEndIndex: \(maxBufferEndIndex)\n  itemCount: \(itemCount)\n---"
 	}
 
-	func push(_ entry: [UInt8]) {
+	public func push(_ entry: [UInt8]) {
 		let fp = FileHandle(forUpdatingAtPath: self.filePath)
 		if let fp = fp {
 			let entrySize = UInt32(entry.count)
@@ -108,7 +108,7 @@ class RingBufferFile: CustomStringConvertible {
 		}
 	}
 	
-	func pop() -> [UInt8]? {
+	public func pop() -> [UInt8]? {
 		if itemCount > 0 {
 			let entry = peek()
 			drop()
@@ -117,7 +117,7 @@ class RingBufferFile: CustomStringConvertible {
 		return nil
 	}
 	
-	func peek() -> [UInt8]? {
+	public func peek() -> [UInt8]? {
 		var entry: [UInt8]?
 		if itemCount > 0 {
 			let fp = FileHandle(forReadingAtPath: self.filePath)
@@ -130,7 +130,7 @@ class RingBufferFile: CustomStringConvertible {
 		return entry
 	}
 	
-	func peekSize() -> UInt32? {
+	public func peekSize() -> UInt32? {
 		var entrySize: UInt32?
 		if itemCount > 0 {
 			let fp = FileHandle(forReadingAtPath: self.filePath)
@@ -143,7 +143,7 @@ class RingBufferFile: CustomStringConvertible {
 		return entrySize
 	}
 	
-	func drop() {
+	public func drop() {
 		if itemCount > 0 {
 			let fp = FileHandle(forUpdatingAtPath: self.filePath)
 			if let fp = fp {
@@ -161,7 +161,7 @@ class RingBufferFile: CustomStringConvertible {
 		}
 	}
 	
-	func clear() {
+	public func clear() {
 		let fp = FileHandle(forUpdatingAtPath: self.filePath)
 		if let fp = fp {
 			self.itemCount = 0

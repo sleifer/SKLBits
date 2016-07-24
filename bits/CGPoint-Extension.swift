@@ -12,9 +12,9 @@
 	import UIKit
 #endif
 
-extension CGPoint {
+public extension CGPoint {
 	
-	func move(to: CGPoint, percentage: CGFloat) -> CGPoint {
+	public func move(to: CGPoint, percentage: CGFloat) -> CGPoint {
 		let x = self.x + ((to.x - self.x) * percentage)
 		let y = self.y + ((to.y - self.y) * percentage)
 		return CGPoint(x: x, y: y)
