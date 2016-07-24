@@ -46,7 +46,55 @@ public extension NSLayoutConstraint {
 			target?.addConstraint(self)
 		}
 	}
+	
+	public func installWith(priority: Float) {
+		self.priority = priority
+		self.install()
+	}
 
+	public func remove() {
+		if let owner = owner() {
+			owner.removeConstraint(self)
+		}
+	}
+	
+	public func likelyOwner() -> ViewType? {
+		let first = self.firstItem as? ViewType
+		let second = self.secondItem as? ViewType
+		let target = first?.nearestCommonAncestor(second)
+		return target
+	}
+	
+	public func owner() -> ViewType? {
+		let first = self.firstItem as? ViewType
+		if first != nil && first?.constraints.contains(self) == true {
+			return first
+		}
+		let second = self.secondItem as? ViewType
+		if second != nil && second?.constraints.contains(self) == true {
+			return second
+		}
+		let target = first?.nearestCommonAncestor(second)
+		if target != nil && target != first && target != second && target?.constraints.contains(self) == true {
+			return target
+		}
+		if first != nil, let supers = first?.allSuperviews() {
+			for view in supers {
+				if view.constraints.contains(self) {
+					return view
+				}
+			}
+		}
+		if second != nil, let supers = second?.allSuperviews() {
+			for view in supers {
+				if view.constraints.contains(self) {
+					return view
+				}
+			}
+		}
+		return nil
+	}
+	
 }
 
 public extension ViewType {
@@ -122,4 +170,21 @@ public extension ViewType {
 
 }
 
+public extension Array where Element: NSLayoutConstraint {
+	
+	public func installConstraints() {
+		for constraint in self {
+			constraint.install()
+		}
+	}
+	
+	public func removeConstraints() {
+		for constraint in self {
+			constraint.remove()
+		}
+	}
+	
+}
+	
+	
 #endif
