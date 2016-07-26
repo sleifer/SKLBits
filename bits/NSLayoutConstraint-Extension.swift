@@ -16,8 +16,31 @@
 
 #if !os(watchOS)
 	
+#if os(iOS) || os(tvOS)
+private var barKey: UInt8 = 0
+
+public class LayoutConstraintSizeClass {
+	public var horizontalSizeClass: UIUserInterfaceSizeClass = .unspecified
+
+	public var verticalSizeClass: UIUserInterfaceSizeClass = .unspecified
+}
+#endif
+	
 public extension NSLayoutConstraint {
 
+#if os(iOS) || os(tvOS)
+	var sizeClass: LayoutConstraintSizeClass {
+		get {
+			return associatedObject(self, key: &barKey) {
+				return LayoutConstraintSizeClass()
+			}
+		}
+		set {
+			associateObject(self, key: &barKey, value: newValue)
+		}
+	}
+#endif
+	
 	public func referes(_ toView: ViewType) -> Bool {
 		if self.firstItem as! NSObject == toView {
 			return true
@@ -183,6 +206,38 @@ public extension Array where Element: NSLayoutConstraint {
 			constraint.remove()
 		}
 	}
+	
+#if os(iOS) || os(tvOS)
+	public func installConstraintsFor(_ traits: UITraitCollection) {
+		let hSizeClass = traits.horizontalSizeClass
+		let vSizeClass = traits.verticalSizeClass
+		var install = [NSLayoutConstraint]()
+		var remove = [NSLayoutConstraint]()
+		
+		for constraint in self {
+			let sizeClass = constraint.sizeClass
+			var add: Bool = false
+			
+			if hSizeClass == .unspecified || sizeClass.horizontalSizeClass == .unspecified || hSizeClass == sizeClass.horizontalSizeClass {
+				if vSizeClass == .unspecified || sizeClass.verticalSizeClass == .unspecified || vSizeClass == sizeClass.verticalSizeClass {
+					add = true
+				}
+			}
+			if add == true {
+				if constraint.isActive == false {
+					install.append(constraint)
+				}
+			} else {
+				if constraint.isActive == true {
+					remove.append(constraint)
+				}
+			}
+		}
+		
+		NSLayoutConstraint.deactivate(remove)
+		NSLayoutConstraint.activate(install)
+	}
+#endif
 	
 }
 	
