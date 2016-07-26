@@ -46,6 +46,10 @@
 		DB7EA0401D424961000046CF /* RingBufferFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */; };
 		DB7EA0411D424961000046CF /* XCGLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0071D41C8EE000046CF /* XCGLogger.swift */; };
 		DB7EA0421D424961000046CF /* XCGNSLoggerDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0081D41C8EE000046CF /* XCGNSLoggerDestination.swift */; };
+		DB88B0C01D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
+		DB88B0C11D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
+		DB88B0C21D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
+		DB88B0C31D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +96,7 @@
 		DB7EA0121D41C939000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB7EA01F1D41CA92000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB7EA02E1D41CB79000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoredProperties.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +169,7 @@
 				DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */,
 				DB7EA0071D41C8EE000046CF /* XCGLogger.swift */,
 				DB7EA0081D41C8EE000046CF /* XCGNSLoggerDestination.swift */,
+				DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */,
 			);
 			path = bits;
 			sourceTree = "<group>";
@@ -379,6 +385,7 @@
 				DB48230F1D43973C00903D52 /* CGPoint-Extension.swift in Sources */,
 				DB7EA00C1D41C8EE000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB88B0C01D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB4823101D43973C00903D52 /* CGRect-Extension.swift in Sources */,
 				DB7EA00A1D41C8EE000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA00B1D41C8EE000046CF /* XCGLogger.swift in Sources */,
@@ -391,6 +398,7 @@
 			files = (
 				DB7EA03A1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA0371D424960000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB88B0C11D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB7EA0381D424960000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA0391D424960000046CF /* XCGLogger.swift in Sources */,
 			);
@@ -402,6 +410,7 @@
 			files = (
 				DB7EA03E1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA03B1D424960000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB88B0C21D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB7EA03C1D424960000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA03D1D424960000046CF /* XCGLogger.swift in Sources */,
 			);
@@ -413,6 +422,7 @@
 			files = (
 				DB7EA0421D424961000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA03F1D424961000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
+				DB88B0C31D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB7EA0401D424961000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA0411D424961000046CF /* XCGLogger.swift in Sources */,
 			);
