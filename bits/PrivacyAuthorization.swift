@@ -6,6 +6,8 @@
 //  Copyright © 2016 droolingcat.com. All rights reserved.
 //
 
+#if os(iOS)
+
 import Foundation
 import EventKit
 import Photos
@@ -237,3 +239,5 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	}
 
 }
+
+#endif
