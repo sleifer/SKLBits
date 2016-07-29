@@ -9,6 +9,8 @@
 import Foundation
 import EventKit
 import Photos
+import MediaPlayer
+import Speech
 
 public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
@@ -19,6 +21,10 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	public var wantReminder: Bool = false
 	
 	public var wantPhotos: Bool = false
+	
+	public var wantMedia: Bool = false
+	
+	public var wantSpeechRecognizer: Bool = false
 	
 	public var wantLocationAlways: Bool = false
 	
@@ -49,6 +55,16 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 			if wantPhotos {
 				requestQueue.append({
 					self.requestPhotos()
+				})
+			}
+			if wantMedia {
+				requestQueue.append({
+					self.requestMedia()
+				})
+			}
+			if wantSpeechRecognizer {
+				requestQueue.append({
+					self.requestSpeechRecognizer()
 				})
 			}
 			if wantLocationAlways {
@@ -116,6 +132,34 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
+	func requestMedia() {
+		if mediaStatus() == .notDetermined {
+			MPMediaLibrary.requestAuthorization({ (status: MPMediaLibraryAuthorizationStatus) in
+				self.startNextRequest()
+			})
+		} else {
+			startNextRequest()
+		}
+	}
+	
+	/*
+		Requires plist string NSSpeechRecognitionUsageDescription. has microphone access prerequisite (NSMicrophoneUsageDescription)
+	*/
+	
+	func requestSpeechRecognizer() {
+		if #available(iOS 10, *) {
+			if speechRecognizerStatus() == .notDetermined {
+				SFSpeechRecognizer.requestAuthorization({ (status: SFSpeechRecognizerAuthorizationStatus) in
+					self.startNextRequest()
+				})
+			} else {
+				startNextRequest()
+			}
+		} else {
+			startNextRequest()
+		}
+	}
+	
 	/*
 		Requires plist string NSLocationAlwaysUsageDescription
 	*/
@@ -168,6 +212,18 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
 	public func photosStatus() -> PHAuthorizationStatus {
 		return PHPhotoLibrary.authorizationStatus()
+	}
+	
+	public func mediaStatus() -> MPMediaLibraryAuthorizationStatus {
+		return MPMediaLibrary.authorizationStatus()
+	}
+	
+	public func speechRecognizerStatus() -> SFSpeechRecognizerAuthorizationStatus? {
+		if #available(iOS 10, *) {
+			return SFSpeechRecognizer.authorizationStatus()
+		} else {
+			return nil
+		}
 	}
 	
 	public func locationStatus() -> CLAuthorizationStatus {

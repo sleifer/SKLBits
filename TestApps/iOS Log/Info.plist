@@ -49,5 +49,9 @@
 	<string>Location (in use) please</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Location (always) please</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech recognition please</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone please</string>
 </dict>
 </plist>

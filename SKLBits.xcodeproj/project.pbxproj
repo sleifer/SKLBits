@@ -24,6 +24,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		DB14BFBC1D4BED1C00E29F86 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB14BFBB1D4BED1C00E29F86 /* Speech.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DB48230F1D43973C00903D52 /* CGPoint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230D1D43973C00903D52 /* CGPoint-Extension.swift */; };
 		DB4823101D43973C00903D52 /* CGRect-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230E1D43973C00903D52 /* CGRect-Extension.swift */; };
 		DB4D88AB1D4B882000B1E350 /* PrivacyAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */; };
@@ -85,6 +86,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DB14BFBB1D4BED1C00E29F86 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
 		DB48230D1D43973C00903D52 /* CGPoint-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint-Extension.swift"; sourceTree = "<group>"; };
 		DB48230E1D43973C00903D52 /* CGRect-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGRect-Extension.swift"; sourceTree = "<group>"; };
 		DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyAuthorization.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB14BFBC1D4BED1C00E29F86 /* Speech.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -133,12 +136,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DB14BFBA1D4BED1C00E29F86 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DB14BFBB1D4BED1C00E29F86 /* Speech.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DB7E9FEF1D41C8B9000046CF = {
 			isa = PBXGroup;
 			children = (
 				DB7EA0041D41C8EE000046CF /* bits */,
 				DB7E9FFB1D41C8B9000046CF /* SKLBits */,
 				DB7E9FFA1D41C8B9000046CF /* Products */,
+				DB14BFBA1D4BED1C00E29F86 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};

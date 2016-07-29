@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB14BFB61D4BEAC400E29F86 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB14BFB51D4BEAC400E29F86 /* Speech.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DB4D88A21D4B871600B1E350 /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D889B1D4B86D100B1E350 /* SKLBits.framework */; };
 		DB4D88A31D4B871600B1E350 /* SKLBits.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D889B1D4B86D100B1E350 /* SKLBits.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB4D88A61D4B871D00B1E350 /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D88951D4B86D100B1E350 /* SKLBits.framework */; };
@@ -95,6 +96,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DB14BFB51D4BEAC400E29F86 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Speech.framework; sourceTree = DEVELOPER_DIR; };
 		DB7670381D39256D00DF7D95 /* macOS Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOS Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB76703B1D39256D00DF7D95 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DB76703D1D39256D00DF7D95 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB14BFB61D4BEAC400E29F86 /* Speech.framework in Frameworks */,
 				DB4D88A61D4B871D00B1E350 /* SKLBits.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,6 +196,7 @@
 		DBEDC4C11D4461EA00AB423C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DB14BFB51D4BEAC400E29F86 /* Speech.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

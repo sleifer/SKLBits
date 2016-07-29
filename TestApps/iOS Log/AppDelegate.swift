@@ -39,6 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		auth?.wantReminder = true
 		auth?.wantPhotos = true
 		auth?.wantLocationWhenInUse = true
+		auth?.wantMedia = true
+		auth?.wantSpeechRecognizer = true
 		auth?.requestAccess()
 	}
 	
