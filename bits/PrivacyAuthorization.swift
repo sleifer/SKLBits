@@ -8,8 +8,9 @@
 
 import Foundation
 import EventKit
+import Photos
 
-public class PrivacyAuthorization {
+public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
 	typealias QueueAction = (Void) -> (Void)
 	
@@ -17,11 +18,19 @@ public class PrivacyAuthorization {
 	
 	public var wantReminder: Bool = false
 	
+	public var wantPhotos: Bool = false
+	
+	public var wantLocationAlways: Bool = false
+	
+	public var wantLocationWhenInUse: Bool = false
+	
 	private var _eventStore: EKEventStore?
+	
+	private var _locationManager: CLLocationManager?
 	
 	var requestQueue: [QueueAction] = []
 	
-	public init() {
+	public override init() {
 		
 	}
 	
@@ -35,6 +44,21 @@ public class PrivacyAuthorization {
 			if wantReminder {
 				requestQueue.append({
 					self.requestReminder()
+				})
+			}
+			if wantPhotos {
+				requestQueue.append({
+					self.requestPhotos()
+				})
+			}
+			if wantLocationAlways {
+				requestQueue.append({
+					self.requestLocationAlways()
+				})
+			}
+			if wantLocationWhenInUse {
+				requestQueue.append({
+					self.requestLocationWhenInUse()
 				})
 			}
 		}
@@ -65,7 +89,7 @@ public class PrivacyAuthorization {
 	}
 	
 	/*
-	Requires plist string NSRemindersUsageDescription
+		Requires plist string NSRemindersUsageDescription
 	*/
 	
 	func requestReminder() {
@@ -78,11 +102,60 @@ public class PrivacyAuthorization {
 		}
 	}
 	
+	/*
+		Requires plist string CFBundleDisplayName
+	*/
+	
+	func requestPhotos() {
+		if photosStatus() == .notDetermined {
+			PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) in
+				self.startNextRequest()
+			})
+		} else {
+			startNextRequest()
+		}
+	}
+	
+	/*
+		Requires plist string NSLocationAlwaysUsageDescription
+	*/
+	
+	func requestLocationAlways() {
+		if locationStatus() == .notDetermined {
+			let mgr = locationManager()
+			mgr.delegate = self
+			mgr.requestAlwaysAuthorization()
+		} else {
+			startNextRequest()
+		}
+	}
+	
+	/*
+		Requires plist string NSLocationWhenInUseUsageDescription
+	*/
+	
+	func requestLocationWhenInUse() {
+		if locationStatus() == .notDetermined {
+			let mgr = locationManager()
+			mgr.delegate = self
+			mgr.requestWhenInUseAuthorization()
+		} else {
+			startNextRequest()
+		}
+	}
+	
 	public func eventStore() -> EKEventStore {
 		if _eventStore == nil {
 			_eventStore = EKEventStore()
 		}
 		return _eventStore!
+	}
+	
+	public func locationManager() -> CLLocationManager {
+		if _locationManager == nil {
+			_locationManager = CLLocationManager()
+		}
+		return _locationManager!
 	}
 	
 	public func eventStatus() -> EKAuthorizationStatus {
@@ -93,4 +166,18 @@ public class PrivacyAuthorization {
 		return EKEventStore.authorizationStatus(for: .reminder)
 	}
 	
+	public func photosStatus() -> PHAuthorizationStatus {
+		return PHPhotoLibrary.authorizationStatus()
+	}
+	
+	public func locationStatus() -> CLAuthorizationStatus {
+		return CLLocationManager.authorizationStatus()
+	}
+
+	// MARK: CLLocationManagerDelegate
+	
+	public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+		startNextRequest()
+	}
+
 }

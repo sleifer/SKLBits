@@ -45,5 +45,9 @@
 	<string>Calendar please</string>
 	<key>NSReminderUsageDescription</key>
 	<string>Reminder please</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location (in use) please</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location (always) please</string>
 </dict>
 </plist>

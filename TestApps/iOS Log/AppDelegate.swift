@@ -37,6 +37,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		auth?.wantEvent = true
 		auth?.wantReminder = true
+		auth?.wantPhotos = true
+		auth?.wantLocationWhenInUse = true
 		auth?.requestAccess()
 	}
 	
