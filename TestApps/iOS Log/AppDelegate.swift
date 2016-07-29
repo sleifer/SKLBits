@@ -16,17 +16,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
 
+	var auth: PrivacyAuthorization?
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 
 //		testRing()
 		
-		setupLogger()
-		testLogger()
+//		setupLogger()
+//		testLogger()
+		
+		testPrivacyAuth()
 
 		return true
 	}
 
+	func testPrivacyAuth() {
+		if auth == nil {
+			auth = PrivacyAuthorization()
+		}
+		
+		auth?.wantEvent = true
+		auth?.wantReminder = true
+		auth?.requestAccess()
+	}
+	
 	func setupLogger() {
 		log.setup(.verbose, showThreadName: true)
 		
