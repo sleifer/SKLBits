@@ -1,23 +1,66 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11173.2" systemVersion="16A254g" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11143.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="iOS_Log" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                    <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5En-er-gIS">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="ex6-aR-w1B"/>
+                                </constraints>
+                                <state key="normal" title="Test Logger"/>
+                                <connections>
+                                    <action selector="testLogger" destination="BYZ-38-t0r" eventType="touchUpInside" id="m0e-In-xlf"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYw-9f-FWo">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="K6g-5Q-6Ks"/>
+                                </constraints>
+                                <state key="normal" title="Test Privacy Auth"/>
+                                <connections>
+                                    <action selector="testPrivacyAuth" destination="BYZ-38-t0r" eventType="touchUpInside" id="fZh-l7-DDi"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YaU-uH-Vfy">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="1Cl-bY-NyM"/>
+                                </constraints>
+                                <state key="normal" title="Test RingFile"/>
+                                <connections>
+                                    <action selector="testRing" destination="BYZ-38-t0r" eventType="touchUpInside" id="fZf-dB-juK"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="YaU-uH-Vfy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="FUW-Pt-qFX"/>
+                            <constraint firstItem="5En-er-gIS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JZk-ZW-Tf1"/>
+                            <constraint firstItem="vYw-9f-FWo" firstAttribute="top" secondItem="YaU-uH-Vfy" secondAttribute="bottom" constant="30" id="Xed-x9-jD1"/>
+                            <constraint firstItem="vYw-9f-FWo" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fM6-5K-rzs"/>
+                            <constraint firstItem="YaU-uH-Vfy" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="bottom" constant="30" id="iG1-VX-Tox"/>
+                            <constraint firstItem="5En-er-gIS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="p5Y-dX-u6b"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="testLoggerButton" destination="5En-er-gIS" id="lgv-xh-hZy"/>
+                        <outlet property="testPrivacyButton" destination="vYw-9f-FWo" id="b5Y-7O-QfD"/>
+                        <outlet property="testRingFileButton" destination="YaU-uH-Vfy" id="ASa-mu-G39"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

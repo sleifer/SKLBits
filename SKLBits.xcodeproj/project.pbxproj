@@ -25,6 +25,7 @@
 
 /* Begin PBXBuildFile section */
 		DB14BFBC1D4BED1C00E29F86 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB14BFBB1D4BED1C00E29F86 /* Speech.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		DB14BFBF1D4BEF9C00E29F86 /* UIImage-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB14BFBE1D4BEF9C00E29F86 /* UIImage-Extension.swift */; };
 		DB48230F1D43973C00903D52 /* CGPoint-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230D1D43973C00903D52 /* CGPoint-Extension.swift */; };
 		DB4823101D43973C00903D52 /* CGRect-Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230E1D43973C00903D52 /* CGRect-Extension.swift */; };
 		DB4D88AB1D4B882000B1E350 /* PrivacyAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */; };
@@ -87,6 +88,7 @@
 
 /* Begin PBXFileReference section */
 		DB14BFBB1D4BED1C00E29F86 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
+		DB14BFBE1D4BEF9C00E29F86 /* UIImage-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage-Extension.swift"; sourceTree = "<group>"; };
 		DB48230D1D43973C00903D52 /* CGPoint-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint-Extension.swift"; sourceTree = "<group>"; };
 		DB48230E1D43973C00903D52 /* CGRect-Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGRect-Extension.swift"; sourceTree = "<group>"; };
 		DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyAuthorization.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 			children = (
 				DB48230D1D43973C00903D52 /* CGPoint-Extension.swift */,
 				DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */,
+				DB14BFBE1D4BEF9C00E29F86 /* UIImage-Extension.swift */,
 				DB48230E1D43973C00903D52 /* CGRect-Extension.swift */,
 				DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-Extension.swift */,
 				DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */,
@@ -401,6 +404,7 @@
 				DB7EA00C1D41C8EE000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-Extension.swift in Sources */,
 				DB88B0C01D47C0DE00A71885 /* StoredProperties.swift in Sources */,
+				DB14BFBF1D4BEF9C00E29F86 /* UIImage-Extension.swift in Sources */,
 				DB4D88AB1D4B882000B1E350 /* PrivacyAuthorization.swift in Sources */,
 				DB4823101D43973C00903D52 /* CGRect-Extension.swift in Sources */,
 				DB7EA00A1D41C8EE000046CF /* RingBufferFile.swift in Sources */,

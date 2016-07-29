@@ -12,6 +12,7 @@ import SKLBits
 class ViewController: NSViewController {
 
 	override func viewDidLoad() {
+        @IBOutlet weak var testLoggerButton: UIButton!
 		super.viewDidLoad()
 		
 		self.view.translatesAutoresizingMaskIntoConstraints = false
