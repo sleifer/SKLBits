@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:XCGNSLogger.xcodeproj">
+      location = "self:TestApps.xcodeproj">
    </FileRef>
 </Workspace>

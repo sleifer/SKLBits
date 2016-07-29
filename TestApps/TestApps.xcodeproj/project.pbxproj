@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB4D88A21D4B871600B1E350 /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D889B1D4B86D100B1E350 /* SKLBits.framework */; };
+		DB4D88A31D4B871600B1E350 /* SKLBits.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D889B1D4B86D100B1E350 /* SKLBits.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DB4D88A61D4B871D00B1E350 /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D88951D4B86D100B1E350 /* SKLBits.framework */; };
+		DB4D88A71D4B871D00B1E350 /* SKLBits.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DB4D88951D4B86D100B1E350 /* SKLBits.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DB76703C1D39256D00DF7D95 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703B1D39256D00DF7D95 /* AppDelegate.swift */; };
 		DB76703E1D39256D00DF7D95 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB76703D1D39256D00DF7D95 /* ViewController.swift */; };
 		DB7670401D39256D00DF7D95 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB76703F1D39256D00DF7D95 /* Assets.xcassets */; };
@@ -18,40 +22,77 @@
 		DB8980271D3A841900BC96F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB8980261D3A841900BC96F4 /* Assets.xcassets */; };
 		DB89802A1D3A841900BC96F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB8980281D3A841900BC96F4 /* LaunchScreen.storyboard */; };
 		DB89802F1D3A844100BC96F4 /* test.png in Resources */ = {isa = PBXBuildFile; fileRef = DB8980171D3A7FA300BC96F4 /* test.png */; };
-		DBBDB9D71D4462A5009B120F /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBEDC4E11D44626F00AB423C /* SKLBits.framework */; };
-		DBBDB9D81D4462B0009B120F /* SKLBits.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBEDC4DB1D44626F00AB423C /* SKLBits.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		DBEDC4DA1D44626F00AB423C /* PBXContainerItemProxy */ = {
+		DB4D88941D4B86D100B1E350 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DB7E9FF91D41C8B9000046CF;
 			remoteInfo = "SKLBits iOS";
 		};
-		DBEDC4DC1D44626F00AB423C /* PBXContainerItemProxy */ = {
+		DB4D88961D4B86D100B1E350 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DB7EA0121D41C939000046CF;
 			remoteInfo = "SKLBits watchOS";
 		};
-		DBEDC4DE1D44626F00AB423C /* PBXContainerItemProxy */ = {
+		DB4D88981D4B86D100B1E350 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DB7EA01F1D41CA92000046CF;
 			remoteInfo = "SKLBits tvOS";
 		};
-		DBEDC4E01D44626F00AB423C /* PBXContainerItemProxy */ = {
+		DB4D889A1D4B86D100B1E350 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = DB7EA02E1D41CB79000046CF;
 			remoteInfo = "SKLBits macOS";
 		};
+		DB4D88A41D4B871600B1E350 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7EA02D1D41CB79000046CF;
+			remoteInfo = "SKLBits macOS";
+		};
+		DB4D88A81D4B871D00B1E350 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7E9FF81D41C8B9000046CF;
+			remoteInfo = "SKLBits iOS";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DB4D88821D4B850800B1E350 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DB4D88A31D4B871600B1E350 /* SKLBits.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB4D88871D4B851A00B1E350 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DB4D88A71D4B871D00B1E350 /* SKLBits.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DB7670381D39256D00DF7D95 /* macOS Log.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "macOS Log.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -68,7 +109,7 @@
 		DB8980261D3A841900BC96F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB8980291D3A841900BC96F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DB89802B1D3A841900BC96F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SKLBits.xcodeproj; path = ../../SKLBits.xcodeproj; sourceTree = "<group>"; };
+		DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SKLBits.xcodeproj; path = ../SKLBits.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,7 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBBDB9D71D4462A5009B120F /* SKLBits.framework in Frameworks */,
+				DB4D88A21D4B871600B1E350 /* SKLBits.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,13 +125,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBBDB9D81D4462B0009B120F /* SKLBits.framework in Frameworks */,
+				DB4D88A61D4B871D00B1E350 /* SKLBits.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DB4D888D1D4B86D100B1E350 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB4D88951D4B86D100B1E350 /* SKLBits.framework */,
+				DB4D88971D4B86D100B1E350 /* SKLBits.framework */,
+				DB4D88991D4B86D100B1E350 /* SKLBits.framework */,
+				DB4D889B1D4B86D100B1E350 /* SKLBits.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		DB76702F1D39256D00DF7D95 = {
 			isa = PBXGroup;
 			children = (
@@ -145,17 +197,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		DBEDC4D31D44626F00AB423C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				DBEDC4DB1D44626F00AB423C /* SKLBits.framework */,
-				DBEDC4DD1D44626F00AB423C /* SKLBits.framework */,
-				DBEDC4DF1D44626F00AB423C /* SKLBits.framework */,
-				DBEDC4E11D44626F00AB423C /* SKLBits.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -166,10 +207,12 @@
 				DB7670341D39256D00DF7D95 /* Sources */,
 				DB7670351D39256D00DF7D95 /* Frameworks */,
 				DB7670361D39256D00DF7D95 /* Resources */,
+				DB4D88821D4B850800B1E350 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DB4D88A51D4B871600B1E350 /* PBXTargetDependency */,
 			);
 			name = "macOS Log";
 			productName = NSLoggerSrc;
@@ -183,10 +226,12 @@
 				DB8980191D3A841900BC96F4 /* Sources */,
 				DB89801A1D3A841900BC96F4 /* Frameworks */,
 				DB89801B1D3A841900BC96F4 /* Resources */,
+				DB4D88871D4B851A00B1E350 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DB4D88A91D4B871D00B1E350 /* PBXTargetDependency */,
 			);
 			name = "iOS Log";
 			productName = "iOS Log";
@@ -218,7 +263,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DB7670331D39256D00DF7D95 /* Build configuration list for PBXProject "XCGNSLogger" */;
+			buildConfigurationList = DB7670331D39256D00DF7D95 /* Build configuration list for PBXProject "TestApps" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -231,7 +276,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = DBEDC4D31D44626F00AB423C /* Products */;
+					ProductGroup = DB4D888D1D4B86D100B1E350 /* Products */;
 					ProjectRef = DBEDC4D21D44626F00AB423C /* SKLBits.xcodeproj */;
 				},
 			);
@@ -244,32 +289,32 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		DBEDC4DB1D44626F00AB423C /* SKLBits.framework */ = {
+		DB4D88951D4B86D100B1E350 /* SKLBits.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = SKLBits.framework;
-			remoteRef = DBEDC4DA1D44626F00AB423C /* PBXContainerItemProxy */;
+			remoteRef = DB4D88941D4B86D100B1E350 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DBEDC4DD1D44626F00AB423C /* SKLBits.framework */ = {
+		DB4D88971D4B86D100B1E350 /* SKLBits.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = SKLBits.framework;
-			remoteRef = DBEDC4DC1D44626F00AB423C /* PBXContainerItemProxy */;
+			remoteRef = DB4D88961D4B86D100B1E350 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DBEDC4DF1D44626F00AB423C /* SKLBits.framework */ = {
+		DB4D88991D4B86D100B1E350 /* SKLBits.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = SKLBits.framework;
-			remoteRef = DBEDC4DE1D44626F00AB423C /* PBXContainerItemProxy */;
+			remoteRef = DB4D88981D4B86D100B1E350 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		DBEDC4E11D44626F00AB423C /* SKLBits.framework */ = {
+		DB4D889B1D4B86D100B1E350 /* SKLBits.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = SKLBits.framework;
-			remoteRef = DBEDC4E01D44626F00AB423C /* PBXContainerItemProxy */;
+			remoteRef = DB4D889A1D4B86D100B1E350 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -318,6 +363,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DB4D88A51D4B871600B1E350 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SKLBits macOS";
+			targetProxy = DB4D88A41D4B871600B1E350 /* PBXContainerItemProxy */;
+		};
+		DB4D88A91D4B871D00B1E350 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SKLBits iOS";
+			targetProxy = DB4D88A81D4B871D00B1E350 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		DB7670411D39256D00DF7D95 /* Main.storyboard */ = {
@@ -438,6 +496,7 @@
 		DB7670481D39256D00DF7D95 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "macOS Log/Info.plist";
@@ -452,6 +511,7 @@
 		DB7670491D39256D00DF7D95 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "macOS Log/Info.plist";
@@ -466,6 +526,7 @@
 		DB89802D1D3A841900BC96F4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "iOS Log/Info.plist";
@@ -482,6 +543,7 @@
 		DB89802E1D3A841900BC96F4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "iOS Log/Info.plist";
@@ -499,7 +561,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DB7670331D39256D00DF7D95 /* Build configuration list for PBXProject "XCGNSLogger" */ = {
+		DB7670331D39256D00DF7D95 /* Build configuration list for PBXProject "TestApps" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB7670451D39256D00DF7D95 /* Debug */,
