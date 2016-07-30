@@ -55,6 +55,9 @@ class ViewController: UIViewController {
 		auth?.wantLocationWhenInUse = true
 		auth?.wantMedia = true
 		auth?.wantSpeechRecognizer = true
+		auth?.wantMicrophone = true
+		auth?.wantCamera = true
+		auth?.wantSiri = true
 		auth?.requestAccess()
 	}
 

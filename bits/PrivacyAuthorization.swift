@@ -13,6 +13,8 @@ import EventKit
 import Photos
 import MediaPlayer
 import Speech
+import AVFoundation
+import Intents
 
 public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
@@ -25,6 +27,12 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	public var wantPhotos: Bool = false
 	
 	public var wantMedia: Bool = false
+	
+	public var wantMicrophone: Bool = false
+	
+	public var wantSiri: Bool = false
+	
+	public var wantCamera: Bool = false
 	
 	public var wantSpeechRecognizer: Bool = false
 	
@@ -62,6 +70,21 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 			if wantMedia {
 				requestQueue.append({
 					self.requestMedia()
+				})
+			}
+			if wantMicrophone {
+				requestQueue.append({
+					self.requestMicrophone()
+				})
+			}
+			if wantSiri {
+				requestQueue.append({
+					self.requestSiri()
+				})
+			}
+			if wantCamera {
+				requestQueue.append({
+					self.requestCamera()
 				})
 			}
 			if wantSpeechRecognizer {
@@ -121,7 +144,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	}
 	
 	/*
-		Requires plist string CFBundleDisplayName
+		Requires plist string NSPhotoLibraryUsageDescription
 	*/
 	
 	func requestPhotos() {
@@ -134,6 +157,10 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 	
+	/*
+		Requires plist string NSAppleMusicUsageDescription
+	*/
+	
 	func requestMedia() {
 		if mediaStatus() == .notDetermined {
 			MPMediaLibrary.requestAuthorization({ (status: MPMediaLibraryAuthorizationStatus) in
@@ -145,7 +172,54 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	}
 	
 	/*
-		Requires plist string NSSpeechRecognitionUsageDescription. has microphone access prerequisite (NSMicrophoneUsageDescription)
+		Requires plist string NSMicrophoneUsageDescription
+	*/
+	
+	func requestMicrophone() {
+		if microphoneStatus() == .notDetermined {
+			AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeAudio, completionHandler: { (success: Bool) in
+				self.startNextRequest()
+			})
+		} else {
+			startNextRequest()
+		}
+	}
+	
+	/*
+		Requires plist string NSSiriUsageDescription
+		Requires Siri Capability (entitlement)
+	*/
+
+	func requestSiri() {
+		if #available(iOS 10, *) {
+			if siriStatus() == INSiriAuthorizationStatus.notDetermined.rawValue {
+				INPreferences.requestSiriAuthorization({ (status: INSiriAuthorizationStatus) in
+					self.startNextRequest()
+				})
+			} else {
+				startNextRequest()
+			}
+		} else {
+			startNextRequest()
+		}
+	}
+
+	/*
+		Requires plist string NSCameraUsageDescription
+	*/
+	
+	func requestCamera() {
+		if cameraStatus() == .notDetermined {
+			AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { (success: Bool) in
+				self.startNextRequest()
+			})
+		} else {
+			startNextRequest()
+		}
+	}
+	
+	/*
+		Requires plist string NSSpeechRecognitionUsageDescription. has microphone access prerequisite
 	*/
 	
 	func requestSpeechRecognizer() {
@@ -218,6 +292,22 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
 	public func mediaStatus() -> MPMediaLibraryAuthorizationStatus {
 		return MPMediaLibrary.authorizationStatus()
+	}
+	
+	public func microphoneStatus() -> AVAuthorizationStatus {
+		return AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeAudio)
+	}
+	
+	public func siriStatus() -> Int? {
+		if #available(iOS 10, *) {
+			return INPreferences.siriAuthorizationStatus().rawValue
+		} else {
+			return nil
+		}
+	}
+	
+	public func cameraStatus() -> AVAuthorizationStatus {
+		return AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
 	}
 	
 	public func speechRecognizerStatus() -> SFSpeechRecognizerAuthorizationStatus? {

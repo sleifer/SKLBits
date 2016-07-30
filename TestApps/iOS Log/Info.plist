@@ -41,9 +41,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSCalendarUsageDescription</key>
+	<key>NSCalendarsUsageDescription</key>
 	<string>Calendar please</string>
-	<key>NSReminderUsageDescription</key>
+	<key>NSRemindersUsageDescription</key>
 	<string>Reminder please</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location (in use) please</string>
@@ -53,5 +53,13 @@
 	<string>Speech recognition please</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone please</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photos please</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Media please</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera please</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Siri please</string>
 </dict>
 </plist>
