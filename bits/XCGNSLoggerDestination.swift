@@ -383,7 +383,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	
 	private var ringFile: RingBufferFile?
 	
-	private let queue = DispatchQueue(label: "message queue", attributes: .serial, target: nil)
+	private let queue = DispatchQueue(label: "message queue")
 
 	private var browser: NetServiceBrowser?
 	
@@ -582,7 +582,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		#if os(iOS)
 			if Thread.isMainThread || Thread.isMultiThreaded() {
 				autoreleasepool {
-					let device = UIDevice.current()
+					let device = UIDevice.current
 					encoder.addString(device.name, key: PART_KEY_UNIQUEID);
 					encoder.addString(device.systemVersion, key: PART_KEY_OS_VERSION)
 					encoder.addString(device.systemName, key: PART_KEY_OS_NAME)
@@ -626,12 +626,12 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		if runFilePath == nil {
 			do {
 				let fm = FileManager.default
-				let urls = fm.urlsForDirectory(.cachesDirectory, inDomains: .userDomainMask)
+				let urls = fm.urls(for: .cachesDirectory, in: .userDomainMask)
 				let identifier = Bundle.main.bundleIdentifier
 				if let identifier = identifier, urls.count > 0 {
 					let fileName = identifier + ".xcgnsrun"
 					var url = urls[0]
-					try url.appendPathComponent(fileName)
+					url.appendPathComponent(fileName)
 					runFilePath = url.path
 					if let runFilePath = runFilePath {
 						if fm.fileExists(atPath: runFilePath) {
@@ -683,17 +683,14 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	}
 	
 	func createRingFile() {
-		do {
-			let fm = FileManager.default
-			let urls = fm.urlsForDirectory(.cachesDirectory, inDomains: .userDomainMask)
-			let identifier = Bundle.main.bundleIdentifier
-			if let identifier = identifier, urls.count > 0 {
-				let fileName = identifier + ".xcgnsring"
-				var url = urls[0]
-				try url.appendPathComponent(fileName)
-				self.ringFile = RingBufferFile(capacity: RING_BUFFER_CAPACITY, filePath: url.path!)
-			}
-		} catch {
+		let fm = FileManager.default
+		let urls = fm.urls(for: .cachesDirectory, in: .userDomainMask)
+		let identifier = Bundle.main.bundleIdentifier
+		if let identifier = identifier, urls.count > 0 {
+			let fileName = identifier + ".xcgnsring"
+			var url = urls[0]
+			url.appendPathComponent(fileName)
+			self.ringFile = RingBufferFile(capacity: RING_BUFFER_CAPACITY, filePath: url.path)
 		}
 	}
 

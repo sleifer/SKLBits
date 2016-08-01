@@ -11,7 +11,7 @@
 import UIKit
 
 public extension UIImage {
-	public class func drawSimpleButton(_ frame: CGRect, radius: CGFloat = -1, strokeWidth: CGFloat = 1, strokeColor: UIColor? = UIColor.black(), fillColor: UIColor? = nil) {
+	public class func drawSimpleButton(_ frame: CGRect, radius: CGFloat = -1, strokeWidth: CGFloat = 1, strokeColor: UIColor? = UIColor.black, fillColor: UIColor? = nil) {
 		let inset = strokeWidth
 		let rectanglePath = UIBezierPath(roundedRect: CGRect(x: (frame.origin.x + inset), y: (frame.origin.y + inset), width: (frame.size.width - (inset * 2)), height: (frame.size.height - (inset * 2))), cornerRadius: radius)
 		if let fillColor = fillColor {
@@ -25,7 +25,7 @@ public extension UIImage {
 		}
 	}
 	
-	public class func imageOfSimpleButton(_ frame: CGRect, radius: CGFloat = -1, strokeWidth: CGFloat = 1, strokeColor: UIColor? = UIColor.black(), fillColor: UIColor? = nil) -> UIImage {
+	public class func imageOfSimpleButton(_ frame: CGRect, radius: CGFloat = -1, strokeWidth: CGFloat = 1, strokeColor: UIColor? = UIColor.black, fillColor: UIColor? = nil) -> UIImage {
 		var r = radius
 		if r == -1 {
 			r = floor(frame.height / 2.0)

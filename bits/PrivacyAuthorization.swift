@@ -121,7 +121,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
 	func requestEvent() {
 		if eventStatus() == .notDetermined {
-			eventStore().requestAccess(to: .event, completion: { (success: Bool, error: NSError?) in
+			eventStore().requestAccess(to: .event, completion: { (success: Bool, error: Error?) in
 				self.startNextRequest()
 			})
 		} else {
@@ -135,7 +135,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	
 	func requestReminder() {
 		if reminderStatus() == .notDetermined {
-			eventStore().requestAccess(to: .reminder, completion: { (success: Bool, error: NSError?) in
+			eventStore().requestAccess(to: .reminder, completion: { (success: Bool, error: Error?) in
 				self.startNextRequest()
 			})
 		} else {
