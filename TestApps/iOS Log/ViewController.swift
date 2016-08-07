@@ -82,11 +82,11 @@ class ViewController: UIViewController {
 	@IBAction func testRing() {
 		let capacity: UInt32 = 80
 		let fm = FileManager.default
-		let urls = fm.urlsForDirectory(.desktopDirectory, inDomains: .userDomainMask)
+		let urls = fm.urls(for: .desktopDirectory, in: .userDomainMask)
 		let fileName = "ring.xcgnsring"
 		var url = urls[0]
-		try! url.appendPathComponent(fileName)
-		let testFilePath = url.path!
+		url.appendPathComponent(fileName)
+		let testFilePath = url.path
 		
 		let buffer = RingBufferFile(capacity: capacity, filePath: testFilePath)
 		buffer.clear()
