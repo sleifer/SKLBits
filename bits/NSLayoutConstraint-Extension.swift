@@ -58,7 +58,7 @@ public extension NSLayoutConstraint {
 		let first = self.firstItem as? ViewType
 		let second = self.secondItem as? ViewType
 		let target = first?.nearestCommonAncestor(second)
-		if target != nil {
+		if target != nil && target?.constraints.contains(self) == false {
 			if target != first {
 				first?.translatesAutoresizingMaskIntoConstraints = false
 			}
