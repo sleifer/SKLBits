@@ -1,5 +1,5 @@
 //
-//  UIImage-Extension.swift
+//  UIImage-SKLBits.swift
 //  SKLBits
 //
 //  Created by Simeon Leifer on 7/29/16.

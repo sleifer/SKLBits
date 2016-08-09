@@ -1,5 +1,5 @@
 //
-//  NSLayoutConstraint-Extension.swift
+//  NSLayoutConstraint-SKLBits.swift
 //  slidekey
 //
 //  Created by Simeon Leifer on 7/10/16.

@@ -1,5 +1,5 @@
 //
-//  CGPoint+extension.swift
+//  CGPoint+SKLBits.swift
 //  slidekey
 //
 //  Created by Simeon Leifer on 7/11/16.
