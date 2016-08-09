@@ -16,9 +16,16 @@ class ViewController: UIViewController {
 	@IBOutlet weak var testRingFileButton: UIButton!
 	@IBOutlet weak var testPrivacyButton: UIButton!
 	
+	@IBOutlet weak var layoutAndHiddenView1: UIView!
+	@IBOutlet weak var layoutAndHiddenView2: UIView!
+	
 	var auth: PrivacyAuthorization?
 	
 	var debug: DebugActionSheet?
+	
+	var visibleCollection: [NSLayoutConstraint] = []
+	
+	var hiddenCollection: [NSLayoutConstraint] = []
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -35,8 +42,31 @@ class ViewController: UIViewController {
 		debug?.addAction("Bravo", handler: {
 			print("GOT Bravo")
 		})
+		
+		let tap = UITapGestureRecognizer(target: self, action: #selector(toggleHidden))
+		layoutAndHiddenView1.addGestureRecognizer(tap)
+		
+		let visibleCon = NSLayoutConstraint(item: layoutAndHiddenView1, attribute: .right, relatedBy: .equal, toItem: layoutAndHiddenView2, attribute: .left, multiplier: 1.0, constant: -8.0)
+		visibleCollection = [visibleCon]
+		
+		let hiddenCon = NSLayoutConstraint(item: layoutAndHiddenView1, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0)
+		hiddenCollection = [hiddenCon]
+		
+		visibleCollection.installConstraints()
 	}
 
+	func toggleHidden() {
+		if layoutAndHiddenView2.isHidden == false {
+			layoutAndHiddenView2.isHidden = true
+			visibleCollection.removeConstraints()
+			hiddenCollection.installConstraints()
+		} else {
+			layoutAndHiddenView2.isHidden = false
+			hiddenCollection.removeConstraints()
+			visibleCollection.installConstraints()
+		}
+	}
+	
 	override func viewDidLayoutSubviews() {
 		if testLoggerButton.backgroundImage(for: .normal) == nil {
 			let img1 = UIImage.imageOfSimpleButton(testLoggerButton.bounds, radius: 6)

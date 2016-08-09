@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11185.3" systemVersion="16A270f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11191" systemVersion="16A286a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11151.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11156"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -45,18 +46,45 @@
                                     <action selector="testRing" destination="BYZ-38-t0r" eventType="touchUpInside" id="fZf-dB-juK"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Two finger tap for debug sheet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X04-oQ-IXN">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rys-A5-Ip3">
+                                <color key="backgroundColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="jNT-oO-Kqn"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="f4d-Q2-Gie">
+                                <color key="backgroundColor" red="1" green="0.80000001190000003" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="75" id="4rv-67-2fu"/>
+                                    <constraint firstAttribute="height" constant="16" id="UFV-dD-eNP"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstAttribute="leadingMargin" secondItem="Rys-A5-Ip3" secondAttribute="leading" id="E7a-xi-7n1"/>
                             <constraint firstItem="YaU-uH-Vfy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="FUW-Pt-qFX"/>
                             <constraint firstItem="5En-er-gIS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JZk-ZW-Tf1"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="X04-oQ-IXN" secondAttribute="bottom" constant="20" id="S0Z-qy-4N6"/>
                             <constraint firstItem="vYw-9f-FWo" firstAttribute="top" secondItem="YaU-uH-Vfy" secondAttribute="bottom" constant="30" id="Xed-x9-jD1"/>
+                            <constraint firstItem="Rys-A5-Ip3" firstAttribute="top" secondItem="vYw-9f-FWo" secondAttribute="bottom" constant="30" id="Zfv-Vy-ubL"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="f4d-Q2-Gie" secondAttribute="trailing" id="cQ8-bv-coO"/>
                             <constraint firstItem="vYw-9f-FWo" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fM6-5K-rzs"/>
                             <constraint firstItem="YaU-uH-Vfy" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="bottom" constant="30" id="iG1-VX-Tox"/>
+                            <constraint firstItem="f4d-Q2-Gie" firstAttribute="centerY" secondItem="Rys-A5-Ip3" secondAttribute="centerY" id="lcI-gs-44V"/>
+                            <constraint firstItem="X04-oQ-IXN" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="nXz-YG-3ec"/>
+                            <constraint firstItem="f4d-Q2-Gie" firstAttribute="leading" secondItem="Rys-A5-Ip3" secondAttribute="trailing" constant="8" placeholder="YES" id="ogt-if-2hW"/>
                             <constraint firstItem="5En-er-gIS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="p5Y-dX-u6b"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="layoutAndHiddenView1" destination="Rys-A5-Ip3" id="Bc5-ud-5ts"/>
+                        <outlet property="layoutAndHiddenView2" destination="f4d-Q2-Gie" id="Imv-f8-S9i"/>
                         <outlet property="testLoggerButton" destination="5En-er-gIS" id="lgv-xh-hZy"/>
                         <outlet property="testPrivacyButton" destination="vYw-9f-FWo" id="b5Y-7O-QfD"/>
                         <outlet property="testRingFileButton" destination="YaU-uH-Vfy" id="ASa-mu-G39"/>
@@ -64,6 +92,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="138.98050974512745"/>
         </scene>
     </scenes>
 </document>
