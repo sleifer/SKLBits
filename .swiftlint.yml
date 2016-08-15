@@ -1,0 +1,13 @@
+disabled_rules:
+  - line_length
+  - file_length
+  - type_body_length
+  - function_body_length
+  - conditional_binding_cascade
+  - function_parameter_count
+  - nesting
+
+variable_name:
+  min_length:
+    - 2
+    - 2

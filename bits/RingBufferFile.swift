@@ -24,34 +24,34 @@ data: UInt8[N]
 
 public class RingBufferFile: CustomStringConvertible {
 	public private(set) var capacity: UInt32
-	
+
 	public let filePath: String
-	
+
 	public let atomSize: UInt32
-	
+
 	public let headerSize: UInt32
-	
+
 	private var bufferStartIndex: UInt32 = 0
-	
+
 	private var bufferEndIndex: UInt32 = 0
-	
+
 	private var maxBufferEndIndex: UInt32 = 0
-	
+
 	private var dataStartIndex: UInt32 = 0
-	
+
 	private var dataEndIndex: UInt32 = 0
-	
+
 	public private(set) var itemCount: UInt32 = 0
-	
+
 	public init(capacity: UInt32, filePath: String) {
 		self.capacity = capacity
 		self.filePath = filePath
 		self.atomSize = UInt32(sizeof(UInt32.self))
 		self.headerSize = self.atomSize * 6
-		
+
 		loadOrCreate()
 	}
-	
+
 	public var description: String {
 		return "\(self.dynamicType)\n  filePath: \(filePath)\n  capacity: \(capacity)\n  atomSize: \(atomSize)\n  headerSize: \(headerSize)\n  bufferStartIndex: \(bufferStartIndex)\n  bufferEndIndex: \(bufferEndIndex)\n  dataStartIndex: \(dataStartIndex)\n  dataEndIndex: \(dataEndIndex)\n  maxBufferEndIndex: \(maxBufferEndIndex)\n  itemCount: \(itemCount)\n---"
 	}
@@ -61,7 +61,7 @@ public class RingBufferFile: CustomStringConvertible {
 		if let fp = fp {
 			let entrySize = UInt32(entry.count)
 			let totalSize = entrySize + atomSize
-			
+
 			var proposedItemCount = self.itemCount
 			var proposedWriteStart = self.dataEndIndex + 1
 			if self.dataStartIndex == self.dataEndIndex {
@@ -95,11 +95,11 @@ public class RingBufferFile: CustomStringConvertible {
 			if proposedDataEndIndex > proposedBufferEndIndex {
 				proposedBufferEndIndex = proposedDataEndIndex
 			}
-			
+
 			fp.seek(toFileOffset: UInt64(proposedWriteStart))
 			writeEntry(fp, entry: entry)
 			proposedItemCount = proposedItemCount + 1
-			
+
 			self.itemCount = proposedItemCount
 			self.bufferEndIndex = proposedBufferEndIndex
 			self.dataStartIndex = proposedDataStartIndex
@@ -107,7 +107,7 @@ public class RingBufferFile: CustomStringConvertible {
 			writeHeader(fp)
 		}
 	}
-	
+
 	public func pop() -> [UInt8]? {
 		if itemCount > 0 {
 			let entry = peek()
@@ -116,7 +116,7 @@ public class RingBufferFile: CustomStringConvertible {
 		}
 		return nil
 	}
-	
+
 	public func peek() -> [UInt8]? {
 		var entry: [UInt8]?
 		if itemCount > 0 {
@@ -129,7 +129,7 @@ public class RingBufferFile: CustomStringConvertible {
 		}
 		return entry
 	}
-	
+
 	public func peekSize() -> UInt32? {
 		var entrySize: UInt32?
 		if itemCount > 0 {
@@ -142,7 +142,7 @@ public class RingBufferFile: CustomStringConvertible {
 		}
 		return entrySize
 	}
-	
+
 	public func drop() {
 		if itemCount > 0 {
 			let fp = FileHandle(forUpdatingAtPath: self.filePath)
@@ -153,14 +153,14 @@ public class RingBufferFile: CustomStringConvertible {
 				self.dataStartIndex = self.dataStartIndex + (entrySize + self.atomSize)
 				if self.dataStartIndex >= self.bufferEndIndex {
 					self.dataStartIndex = self.bufferStartIndex
-					
+
 				}
 				writeHeader(fp)
 				fp.closeFile()
 			}
 		}
 	}
-	
+
 	public func clear() {
 		let fp = FileHandle(forUpdatingAtPath: self.filePath)
 		if let fp = fp {
@@ -175,7 +175,7 @@ public class RingBufferFile: CustomStringConvertible {
 			fp.closeFile()
 		}
 	}
-	
+
 	private func writeHeader(_ fp: FileHandle) {
 		fp.seek(toFileOffset: 0)
 		writeAtom(fp, atom: self.bufferStartIndex)
@@ -185,7 +185,7 @@ public class RingBufferFile: CustomStringConvertible {
 		writeAtom(fp, atom: self.itemCount)
 		writeAtom(fp, atom: self.capacity)
 	}
-	
+
 	private func readAtom(_ fp: FileHandle) -> UInt32 {
 		let atomData = fp.readData(ofLength: Int(atomSize))
 		let atomValue = atomData.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> UInt32 in
@@ -193,7 +193,7 @@ public class RingBufferFile: CustomStringConvertible {
 		}
 		return atomValue
 	}
-	
+
 	private func writeAtom(_ fp: FileHandle, atom: UInt32) {
 		var value = CFSwapInt32HostToBig(atom)
 		withUnsafeMutablePointer(&value, {
@@ -201,7 +201,7 @@ public class RingBufferFile: CustomStringConvertible {
 			fp.write(data)
 		})
 	}
-	
+
 	private func readEntry(_ fp: FileHandle) -> [UInt8]? {
 		var entry: [UInt8]? = nil
 		let lengthData = fp.readData(ofLength: Int(atomSize))
@@ -215,7 +215,7 @@ public class RingBufferFile: CustomStringConvertible {
 		}
 		return entry
 	}
-	
+
 	private func writeEntry(_ fp: FileHandle, entry: [UInt8]) {
 		var value = CFSwapInt32HostToBig(UInt32(entry.count))
 		withUnsafeMutablePointer(&value, {
@@ -225,7 +225,7 @@ public class RingBufferFile: CustomStringConvertible {
 		let data = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>(entry), count: entry.count, deallocator: .none)
 		fp.write(data)
 	}
-	
+
 	private func loadOrCreate() {
 		let fm = FileManager.default
 		if fm.fileExists(atPath: self.filePath) {
@@ -250,7 +250,7 @@ public class RingBufferFile: CustomStringConvertible {
 				self.dataStartIndex = self.headerSize
 				self.dataEndIndex = self.headerSize
 				self.maxBufferEndIndex = self.bufferStartIndex + self.capacity
-				
+
 				let fp = FileHandle(forWritingAtPath: self.filePath)
 				if let fp = fp {
 					writeHeader(fp)

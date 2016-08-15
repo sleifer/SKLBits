@@ -15,25 +15,25 @@ class ViewController: UIViewController {
 	@IBOutlet weak var testLoggerButton: UIButton!
 	@IBOutlet weak var testRingFileButton: UIButton!
 	@IBOutlet weak var testPrivacyButton: UIButton!
-	
+
 	@IBOutlet weak var layoutAndHiddenView1: UIView!
 	@IBOutlet weak var layoutAndHiddenView2: UIView!
-	
+
 	var auth: PrivacyAuthorization?
-	
+
 	var debug: DebugActionSheet?
-	
+
 	var visibleCollection: [NSLayoutConstraint] = []
-	
+
 	var hiddenCollection: [NSLayoutConstraint] = []
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
+
 		testLoggerButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 		testRingFileButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 		testPrivacyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
-		
+
 		debug = DebugActionSheet()
 		debug?.attach(to: self.view)
 		debug?.addAction("Alpha", handler: {
@@ -42,16 +42,16 @@ class ViewController: UIViewController {
 		debug?.addAction("Bravo", handler: {
 			print("GOT Bravo")
 		})
-		
+
 		let tap = UITapGestureRecognizer(target: self, action: #selector(toggleHidden))
 		layoutAndHiddenView1.addGestureRecognizer(tap)
-		
+
 		let visibleCon = NSLayoutConstraint(item: layoutAndHiddenView1, attribute: .right, relatedBy: .equal, toItem: layoutAndHiddenView2, attribute: .left, multiplier: 1.0, constant: -8.0)
 		visibleCollection = [visibleCon]
-		
+
 		let hiddenCon = NSLayoutConstraint(item: layoutAndHiddenView1, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailingMargin, multiplier: 1.0, constant: 0.0)
 		hiddenCollection = [hiddenCon]
-		
+
 		visibleCollection.installConstraints()
 	}
 
@@ -66,15 +66,15 @@ class ViewController: UIViewController {
 			visibleCollection.installConstraints()
 		}
 	}
-	
+
 	override func viewDidLayoutSubviews() {
 		if testLoggerButton.backgroundImage(for: .normal) == nil {
 			let img1 = UIImage.imageOfSimpleButton(testLoggerButton.bounds, radius: 6)
 			testLoggerButton.setBackgroundImage(img1, for: [])
-			
+
 			let img2 = UIImage.imageOfSimpleButton(testRingFileButton.bounds, radius: 6)
 			testRingFileButton.setBackgroundImage(img2, for: [])
-			
+
 			let img3 = UIImage.imageOfSimpleButton(testPrivacyButton.bounds, radius: 6)
 			testPrivacyButton.setBackgroundImage(img3, for: [])
 		}
@@ -89,7 +89,7 @@ class ViewController: UIViewController {
 		if auth == nil {
 			auth = PrivacyAuthorization()
 		}
-		
+
 		auth?.wantEvent = true
 		auth?.wantReminder = true
 		auth?.wantPhotos = true
@@ -115,11 +115,11 @@ class ViewController: UIViewController {
 		let image = UIImage(named: "test")
 		log.info(image)
 		let data = NSMutableData()
-		let small: [UInt8] = [1,2,3,4,5,6,7,8,9]
+		let small: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		data.append(UnsafePointer<Void>(small), length: small.count)
 		log.info(data)
 	}
-	
+
 	@IBAction func testRing() {
 		let capacity: UInt32 = 80
 		let fm = FileManager.default
@@ -128,36 +128,36 @@ class ViewController: UIViewController {
 		var url = urls[0]
 		url.appendPathComponent(fileName)
 		let testFilePath = url.path
-		
+
 		let buffer = RingBufferFile(capacity: capacity, filePath: testFilePath)
 		buffer.clear()
 		print(buffer)
-		buffer.push([1,2,3,4])
+		buffer.push([1, 2, 3, 4])
 		print(buffer)
-		buffer.push([5,6,7])
+		buffer.push([5, 6, 7])
 		print(buffer)
-		buffer.push([8,9])
+		buffer.push([8, 9])
 		print(buffer)
 		buffer.push([10])
 		print(buffer)
-		buffer.push([11,12,13,14,15])
+		buffer.push([11, 12, 13, 14, 15])
 		print(buffer)
-		buffer.push([16,17,18,19])
+		buffer.push([16, 17, 18, 19])
 		print(buffer)
-		buffer.push([20,21,22])
+		buffer.push([20, 21, 22])
 		print(buffer)
-		buffer.push([23,24])
+		buffer.push([23, 24])
 		print(buffer)
 		buffer.push([25])
 		print(buffer)
-		buffer.push([26,27,29,29,30])
+		buffer.push([26, 27, 29, 29, 30])
 		print(buffer)
-		buffer.push([31,32,33,34])
+		buffer.push([31, 32, 33, 34])
 		print(buffer)
 		// will wrap and drop oldest starting with next push
-		buffer.push([35,36,37])
+		buffer.push([35, 36, 37])
 		print(buffer)
-		buffer.push([38,39])
+		buffer.push([38, 39])
 		print(buffer)
 		buffer.push([40])
 		print(buffer)
@@ -171,4 +171,3 @@ class ViewController: UIViewController {
 	}
 
 }
-

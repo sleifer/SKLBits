@@ -76,6 +76,8 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
     }
 
     // MARK: - Methods to Process Log Details
+
+	// swiftlint:disable cyclomatic_complexity
     public func processLogDetails(_ logDetails: XCGLogDetails) {
         var extendedDetails: String = ""
 
@@ -99,15 +101,12 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
         if showThreadName {
             if Thread.isMainThread {
                 extendedDetails += "[main] "
-            }
-            else {
+            } else {
                 if let threadName = Thread.current.name, !threadName.isEmpty {
                     extendedDetails += "[" + threadName + "] "
-                }
-                else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
+                } else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
                     extendedDetails += "[" + queueName + "] "
-                }
-                else {
+                } else {
                     extendedDetails += "[" + String(format:"%p", Thread.current) + "] "
                 }
             }
@@ -115,8 +114,7 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
 
         if showFileName {
             extendedDetails += "[" + (logDetails.fileName as NSString).lastPathComponent + (showLineNumber ? ":" + String(logDetails.lineNumber) : "") + "] "
-        }
-        else if showLineNumber {
+        } else if showLineNumber {
             extendedDetails += "[" + String(logDetails.lineNumber) + "] "
         }
 
@@ -126,6 +124,7 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
 
         output(logDetails, text: "\(extendedDetails)> \(logDetails.logMessage)")
     }
+	// swiftlint:enable cyclomatic_complexity
 
     public func processInternalLogDetails(_ logDetails: XCGLogDetails) {
         var extendedDetails: String = ""
@@ -176,8 +175,7 @@ public class XCGConsoleLogDestination: XCGBaseLogDestination {
             let adjustedText: String
             if let xcodeColor = (self.xcodeColors ?? self.owner.xcodeColors)[logDetails.logLevel], self.owner.xcodeColorsEnabled {
                 adjustedText = "\(xcodeColor.format())\(text)\(XCGLogger.XcodeColor.reset)"
-            }
-            else {
+            } else {
                 adjustedText = text
             }
 
@@ -186,8 +184,7 @@ public class XCGConsoleLogDestination: XCGBaseLogDestination {
 
         if let logQueue = logQueue {
             logQueue.async(execute: outputClosure)
-        }
-        else {
+        } else {
             outputClosure()
         }
     }
@@ -216,8 +213,7 @@ public class XCGNSLogDestination: XCGBaseLogDestination {
             let adjustedText: String
             if let xcodeColor = (self.xcodeColors ?? self.owner.xcodeColors)[logDetails.logLevel], self.owner.xcodeColorsEnabled {
                 adjustedText = "\(xcodeColor.format())\(text)\(XCGLogger.XcodeColor.reset)"
-            }
-            else {
+            } else {
                 adjustedText = text
             }
 
@@ -226,8 +222,7 @@ public class XCGNSLogDestination: XCGBaseLogDestination {
 
         if let logQueue = logQueue {
             logQueue.async(execute: outputClosure)
-        }
-        else {
+        } else {
             outputClosure()
         }
     }
@@ -249,13 +244,11 @@ public class XCGFileLogDestination: XCGBaseLogDestination {
     public init(owner: XCGLogger, writeToFile: AnyObject, identifier: String = "") {
         super.init(owner: owner, identifier: identifier)
 
-        if writeToFile is NSString {
-            writeToFileURL = URL(fileURLWithPath: writeToFile as! String)
-        }
-        else if writeToFile is URL {
-            writeToFileURL = writeToFile as? URL
-        }
-        else {
+        if writeToFile is NSString, let wtfString = writeToFile as? String {
+            writeToFileURL = URL(fileURLWithPath: wtfString)
+        } else if writeToFile is URL, let wtfURL = writeToFile as? URL {
+            writeToFileURL = wtfURL
+        } else {
             writeToFileURL = nil
         }
 
@@ -278,8 +271,7 @@ public class XCGFileLogDestination: XCGBaseLogDestination {
             FileManager.default.createFile(atPath: writeToFileURL.path, contents: nil, attributes: nil)
             do {
                 logFileHandle = try FileHandle(forWritingTo: writeToFileURL)
-            }
-            catch let error as NSError {
+            } catch let error as NSError {
                 owner._logln("Attempt to open log file for writing failed: \(error.localizedDescription)", logLevel: .error)
                 logFileHandle = nil
                 return
@@ -309,8 +301,7 @@ public class XCGFileLogDestination: XCGBaseLogDestination {
 
         if let logQueue = logQueue {
             logQueue.async(execute: outputClosure)
-        }
-        else {
+        } else {
             outputClosure()
         }
     }
@@ -380,15 +371,13 @@ public class XCGLogger: CustomDebugStringConvertible {
 
             if let fg = fg {
                 format += "\(XcodeColor.escape)fg\(fg.0),\(fg.1),\(fg.2);"
-            }
-            else {
+            } else {
                 format += XcodeColor.resetFg
             }
 
             if let bg = bg {
                 format += "\(XcodeColor.escape)bg\(bg.0),\(bg.1),\(bg.2);"
-            }
-            else {
+            } else {
                 format += XcodeColor.resetBg
             }
 
@@ -404,8 +393,7 @@ public class XCGLogger: CustomDebugStringConvertible {
         public init(fg: NSColor, bg: NSColor? = nil) {
             if let fgColorSpaceCorrected = fg.usingColorSpaceName(NSCalibratedRGBColorSpace) {
                 self.fg = (Int(fgColorSpaceCorrected.redComponent * 255), Int(fgColorSpaceCorrected.greenComponent * 255), Int(fgColorSpaceCorrected.blueComponent * 255))
-            }
-            else {
+            } else {
                 self.fg = nil
             }
 
@@ -413,8 +401,7 @@ public class XCGLogger: CustomDebugStringConvertible {
                 let bgColorSpaceCorrected = bg.usingColorSpaceName(NSCalibratedRGBColorSpace) {
 
                     self.bg = (Int(bgColorSpaceCorrected.redComponent * 255), Int(bgColorSpaceCorrected.greenComponent * 255), Int(bgColorSpaceCorrected.blueComponent * 255))
-            }
-            else {
+            } else {
                 self.bg = nil
             }
         }
@@ -430,8 +417,7 @@ public class XCGLogger: CustomDebugStringConvertible {
             if let bg = bg {
                 bg.getRed(&redComponent, green: &greenComponent, blue: &blueComponent, alpha:&alphaComponent)
                 self.bg = (Int(redComponent * 255), Int(greenComponent * 255), Int(blueComponent * 255))
-            }
-            else {
+            } else {
                 self.bg = nil
             }
         }
@@ -559,7 +545,7 @@ public class XCGLogger: CustomDebugStringConvertible {
     }
 
     public func setup(_ logLevel: LogLevel = .debug, showLogIdentifier: Bool = false, showFunctionName: Bool = true, showThreadName: Bool = false, showLogLevel: Bool = true, showFileNames: Bool = true, showLineNumbers: Bool = true, showDate: Bool = true, writeToFile: AnyObject? = nil, fileLogLevel: LogLevel? = nil) {
-        outputLogLevel = logLevel;
+        outputLogLevel = logLevel
 
         if let standardConsoleLogDestination = logDestination(XCGLogger.Constants.baseConsoleLogDestinationIdentifier) as? XCGConsoleLogDestination {
             standardConsoleLogDestination.showLogIdentifier = showLogIdentifier
@@ -608,12 +594,11 @@ public class XCGLogger: CustomDebugStringConvertible {
     public func logln(_ logLevel: LogLevel = .debug, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> String?) {
         var logDetails: XCGLogDetails? = nil
         for logDestination in self.logDestinations {
-            if (logDestination.isEnabledForLogLevel(logLevel)) {
+            if logDestination.isEnabledForLogLevel(logLevel) {
                 if logDetails == nil {
                     if let logMessage = closure() {
                         logDetails = XCGLogDetails(logLevel: logLevel, date: Date(), logMessage: logMessage, functionName: functionName, fileName: fileName, lineNumber: lineNumber)
-                    }
-                    else {
+                    } else {
                         break
                     }
                 }
@@ -628,7 +613,7 @@ public class XCGLogger: CustomDebugStringConvertible {
     }
 
     public func exec(_ logLevel: LogLevel = .debug, closure: () -> () = {}) {
-        if (!isEnabledForLogLevel(logLevel)) {
+        if isEnabledForLogLevel(logLevel) == false {
             return
         }
 
@@ -657,7 +642,7 @@ public class XCGLogger: CustomDebugStringConvertible {
         for logDestination in (selectedLogDestination != nil ? [selectedLogDestination!] : logDestinations) {
             for logDetail in logDetails {
                 if !logDestination.isEnabledForLogLevel(.info) {
-                    continue;
+                    continue
                 }
 
                 logDestination.processInternalLogDetails(logDetail)
@@ -861,7 +846,7 @@ public class XCGLogger: CustomDebugStringConvertible {
 
         var logDetails: XCGLogDetails? = nil
         for logDestination in self.logDestinations {
-            if (logDestination.isEnabledForLogLevel(logLevel)) {
+            if logDestination.isEnabledForLogLevel(logLevel) {
                 if logDetails == nil {
                     logDetails = XCGLogDetails(logLevel: logLevel, date: Date(), logMessage: logMessage, functionName: "", fileName: "", lineNumber: 0)
                 }
@@ -885,7 +870,7 @@ public class XCGLogger: CustomDebugStringConvertible {
 }
 
 // Implement Comparable for XCGLogger.LogLevel
-public func < (lhs:XCGLogger.LogLevel, rhs:XCGLogger.LogLevel) -> Bool {
+public func < (lhs: XCGLogger.LogLevel, rhs: XCGLogger.LogLevel) -> Bool {
     return lhs.rawValue < rhs.rawValue
 }
 

@@ -237,6 +237,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DB7EA0011D41C8B9000046CF /* Build configuration list for PBXNativeTarget "SKLBits iOS" */;
 			buildPhases = (
+				DB04A8481D62182700A58CFF /* Lint */,
 				DB7E9FF41D41C8B9000046CF /* Sources */,
 				DB7E9FF51D41C8B9000046CF /* Frameworks */,
 				DB7E9FF61D41C8B9000046CF /* Headers */,
@@ -397,6 +398,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DB04A8481D62182700A58CFF /* Lint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Lint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DB7E9FF41D41C8B9000046CF /* Sources */ = {

@@ -24,7 +24,7 @@ public extension UIImage {
 			rectanglePath.stroke()
 		}
 	}
-	
+
 	public class func imageOfSimpleButton(_ frame: CGRect, radius: CGFloat = -1, strokeWidth: CGFloat = 1, strokeColor: UIColor? = UIColor.black, fillColor: UIColor? = nil) -> UIImage {
 		var r = radius
 		if r == -1 {
@@ -34,10 +34,10 @@ public extension UIImage {
 		let height = frame.height
 		UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, 0)
 		drawSimpleButton(CGRect(x: 0, y: 0, width: width, height: height), radius: r, strokeWidth: strokeWidth, strokeColor: strokeColor, fillColor: fillColor)
-		
+
 		let imageOfSimpleButton = UIGraphicsGetImageFromCurrentImageContext()?.resizableImage(withCapInsets: UIEdgeInsets(top: 0, left: r+2, bottom: 0, right: r+2), resizingMode: .stretch)
 		UIGraphicsEndImageContext()
-		
+
 		return imageOfSimpleButton!
 	}
 }

@@ -14,12 +14,12 @@ class ViewController: NSViewController {
 	override func viewDidLoad() {
         @IBOutlet weak var testLoggerButton: UIButton!
 		super.viewDidLoad()
-		
+
 		self.view.translatesAutoresizingMaskIntoConstraints = false
-		
+
 		NSLayoutConstraint(item: self.view, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 400).install()
 		NSLayoutConstraint(item: self.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 200).install()
-		
+
 		let connectBtn = NSButton()
 		connectBtn.setButtonType(.momentaryChange)
 		connectBtn.title = "Connect"
@@ -28,10 +28,10 @@ class ViewController: NSViewController {
 		connectBtn.translatesAutoresizingMaskIntoConstraints = false
 		connectBtn.sizeToFit()
 		self.view.addSubview(connectBtn)
-		
+
 		NSLayoutConstraint(item: connectBtn, attribute: .left, relatedBy: .equal, toItem: self.view, attribute: .left, multiplier: 1.0, constant: 10.0).install()
 		NSLayoutConstraint(item: connectBtn, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1.0, constant: 10.0).install()
-		
+
 		let disconnectBtn = NSButton()
 		disconnectBtn.setButtonType(.momentaryChange)
 		disconnectBtn.title = "Disonnect"
@@ -40,10 +40,10 @@ class ViewController: NSViewController {
 		disconnectBtn.translatesAutoresizingMaskIntoConstraints = false
 		disconnectBtn.sizeToFit()
 		self.view.addSubview(disconnectBtn)
-		
+
 		NSLayoutConstraint(item: disconnectBtn, attribute: .left, relatedBy: .equal, toItem: connectBtn, attribute: .right, multiplier: 1.0, constant: 10.0).install()
 		NSLayoutConstraint(item: disconnectBtn, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1.0, constant: 10.0).install()
-		
+
 		let logBtn = NSButton()
 		logBtn.setButtonType(.momentaryChange)
 		logBtn.title = "Log Message"
@@ -52,7 +52,7 @@ class ViewController: NSViewController {
 		logBtn.translatesAutoresizingMaskIntoConstraints = false
 		logBtn.sizeToFit()
 		self.view.addSubview(logBtn)
-		
+
 		NSLayoutConstraint(item: logBtn, attribute: .left, relatedBy: .equal, toItem: disconnectBtn, attribute: .right, multiplier: 1.0, constant: 10.0).install()
 		NSLayoutConstraint(item: logBtn, attribute: .top, relatedBy: .equal, toItem: self.view, attribute: .top, multiplier: 1.0, constant: 10.0).install()
 	}
@@ -62,16 +62,15 @@ class ViewController: NSViewController {
 		// Update the view, if already loaded.
 		}
 	}
-	
+
 	func connectAction(_ sender: AnyObject) {
 	}
-	
+
 	func disconnectAction(_ sender: AnyObject) {
 	}
-	
+
 	func logAction(_ sender: AnyObject) {
 		log.debug("got something to say?")
 	}
 
 }
-

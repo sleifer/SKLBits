@@ -18,9 +18,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
 		appDelegate = self
-		
+
 //		testRing()
-		
+
 		setupLogger()
 		testLogger()
 	}
@@ -30,16 +30,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func setupLogger() {
 		log.setup(.verbose, showThreadName: true)
-		
+
 		let logger: XCGNSLoggerDestination = XCGNSLoggerDestination(owner: log)
 		logger.outputLogLevel = .verbose
 		logger.offlineBehavior = .ringFile
 		if log.addLogDestination(logger) {
 		}
-		
+
 		logger.startBonjourBrowsing()
 	}
-	
+
 	func testLogger() {
 		log.verbose("A verbose message, usually useful when working on a specific problem")
 		log.debug("A debug message")
@@ -53,49 +53,49 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		let image = NSImage(named: "test")
 		log.info(image)
 		let data = NSMutableData()
-		let small: [UInt8] = [1,2,3,4,5,6,7,8,9]
+		let small: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 		data.append(UnsafePointer<Void>(small), length: small.count)
 		log.info(data)
 	}
-	
+
 	func testRing() {
 		let capacity: UInt32 = 80
 		let fm = FileManager.default
 		let urls = fm.urlsForDirectory(.desktopDirectory, inDomains: .userDomainMask)
 		let fileName = "ring.xcgnsring"
 		var url = urls[0]
-		try! url.appendPathComponent(fileName)
+		url.appendPathComponent(fileName)
 		let testFilePath = url.path!
-		
+
 		let buffer = RingBufferFile(capacity: capacity, filePath: testFilePath)
 		buffer.clear()
 		print(buffer)
-		buffer.push([1,2,3,4])
+		buffer.push([1, 2, 3, 4])
 		print(buffer)
-		buffer.push([5,6,7])
+		buffer.push([5, 6, 7])
 		print(buffer)
-		buffer.push([8,9])
+		buffer.push([8, 9])
 		print(buffer)
 		buffer.push([10])
 		print(buffer)
-		buffer.push([11,12,13,14,15])
+		buffer.push([11, 12, 13, 14, 15])
 		print(buffer)
-		buffer.push([16,17,18,19])
+		buffer.push([16, 17, 18, 19])
 		print(buffer)
-		buffer.push([20,21,22])
+		buffer.push([20, 21, 22])
 		print(buffer)
-		buffer.push([23,24])
+		buffer.push([23, 24])
 		print(buffer)
 		buffer.push([25])
 		print(buffer)
-		buffer.push([26,27,29,29,30])
+		buffer.push([26, 27, 29, 29, 30])
 		print(buffer)
-		buffer.push([31,32,33,34])
+		buffer.push([31, 32, 33, 34])
 		print(buffer)
 		// will wrap and drop oldest starting with next push
-		buffer.push([35,36,37])
+		buffer.push([35, 36, 37])
 		print(buffer)
-		buffer.push([38,39])
+		buffer.push([38, 39])
 		print(buffer)
 		buffer.push([40])
 		print(buffer)
@@ -108,5 +108,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		}
 	}
 }
-
-

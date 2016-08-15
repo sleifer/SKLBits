@@ -13,7 +13,7 @@
 #endif
 
 public extension CGRect {
-	
+
 	public func floored() -> CGRect {
 		var r: CGRect = self
 		r.origin.x = ceil(r.origin.x)
@@ -28,16 +28,16 @@ public extension CGRect {
 		}
 		return r
 	}
-	
+
 	mutating public func center(in rect: CGRect) {
 		self.position(in: rect, px: 0.5, py: 0.5)
 	}
-	
+
 	mutating public func position(in rect: CGRect, px: CGFloat, py: CGFloat) {
 		let offset = offsetToPosition(in: rect, px: px, py: py)
 		self = self.offsetBy(dx: offset.x, dy: offset.y)
 	}
-	
+
 	public func offsetToPosition(in rect: CGRect, px: CGFloat, py: CGFloat) -> CGPoint {
 		let xoff = floor((rect.width - self.width) * px)
 		let yoff = floor((rect.height - self.height) * py)
