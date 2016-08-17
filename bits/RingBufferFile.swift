@@ -46,14 +46,14 @@ public class RingBufferFile: CustomStringConvertible {
 	public init(capacity: UInt32, filePath: String) {
 		self.capacity = capacity
 		self.filePath = filePath
-		self.atomSize = UInt32(sizeof(UInt32.self))
+		self.atomSize = UInt32(MemoryLayout<UInt32>.size)
 		self.headerSize = self.atomSize * 6
 
 		loadOrCreate()
 	}
 
 	public var description: String {
-		return "\(self.dynamicType)\n  filePath: \(filePath)\n  capacity: \(capacity)\n  atomSize: \(atomSize)\n  headerSize: \(headerSize)\n  bufferStartIndex: \(bufferStartIndex)\n  bufferEndIndex: \(bufferEndIndex)\n  dataStartIndex: \(dataStartIndex)\n  dataEndIndex: \(dataEndIndex)\n  maxBufferEndIndex: \(maxBufferEndIndex)\n  itemCount: \(itemCount)\n---"
+		return "\(type(of: self))\n  filePath: \(filePath)\n  capacity: \(capacity)\n  atomSize: \(atomSize)\n  headerSize: \(headerSize)\n  bufferStartIndex: \(bufferStartIndex)\n  bufferEndIndex: \(bufferEndIndex)\n  dataStartIndex: \(dataStartIndex)\n  dataEndIndex: \(dataEndIndex)\n  maxBufferEndIndex: \(maxBufferEndIndex)\n  itemCount: \(itemCount)\n---"
 	}
 
 	public func push(_ entry: [UInt8]) {
@@ -196,10 +196,8 @@ public class RingBufferFile: CustomStringConvertible {
 
 	private func writeAtom(_ fp: FileHandle, atom: UInt32) {
 		var value = CFSwapInt32HostToBig(atom)
-		withUnsafeMutablePointer(&value, {
-			let data = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>($0), count: sizeof(value.dynamicType.self), deallocator: .none)
-			fp.write(data)
-		})
+		let data = Data(buffer: UnsafeBufferPointer<UInt32>(start: &value, count: 1))
+		fp.write(data)
 	}
 
 	private func readEntry(_ fp: FileHandle) -> [UInt8]? {
@@ -218,11 +216,9 @@ public class RingBufferFile: CustomStringConvertible {
 
 	private func writeEntry(_ fp: FileHandle, entry: [UInt8]) {
 		var value = CFSwapInt32HostToBig(UInt32(entry.count))
-		withUnsafeMutablePointer(&value, {
-			let data = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>($0), count: sizeof(value.dynamicType.self), deallocator: .none)
-			fp.write(data)
-		})
-		let data = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>(entry), count: entry.count, deallocator: .none)
+		let data1 = Data(buffer: UnsafeBufferPointer<UInt32>(start: &value, count: 1))
+		fp.write(data1)
+		let data = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>(mutating: entry), count: entry.count, deallocator: .none)
 		fp.write(data)
 	}
 

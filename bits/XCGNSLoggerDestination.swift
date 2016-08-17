@@ -14,27 +14,27 @@ import Foundation
 
 // Constants for the "part key" field
 let	partKeyMessageType: UInt8 = 0
-let	partKeyTimestampS: UInt8 = 1			// "seconds" component of timestamp
+let	partKeyTmestampS: UInt8 = 1			// "seconds" component of timestamp
 let partKeyTimestampMS: UInt8 = 2			// milliseconds component of timestamp (optional, mutually exclusive with partKeyTimestampUS)
 let partKeyTimestampUS: UInt8 = 3			// microseconds component of timestamp (optional, mutually exclusive with partKeyTimestampMS)
 let partKeyThreadID: UInt8 = 4
 let	partKeyTag: UInt8 = 5
 let	partKeyLevel: UInt8 = 6
 let	partKeyMessage: UInt8 = 7
-let partKeyImageWidth: UInt8 = 8			// messages containing an image should also contain a part with the image size
+let partKeyImagWidth: UInt8 = 8			// messages containing an image should also contain a part with the image size
 let partKeyImageHeight: UInt8 = 9			// (this is mainly for the desktop viewer to compute the cell size without having to immediately decode the image)
 let partKeyMessageSeq: UInt8 = 10			// the sequential number of this message which indicates the order in which messages are generated
 let partKeyFilename: UInt8 = 11			// when logging, message can contain a file name
 let partKeyLinenumber: UInt8 = 12			// as well as a line number
-let partKeyFunctionName: UInt8 = 13			// and a function or method name
+let partKeyFunctionname: UInt8 = 13			// and a function or method name
 
 // Constants for parts in logMsgTypeClientInfo
 let partKeyClientName: UInt8 = 20
 let partKeyClientVersion: UInt8 = 21
-let partKeyOsName: UInt8 = 22
-let partKeyOsVersion: UInt8 = 23
+let partKeyOSName: UInt8 = 22
+let partKeyOSVersion: UInt8 = 23
 let partKeyClientModel: UInt8 = 24			// For iPhone, device model (i.e 'iPhone', 'iPad', etc)
-let partKeyUniqueId: UInt8 = 25			// for remote device identification, part of logMsgTypeClientInfo
+let partKeyUniqueID: UInt8 = 25			// for remote device identification, part of logMsgTypeClientInfo
 
 // Area starting at which you may define your own constants
 let partKeyUserDefined: UInt8 = 100
@@ -93,7 +93,7 @@ extension Array {
 		self.insert(elem, at:lo) // not found, would be inserted at position lo
 	}
 
-}
+	}
 
 class MessageBuffer: CustomStringConvertible, Equatable {
 	let seq: Int32
@@ -120,7 +120,7 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 
 	init?(_ fp: FileHandle?) {
 		if let fp = fp {
-			let atomSize = sizeof(UInt32.self)
+			let atomSize = MemoryLayout<UInt32>.size
 			let seqData = fp.readData(ofLength: atomSize)
 			if seqData.count != atomSize {
 				return nil
@@ -155,7 +155,10 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 	}
 
 	init(_ raw: [UInt8]) {
-		self.seq = Int32(CFSwapInt32HostToBig(UnsafePointer<UInt32>(raw).pointee))
+		let seqExtract: UInt32 = UnsafePointer(raw).withMemoryRebound(to: UInt32.self, capacity: 1) {
+			return $0[0]
+		}
+		self.seq = Int32(CFSwapInt32HostToBig(seqExtract))
 		let data = raw[4..<raw.count]
 		self.buffer = [UInt8]()
 		self.buffer.append(contentsOf: data)
@@ -168,26 +171,27 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 	}
 
 	private func toByteArray<T>(_ value: T) -> [UInt8] {
-		var value = value
-		return withUnsafePointer(&value) {
-			Array(UnsafeBufferPointer(start: UnsafePointer<UInt8>($0), count: sizeof(T.self)))
+		var data = [UInt8](repeating: 0, count: MemoryLayout<T>.size)
+		data.withUnsafeMutableBufferPointer {
+			UnsafeMutableRawPointer($0.baseAddress!).storeBytes(of: value, as: T.self)
 		}
+		return data
 	}
 
 	private func append(_ value: UInt8) {
 		buffer.append(value)
 	}
 
-	private func append<C: Collection where C.Iterator.Element == UInt8>(_ newElements: C) {
+	private func append<C: Collection>(_ newElements: C) where C.Iterator.Element == UInt8 {
 		buffer.append(contentsOf: newElements)
 	}
 
-	private func append<S: Sequence where S.Iterator.Element == UInt8>(_ newElements: S) {
+	private func append<S: Sequence>(_ newElements: S) where S.Iterator.Element == UInt8 {
 		buffer.append(contentsOf: newElements)
 	}
 
 	func ptr() -> UnsafeMutablePointer<UInt8> {
-		return UnsafeMutablePointer<UInt8>(buffer)
+		return UnsafeMutablePointer<UInt8>(mutating: buffer)
 	}
 
 	func count() -> Int {
@@ -196,16 +200,18 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 
 	private func prepareForPart(ofSize byteCount: Int) {
 		var bytePtr = ptr()
-		let sizePtr = UnsafeMutablePointer<UInt32>(bytePtr)
-		let sizeValue = CFSwapInt32HostToBig(sizePtr.pointee)
-
-		sizePtr[0] = CFSwapInt32HostToBig(sizeValue + UInt32(byteCount))
+		UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+			let currentValue = CFSwapInt32HostToBig($0[0])
+			let newValue = currentValue + UInt32(byteCount)
+			$0[0] = CFSwapInt32HostToBig(newValue)
+		}
 
 		bytePtr = bytePtr.advanced(by: 4)
-		let partPtr = UnsafeMutablePointer<UInt16>(bytePtr)
-		let partValue = CFSwapInt16HostToBig(partPtr.pointee)
-
-		partPtr[0] = CFSwapInt16HostToBig(partValue + 1)
+		UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt16.self, capacity: 1) {
+			let currentValue = CFSwapInt16HostToBig($0[0])
+			let newValue = currentValue + 1
+			$0[0] = CFSwapInt16HostToBig(newValue)
+		}
 	}
 
 	func addInt16(_ value: UInt16, key: UInt8) {
@@ -245,15 +251,17 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 		}
 	}
 
-	func addData(_ value: NSData, key: UInt8, type: UInt8) {
-		let len = value.length
+	func addData(_ value: Data, key: UInt8, type: UInt8) {
+		let len = value.count
 
 		prepareForPart(ofSize: 6 + len)
 		append(key)
 		append(type)
 		append(toByteArray(CFSwapInt32HostToBig(UInt32(len))))
 		if len > 0 {
-			append(UnsafeBufferPointer(start: UnsafePointer<UInt8>(value.bytes), count: len))
+			value.withUnsafeBytes({ (uptr: UnsafePointer<UInt8>) -> Void in
+				append(UnsafeBufferPointer(start: uptr, count: len))
+			})
 		}
 	}
 
@@ -263,10 +271,10 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 		let us = floor((t - s) * 1000000)
 
 		#if __LP64__
-			addInt64(s, key: partKeyTimestampS)
+			addInt64(s, key: partKeyTmestampS)
 			addInt64(us, key: partKeyTimestampUS)
 		#else
-			addInt32(UInt32(s), key: partKeyTimestampS)
+			addInt32(UInt32(s), key: partKeyTmestampS)
 			addInt32(UInt32(us), key: partKeyTimestampUS)
 		#endif
 	}
@@ -288,7 +296,7 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 	}
 
 	var description: String {
-		return "\(self.dynamicType), seq #\(seq)"
+		return "\(type(of: self)), seq #\(seq)"
 	}
 }
 
@@ -426,12 +434,12 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			}
 		} else {
 			if let txtData = service.txtRecordData() {
-				if let txtDict = CFNetServiceCreateDictionaryWithTXTData(nil, txtData)?.takeUnretainedValue() {
+				// swiftlint:disable:next force_cast
+				if let txtDict = CFNetServiceCreateDictionaryWithTXTData(nil, txtData as CFData) as! CFDictionary? {
 					var mismatch: Bool = true
-					if let value = CFDictionaryGetValue(txtDict, "filterClients") as? CFTypeRef {
+					if let value = CFDictionaryGetValue(txtDict, "filterClients") as CFTypeRef? {
 						// swiftlint:disable:next force_cast
-						let valueString = value as! CFString
-						if CFGetTypeID(value) == CFStringGetTypeID() && CFStringCompare(valueString, "1", CFStringCompareFlags(rawValue: CFOptionFlags(0))) == .compareEqualTo {
+						if CFGetTypeID(value) == CFStringGetTypeID() && CFStringCompare(value as! CFString, "1" as CFString!, CFStringCompareFlags(rawValue: CFOptionFlags(0))) == .compareEqualTo {
 							mismatch = false
 						}
 					}
@@ -463,7 +471,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		}
 
 		if let service = self.service {
-			var outputStream: NSOutputStream?
+			var outputStream: OutputStream?
 			service.getInputStream(nil, outputStream: &outputStream)
 			self.logStream = outputStream
 
@@ -472,7 +480,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 
 			let info = Unmanaged.passUnretained(self).toOpaque()
 			var context: CFStreamClientContext = CFStreamClientContext(version: 0, info: info, retain: nil, release: nil, copyDescription: nil)
-			CFWriteStreamSetClient(self.logStream, options, { (ws: CFWriteStream?, event: CFStreamEventType, info: UnsafeMutablePointer<Void>?) in
+			CFWriteStreamSetClient(self.logStream, options, { (_ ws: CFWriteStream?, _ event: CFStreamEventType, _ info: UnsafeMutableRawPointer?) in
 				let me = Unmanaged<XCGNSLoggerDestination>.fromOpaque(info!).takeUnretainedValue()
 				if let logStream = me.logStream, let ws = ws, ws == logStream {
 					switch event {
@@ -584,9 +592,9 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			if Thread.isMainThread || Thread.isMultiThreaded() {
 				autoreleasepool {
 					let device = UIDevice.current
-					encoder.addString(device.name, key: partKeyUniqueId)
-					encoder.addString(device.systemVersion, key: partKeyOsVersion)
-					encoder.addString(device.systemName, key: partKeyOsName)
+					encoder.addString(device.name, key: partKeyUniqueID)
+					encoder.addString(device.systemVersion, key: partKeyOSVersion)
+					encoder.addString(device.systemName, key: partKeyOSName)
 					encoder.addString(device.model, key: partKeyClientModel)
 				}
 			}
@@ -615,8 +623,8 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 				osVersion = ""
 			}
 
-			encoder.addString(osVersion!, key: partKeyOsVersion)
-			encoder.addString(osName!, key: partKeyOsName)
+			encoder.addString(osVersion!, key: partKeyOSVersion)
+			encoder.addString(osName!, key: partKeyOSName)
 			encoder.addString("<unknown>", key: partKeyClientModel)
 		#endif
 
@@ -654,10 +662,8 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			let fp = FileHandle(forWritingAtPath: runFilePath)
 			fp?.seekToEndOfFile()
 			var seq = CFSwapInt32HostToBig(UInt32(encoder.seq))
-			withUnsafeMutablePointer(&seq, {
-				let data1 = Data(bytesNoCopy: UnsafeMutablePointer<UInt8>($0), count: sizeof(seq.dynamicType.self), deallocator: .none)
-				fp?.write(data1)
-			})
+			let data1 = Data(buffer: UnsafeBufferPointer<UInt32>(start: &seq, count: 1))
+			fp?.write(data1)
 			let data2 = Data(bytesNoCopy: encoder.ptr(), count: encoder.count(), deallocator: .none)
 			fp?.write(data2)
 			fp?.closeFile()
@@ -673,7 +679,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			encoder = MessageBuffer(fp)
 			if let encoder = encoder {
 				self.runFileCount = self.runFileCount - 1
-				self.runFileIndex = self.runFileIndex + UInt64(encoder.count() + sizeof(encoder.seq.dynamicType.self))
+				self.runFileIndex = self.runFileIndex + UInt64(encoder.count() + MemoryLayout<Int32>.size)
 				if self.runFileCount == 0 {
 					fp?.truncateFile(atOffset: 0)
 				}
@@ -775,7 +781,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			encoder.addInt32(UInt32(lineNumber), key: partKeyLinenumber)
 		}
 		if let functionName = functionName, functionName.characters.count > 0 {
-			encoder.addString(functionName, key: partKeyFunctionName)
+			encoder.addString(functionName, key: partKeyFunctionname)
 		}
 		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: partKeyMessage)
@@ -834,7 +840,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			encoder.addInt32(UInt32(lineNumber), key: partKeyLinenumber)
 		}
 		if let functionName = functionName, functionName.characters.count > 0 {
-			encoder.addString(functionName, key: partKeyFunctionName)
+			encoder.addString(functionName, key: partKeyFunctionname)
 		}
 		if let image = image {
 			var data: Data?
@@ -854,7 +860,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			#endif
 
 			if let data = data {
-				encoder.addInt32(width, key: partKeyImageWidth)
+				encoder.addInt32(width, key: partKeyImagWidth)
 				encoder.addInt32(height, key: partKeyImageHeight)
 				encoder.addData(data, key: partKeyMessage, type: partTypeImage)
 			}
@@ -862,7 +868,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		pushMessageToQueue(encoder)
 	}
 
-	func logData(_ data: NSData?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
+	func logData(_ data: Data?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
 		let seq = OSAtomicIncrement32Barrier(&messageSeq)
 		let encoder = MessageBuffer(seq)
 		encoder.addInt32(UInt32(logMsgTypeLog), key: partKeyMessageType)
@@ -879,7 +885,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			encoder.addInt32(UInt32(lineNumber), key: partKeyLinenumber)
 		}
 		if let functionName = functionName, functionName.characters.count > 0 {
-			encoder.addString(functionName, key: partKeyFunctionName)
+			encoder.addString(functionName, key: partKeyFunctionname)
 		}
 		if let data = data {
 			encoder.addData(data, key: partKeyMessage, type: partTypeBinary)
@@ -939,7 +945,7 @@ extension XCGLogger {
 		}
 	}
 
-	func onAllNSLogger(_ level: XCGLogger.LogLevel, closure: @noescape (XCGNSLoggerDestination) -> Void) {
+	func onAllNSLogger(_ level: XCGLogger.LogLevel, closure: (XCGNSLoggerDestination) -> Void) {
 		for logDestination in self.logDestinations {
 			if logDestination.isEnabledForLogLevel(level) {
 				if let logger = logDestination as? XCGNSLoggerDestination {
@@ -949,7 +955,7 @@ extension XCGLogger {
 		}
 	}
 
-	func onAllNonNSLogger(_ level: XCGLogger.LogLevel, closure: @noescape (XCGLogDestinationProtocol) -> Void) {
+	func onAllNonNSLogger(_ level: XCGLogger.LogLevel, closure: (XCGLogDestinationProtocol) -> Void) {
 		for logDestination in self.logDestinations {
 			if logDestination.isEnabledForLogLevel(level) {
 				if logDestination is XCGNSLoggerDestination == false {
@@ -1017,7 +1023,7 @@ extension XCGLogger {
 		self.defaultInstance().verbose(closure())
 	}
 
-	public class func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public class func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		self.defaultInstance().verbose(closure())
 	}
 
@@ -1033,7 +1039,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		if let value = closure() {
 			onAllNSLogger(.verbose) { logger in
 				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
@@ -1045,15 +1051,15 @@ extension XCGLogger {
 		}
 	}
 
-	public class func verbose( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public class func verbose( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		self.defaultInstance().verbose(closure())
 	}
 
-	public class func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public class func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		self.defaultInstance().verbose(closure())
 	}
 
-	public func verbose( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public func verbose( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		if let value = closure() {
 			onAllNSLogger(.verbose) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
@@ -1065,7 +1071,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public func verbose(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		if let value = closure() {
 			onAllNSLogger(.verbose) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.verbose))
@@ -1083,7 +1089,7 @@ extension XCGLogger {
 		self.defaultInstance().debug(closure())
 	}
 
-	public class func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public class func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		self.defaultInstance().debug(closure())
 	}
 
@@ -1099,7 +1105,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		if let value = closure() {
 			onAllNSLogger(.debug) { logger in
 				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
@@ -1111,15 +1117,15 @@ extension XCGLogger {
 		}
 	}
 
-	public class func debug( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public class func debug( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		self.defaultInstance().debug(closure())
 	}
 
-	public class func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public class func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		self.defaultInstance().debug(closure())
 	}
 
-	public func debug( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public func debug( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		if let value = closure() {
 			onAllNSLogger(.debug) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
@@ -1131,7 +1137,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public func debug(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		if let value = closure() {
 			onAllNSLogger(.debug) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.debug))
@@ -1149,7 +1155,7 @@ extension XCGLogger {
 		self.defaultInstance().info(closure())
 	}
 
-	public class func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public class func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		self.defaultInstance().info(closure())
 	}
 
@@ -1165,7 +1171,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		if let value = closure() {
 			onAllNSLogger(.info) { logger in
 				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
@@ -1177,15 +1183,15 @@ extension XCGLogger {
 		}
 	}
 
-	public class func info( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public class func info( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		self.defaultInstance().info(closure())
 	}
 
-	public class func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public class func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		self.defaultInstance().info(closure())
 	}
 
-	public func info( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public func info( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		if let value = closure() {
 			onAllNSLogger(.info) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
@@ -1197,7 +1203,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public func info(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		if let value = closure() {
 			onAllNSLogger(.info) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.info))
@@ -1215,7 +1221,7 @@ extension XCGLogger {
 		self.defaultInstance().warning(closure())
 	}
 
-	public class func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public class func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		self.defaultInstance().warning(closure())
 	}
 
@@ -1231,7 +1237,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		if let value = closure() {
 			onAllNSLogger(.warning) { logger in
 				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
@@ -1243,15 +1249,15 @@ extension XCGLogger {
 		}
 	}
 
-	public class func warning( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public class func warning( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		self.defaultInstance().warning(closure())
 	}
 
-	public class func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public class func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		self.defaultInstance().warning(closure())
 	}
 
-	public func warning( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public func warning( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		if let value = closure() {
 			onAllNSLogger(.warning) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
@@ -1263,7 +1269,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public func warning(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		if let value = closure() {
 			onAllNSLogger(.warning) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.warning))
@@ -1281,7 +1287,7 @@ extension XCGLogger {
 		self.defaultInstance().error(closure())
 	}
 
-	public class func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public class func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		self.defaultInstance().error(closure())
 	}
 
@@ -1297,7 +1303,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		if let value = closure() {
 			onAllNSLogger(.error) { logger in
 				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
@@ -1309,15 +1315,15 @@ extension XCGLogger {
 		}
 	}
 
-	public class func error( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public class func error( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		self.defaultInstance().error(closure())
 	}
 
-	public class func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public class func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		self.defaultInstance().error(closure())
 	}
 
-	public func error( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public func error( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		if let value = closure() {
 			onAllNSLogger(.error) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
@@ -1329,7 +1335,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public func error(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		if let value = closure() {
 			onAllNSLogger(.error) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.error))
@@ -1347,7 +1353,7 @@ extension XCGLogger {
 		self.defaultInstance().severe(closure())
 	}
 
-	public class func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public class func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		self.defaultInstance().severe(closure())
 	}
 
@@ -1363,7 +1369,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> ImageType?) {
+	public func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> ImageType?) {
 		if let value = closure() {
 			onAllNSLogger(.severe) { logger in
 				logger.logImage(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
@@ -1375,15 +1381,15 @@ extension XCGLogger {
 		}
 	}
 
-	public class func severe( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public class func severe( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		self.defaultInstance().severe(closure())
 	}
 
-	public class func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public class func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		self.defaultInstance().severe(closure())
 	}
 
-	public func severe( _ closure: @autoclosure () -> NSData?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
+	public func severe( _ closure: @autoclosure () -> Data?, functionName: String = #function, fileName: String = #file, lineNumber: Int = #line) {
 		if let value = closure() {
 			onAllNSLogger(.severe) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
@@ -1395,7 +1401,7 @@ extension XCGLogger {
 		}
 	}
 
-	public func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: @noescape () -> NSData?) {
+	public func severe(_ functionName: String = #function, fileName: String = #file, lineNumber: Int = #line, closure: () -> Data?) {
 		if let value = closure() {
 			onAllNSLogger(.severe) { logger in
 				logger.logData(value, filename: fileName, lineNumber: lineNumber, functionName: functionName, domain: nil, level: convertLogLevel(.severe))
@@ -1407,6 +1413,6 @@ extension XCGLogger {
 		}
 	}
 
-}
+	}
 
 #endif

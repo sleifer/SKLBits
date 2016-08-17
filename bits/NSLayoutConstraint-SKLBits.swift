@@ -161,6 +161,20 @@ public extension ViewType {
 		return constraints
 	}
 
+	public func referencingConstraint(withIdentifier identifier: String) -> NSLayoutConstraint? {
+		let constraints = self.referencingConstraints()
+		let slidables = constraints.filter { (item) -> Bool in
+			if item.identifier == identifier {
+				return true
+			}
+			return false
+		}
+		if slidables.count > 0 {
+			return slidables[0]
+		}
+		return nil
+	}
+
 	public func isAncestorOf(_ view: ViewType?) -> Bool {
 		if let view = view {
 			return view.allSuperviews().contains(self)
