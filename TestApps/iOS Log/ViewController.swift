@@ -55,6 +55,16 @@ class ViewController: UIViewController {
 		visibleCollection.installConstraints()
 	}
 
+	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
+
+		if let curcon = UIApplication.shared.keyWindow?.visibleViewController() {
+			log.debug("\(curcon)")
+		} else {
+			log.debug("Can't find visibleViewController")
+		}
+	}
+
 	func toggleHidden() {
 		if layoutAndHiddenView2.isHidden == false {
 			layoutAndHiddenView2.isHidden = true
@@ -114,9 +124,9 @@ class ViewController: UIViewController {
 		log.severe("A severe error occurred, we are likely about to crash now")
 		let image = UIImage(named: "test")
 		log.info(image)
-		let data = NSMutableData()
+		var data = Data()
 		let small: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-		data.append(UnsafePointer<Void>(small), length: small.count)
+		data.append(UnsafePointer(small), count: small.count)
 		log.info(data)
 	}
 
