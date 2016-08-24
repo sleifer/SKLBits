@@ -54,7 +54,7 @@ public extension NSLayoutConstraint {
 		return false
 	}
 
-	public func install() {
+	@discardableResult public func install() -> NSLayoutConstraint {
 		let first = self.firstItem as? ViewType
 		let second = self.secondItem as? ViewType
 		let target = first?.nearestCommonAncestor(second)
@@ -68,17 +68,20 @@ public extension NSLayoutConstraint {
 
 			target?.addConstraint(self)
 		}
+		return self
 	}
 
-	public func installWith(priority: Float) {
+	@discardableResult public func installWith(priority: Float) -> NSLayoutConstraint {
 		self.priority = priority
 		self.install()
+		return self
 	}
 
-	public func remove() {
+	@discardableResult public func remove() -> NSLayoutConstraint {
 		if let owner = owner() {
 			owner.removeConstraint(self)
 		}
+		return self
 	}
 
 	public func likelyOwner() -> ViewType? {
