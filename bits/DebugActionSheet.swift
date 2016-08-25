@@ -8,6 +8,22 @@
 
 import UIKit
 
+private var debugActionSheetsKey: UInt8 = 0
+
+private extension UIView {
+
+	var debugActionSheets: NSMutableArray {
+		get {
+			return associatedObject(self, key: &debugActionSheetsKey) {
+				return NSMutableArray()
+			}
+		}
+		set {
+			associateObject(self, key: &debugActionSheetsKey, value: newValue)
+		}
+	}
+}
+
 public typealias DebugActionSheetHandler = (Void) -> (Void)
 
 struct DebugActionSheetAction {
@@ -31,15 +47,24 @@ public class DebugActionSheet {
 		tap.numberOfTapsRequired = 1
 	}
 
+	public class func from(_ view: UIView) -> [DebugActionSheet] {
+		if let items = view.debugActionSheets as NSArray as? [DebugActionSheet] {
+			return items
+		}
+		return [DebugActionSheet]()
+	}
+
 	public func attach(to view: UIView) {
 		detachFromView()
 		self.view = view
+		view.debugActionSheets.add(self)
 		view.addGestureRecognizer(gesture)
 	}
 
 	public func detachFromView() {
 		if let oldView = self.view {
 			oldView.removeGestureRecognizer(gesture)
+			oldView.debugActionSheets.remove(self)
 			self.view = nil
 		}
 	}

@@ -21,7 +21,6 @@ class ViewController: UIViewController {
 
 	var auth: PrivacyAuthorization?
 
-	var debug: DebugActionSheet?
 
 	var visibleCollection: [NSLayoutConstraint] = []
 
@@ -34,12 +33,12 @@ class ViewController: UIViewController {
 		testRingFileButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 		testPrivacyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 
-		debug = DebugActionSheet()
-		debug?.attach(to: self.view)
-		debug?.addAction("Alpha", handler: {
+		let debug = DebugActionSheet()
+		debug.attach(to: self.view)
+		debug.addAction("Alpha", handler: {
 			print("GOT Alpha")
 		})
-		debug?.addAction("Bravo", handler: {
+		debug.addAction("Bravo", handler: {
 			print("GOT Bravo")
 		})
 
