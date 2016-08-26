@@ -97,6 +97,6 @@ public class DebugActionSheet {
 		let action = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
 		alert.addAction(action)
 
-		UIApplication.shared.keyWindow?.rootViewController?.present(alert, animated: true, completion: nil)
+		UIApplication.shared.keyWindow?.visibleViewController()?.present(alert, animated: true, completion: nil)
 	}
 }
