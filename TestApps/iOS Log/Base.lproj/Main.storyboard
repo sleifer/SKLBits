@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11191" systemVersion="16A286a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16A313a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11156"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -64,28 +64,49 @@
                                     <constraint firstAttribute="height" constant="16" id="UFV-dD-eNP"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qxk-5L-CCp">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="d97-aL-Tkk"/>
+                                </constraints>
+                                <state key="normal" title="Test Logger Ring Issue"/>
+                                <connections>
+                                    <action selector="testLoggerWithRingIssue" destination="BYZ-38-t0r" eventType="touchUpInside" id="4jZ-yD-ZdS"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="-" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hyd-me-S6o">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="X04-oQ-IXN" firstAttribute="top" secondItem="hyd-me-S6o" secondAttribute="bottom" constant="20" id="4Bz-sK-YQn"/>
+                            <constraint firstItem="Qxk-5L-CCp" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="top" id="4zK-LI-jGk"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="YaU-uH-Vfy" secondAttribute="leading" id="6bs-Wi-rp7"/>
                             <constraint firstAttribute="leadingMargin" secondItem="Rys-A5-Ip3" secondAttribute="leading" id="E7a-xi-7n1"/>
-                            <constraint firstItem="YaU-uH-Vfy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="FUW-Pt-qFX"/>
-                            <constraint firstItem="5En-er-gIS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JZk-ZW-Tf1"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="hyd-me-S6o" secondAttribute="leading" id="F3U-7T-hIQ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Qxk-5L-CCp" secondAttribute="trailing" id="NBg-2C-X1B"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="X04-oQ-IXN" secondAttribute="bottom" constant="20" id="S0Z-qy-4N6"/>
-                            <constraint firstItem="vYw-9f-FWo" firstAttribute="top" secondItem="YaU-uH-Vfy" secondAttribute="bottom" constant="30" id="Xed-x9-jD1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="hyd-me-S6o" secondAttribute="trailing" id="Vxe-Jn-Bx9"/>
+                            <constraint firstItem="vYw-9f-FWo" firstAttribute="top" secondItem="YaU-uH-Vfy" secondAttribute="bottom" constant="15" id="Xed-x9-jD1"/>
                             <constraint firstItem="Rys-A5-Ip3" firstAttribute="top" secondItem="vYw-9f-FWo" secondAttribute="bottom" constant="30" id="Zfv-Vy-ubL"/>
                             <constraint firstAttribute="trailingMargin" secondItem="f4d-Q2-Gie" secondAttribute="trailing" id="cQ8-bv-coO"/>
-                            <constraint firstItem="vYw-9f-FWo" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fM6-5K-rzs"/>
-                            <constraint firstItem="YaU-uH-Vfy" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="bottom" constant="30" id="iG1-VX-Tox"/>
+                            <constraint firstItem="YaU-uH-Vfy" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="bottom" constant="15" id="iG1-VX-Tox"/>
                             <constraint firstItem="f4d-Q2-Gie" firstAttribute="centerY" secondItem="Rys-A5-Ip3" secondAttribute="centerY" id="lcI-gs-44V"/>
                             <constraint firstItem="X04-oQ-IXN" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="nXz-YG-3ec"/>
                             <constraint firstItem="f4d-Q2-Gie" firstAttribute="leading" secondItem="Rys-A5-Ip3" secondAttribute="trailing" constant="8" placeholder="YES" id="ogt-if-2hW"/>
                             <constraint firstItem="5En-er-gIS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="p5Y-dX-u6b"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="5En-er-gIS" secondAttribute="leading" id="r8r-As-OSF"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="vYw-9f-FWo" secondAttribute="leading" id="zyk-M6-UVP"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="feedbackLabel" destination="hyd-me-S6o" id="Y4B-5n-TDn"/>
                         <outlet property="layoutAndHiddenView1" destination="Rys-A5-Ip3" id="Bc5-ud-5ts"/>
                         <outlet property="layoutAndHiddenView2" destination="f4d-Q2-Gie" id="Imv-f8-S9i"/>
                         <outlet property="testLoggerButton" destination="5En-er-gIS" id="lgv-xh-hZy"/>
+                        <outlet property="testLoggerRingIssueButton" destination="Qxk-5L-CCp" id="V9M-oh-CTh"/>
                         <outlet property="testPrivacyButton" destination="vYw-9f-FWo" id="b5Y-7O-QfD"/>
                         <outlet property="testRingFileButton" destination="YaU-uH-Vfy" id="ASa-mu-G39"/>
                     </connections>

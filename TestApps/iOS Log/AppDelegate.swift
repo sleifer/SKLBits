@@ -10,6 +10,7 @@ import UIKit
 import SKLBits
 
 let log = XCGLogger.defaultInstance()
+var logger: XCGNSLoggerDestination?
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,13 +27,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func setupLogger() {
 		log.setup(.verbose, showThreadName: true)
 
-		let logger: XCGNSLoggerDestination = XCGNSLoggerDestination(owner: log)
-		logger.outputLogLevel = .verbose
-		logger.offlineBehavior = .ringFile
-		if log.addLogDestination(logger) {
-		}
+		logger = XCGNSLoggerDestination(owner: log)
+		if let logger = logger {
+			logger.outputLogLevel = .verbose
+			logger.offlineBehavior = .ringFile
+			if log.addLogDestination(logger) {
+			}
 
-		logger.startBonjourBrowsing()
+			logger.startBonjourBrowsing()
+		}
 	}
 
 	func applicationWillResignActive(_ application: UIApplication) {

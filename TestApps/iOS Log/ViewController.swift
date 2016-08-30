@@ -15,12 +15,16 @@ class ViewController: UIViewController {
 	@IBOutlet weak var testLoggerButton: UIButton!
 	@IBOutlet weak var testRingFileButton: UIButton!
 	@IBOutlet weak var testPrivacyButton: UIButton!
+	@IBOutlet weak var testLoggerRingIssueButton: UIButton!
+
+	@IBOutlet weak var feedbackLabel: UILabel!
 
 	@IBOutlet weak var layoutAndHiddenView1: UIView!
 	@IBOutlet weak var layoutAndHiddenView2: UIView!
 
 	var auth: PrivacyAuthorization?
 
+	let semaphore = DispatchSemaphore(value: 0)
 
 	var visibleCollection: [NSLayoutConstraint] = []
 
@@ -32,6 +36,7 @@ class ViewController: UIViewController {
 		testLoggerButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 		testRingFileButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 		testPrivacyButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+		testLoggerRingIssueButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
 
 		let debug = DebugActionSheet()
 		debug.attach(to: self.view)
@@ -62,6 +67,18 @@ class ViewController: UIViewController {
 		} else {
 			log.debug("Can't find visibleViewController")
 		}
+
+		NotificationCenter.default.addObserver(self, selector: #selector(connectChanged(_:)), name: XGNSLoggerNotification.ConnectChanged, object: nil)
+	}
+
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+
+		NotificationCenter.default.removeObserver(self)
+	}
+
+	func connectChanged(_ note: Notification) {
+		semaphore.signal()
 	}
 
 	func toggleHidden() {
@@ -86,6 +103,9 @@ class ViewController: UIViewController {
 
 			let img3 = UIImage.imageOfSimpleButton(testPrivacyButton.bounds, radius: 6)
 			testPrivacyButton.setBackgroundImage(img3, for: [])
+
+			let img4 = UIImage.imageOfSimpleButton(testLoggerRingIssueButton.bounds, radius: 6)
+			testLoggerRingIssueButton.setBackgroundImage(img4, for: [])
 		}
 	}
 
@@ -132,8 +152,8 @@ class ViewController: UIViewController {
 	@IBAction func testRing() {
 		let capacity: UInt32 = 80
 		let fm = FileManager.default
-		let urls = fm.urls(for: .desktopDirectory, in: .userDomainMask)
-		let fileName = "ring.xcgnsring"
+		let urls = fm.urls(for: .cachesDirectory, in: .userDomainMask)
+		let fileName = "testring.xcgnsring"
 		var url = urls[0]
 		url.appendPathComponent(fileName)
 		let testFilePath = url.path
@@ -177,6 +197,68 @@ class ViewController: UIViewController {
 			print("pop: ", buffer.pop())
 			print(buffer)
 		}
+	}
+
+	func connect() {
+		if let logger = logger {
+			if logger.isConnected == false {
+				logger.startBonjourBrowsing()
+				semaphore.wait()
+			}
+		}
+	}
+
+	func disconnect() {
+		if let logger = logger {
+			if logger.isConnected == true {
+				logger.disconnect()
+				semaphore.wait()
+			}
+		}
+	}
+
+	func resetSeq() {
+		if let logger = logger {
+			logger.resetSeq()
+		}
+	}
+
+	@IBAction func testLoggerWithRingIssue() {
+		feedbackLabel.text = "Starting Ring Buffer Test"
+
+		log.debug("alpha")
+		usleep(10000)
+		log.debug("bravo")
+		usleep(10000)
+		log.debug("charlie")
+		usleep(10000)
+
+		disconnect()
+
+		resetSeq()
+		log.debug("delta")
+		usleep(10000)
+		log.debug("echo")
+		usleep(10000)
+		log.debug("foxtrot")
+		usleep(10000)
+
+		resetSeq()
+		log.debug("golf")
+		usleep(10000)
+		log.debug("hotel")
+		usleep(10000)
+		log.debug("india")
+		usleep(10000)
+
+		connect()
+		log.debug("juliet")
+		usleep(10000)
+		log.debug("kilo")
+		usleep(10000)
+		log.debug("lima")
+
+		feedbackLabel.text = "Ring Buffer Test Complete"
 	}
 
 }
