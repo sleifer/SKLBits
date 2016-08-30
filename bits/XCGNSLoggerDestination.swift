@@ -14,7 +14,7 @@ import Foundation
 
 // Constants for the "part key" field
 let	partKeyMessageType: UInt8 = 0
-let	partKeyTmestampS: UInt8 = 1			// "seconds" component of timestamp
+let	partKeyTimestampS: UInt8 = 1			// "seconds" component of timestamp
 let partKeyTimestampMS: UInt8 = 2			// milliseconds component of timestamp (optional, mutually exclusive with partKeyTimestampUS)
 let partKeyTimestampUS: UInt8 = 3			// microseconds component of timestamp (optional, mutually exclusive with partKeyTimestampMS)
 let partKeyThreadID: UInt8 = 4
@@ -100,11 +100,17 @@ extension Array {
 	}
 
 class MessageBuffer: CustomStringConvertible, Equatable {
-	let seq: Int32
+	private(set) var seq: Int32
+	private(set) var timestamp: CFAbsoluteTime
 	private var buffer: [UInt8]
 
-	init(_ seq: Int32) {
-		self.seq = seq
+	init(_ leader: Bool = false) {
+		if leader == true {
+			self.seq = 0
+		} else {
+			self.seq = 1
+		}
+		self.timestamp = CFAbsoluteTimeGetCurrent()
 		self.buffer = [UInt8]()
 
 		if seq == 0 {
@@ -133,6 +139,7 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 				return Int32(CFSwapInt32HostToBig(bytes.pointee))
 			}
 			self.seq = seqValue
+			self.timestamp = 0
 			self.buffer = [UInt8]()
 
 			let lenData = fp.readData(ofLength: atomSize)
@@ -153,6 +160,8 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 			packetData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
 				append(UnsafeBufferPointer(start: bytes, count: Int(lenValue)))
 			}
+
+			extractTimestamp()
 		} else {
 			return nil
 		}
@@ -163,9 +172,108 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 			return $0[0]
 		}
 		self.seq = Int32(CFSwapInt32HostToBig(seqExtract))
+		self.timestamp = 0
 		let data = raw[4..<raw.count]
 		self.buffer = [UInt8]()
 		self.buffer.append(contentsOf: data)
+
+		extractTimestamp()
+	}
+
+	private func extractTimestamp() {
+		var bytePtr = ptr()
+		bytePtr = bytePtr.advanced(by: 4)
+		var partCount: UInt16 = 0
+		UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt16.self, capacity: 1) {
+			partCount = CFSwapInt16HostToBig($0[0])
+		}
+		if partCount >= 3 {
+			bytePtr = bytePtr.advanced(by: 2)
+
+			if bytePtr[0] == partKeyMessageSeq && bytePtr[1] == partTypeInt32 {
+				bytePtr = bytePtr.advanced(by: 6)
+			}
+
+			var s: Double = 0
+			var us: Double = 0
+
+#if __LP64__
+			if bytePtr[0] == partKeyTimestampS && bytePtr[1] == partTypeInt64 {
+				bytePtr = bytePtr.advanced(by: 2)
+				var high: UInt32 = 0
+				var low: UInt32 = 0
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					high = CFSwapInt32HostToBig($0[0])
+				}
+				bytePtr = bytePtr.advanced(by: 4)
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					low = CFSwapInt32HostToBig($0[0])
+				}
+				bytePtr = bytePtr.advanced(by: 4)
+				let u64: UInt64 = (UInt64(high) << 32) + UInt64(low)
+				s = Double(u64)
+			}
+#else
+			if bytePtr[0] == partKeyTimestampS && bytePtr[1] == partTypeInt32 {
+				bytePtr = bytePtr.advanced(by: 2)
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					s = Double(CFSwapInt32HostToBig($0[0]))
+				}
+				bytePtr = bytePtr.advanced(by: 4)
+			}
+#endif
+
+#if __LP64__
+			if bytePtr[0] == partKeyTimestampUS && bytePtr[1] == partTypeInt64 {
+				bytePtr = bytePtr.advanced(by: 2)
+				var high: UInt32 = 0
+				var low: UInt32 = 0
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					high = CFSwapInt32HostToBig($0[0])
+				}
+				bytePtr = bytePtr.advanced(by: 4)
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					low = CFSwapInt32HostToBig($0[0])
+				}
+				bytePtr = bytePtr.advanced(by: 4)
+				let u64: UInt64 = (UInt64(high) << 32) + UInt64(low)
+				us = Double(u64)
+			}
+#else
+			if bytePtr[0] == partKeyTimestampUS && bytePtr[1] == partTypeInt32 {
+				bytePtr = bytePtr.advanced(by: 2)
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					us = Double(CFSwapInt32HostToBig($0[0])) / 1000000.0
+				}
+				bytePtr = bytePtr.advanced(by: 4)
+			}
+#endif
+
+			self.timestamp = s + us
+		}
+	}
+
+	func updateSeq(_ seq: Int32) {
+		self.seq = seq
+
+		var bytePtr = ptr()
+		bytePtr = bytePtr.advanced(by: 4)
+		var partCount: UInt16 = 0
+		UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt16.self, capacity: 1) {
+			partCount = CFSwapInt16HostToBig($0[0])
+		}
+		if partCount >= 2 {
+			bytePtr = bytePtr.advanced(by: 2)
+
+			if bytePtr[0] == partKeyMessageSeq && bytePtr[1] == partTypeInt32 {
+				bytePtr = bytePtr.advanced(by: 2)
+
+				UnsafeMutablePointer(bytePtr).withMemoryRebound(to: UInt32.self, capacity: 1) {
+					let newValue = UInt32(seq)
+					$0[0] = CFSwapInt32HostToBig(newValue)
+				}
+			}
+		}
 	}
 
 	func raw() -> [UInt8] {
@@ -270,15 +378,15 @@ class MessageBuffer: CustomStringConvertible, Equatable {
 	}
 
 	func addTimestamp() {
-		let t = CFAbsoluteTimeGetCurrent()
+		let t = self.timestamp
 		let s = floor(t)
 		let us = floor((t - s) * 1000000)
 
 		#if __LP64__
-			addInt64(s, key: partKeyTmestampS)
+			addInt64(s, key: partKeyTimestampS)
 			addInt64(us, key: partKeyTimestampUS)
 		#else
-			addInt32(UInt32(s), key: partKeyTmestampS)
+			addInt32(UInt32(s), key: partKeyTimestampS)
 			addInt32(UInt32(us), key: partKeyTimestampUS)
 		#endif
 	}
@@ -527,6 +635,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 						print("Logger stream end encountered")
 						me.streamTerminated()
 					default:
+						print("Logger should not be here")
 						break
 					}
 				}
@@ -562,6 +671,9 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			self.logStream = nil
 		}
 		self.connected = false
+		queue.async {
+			self.reconcileOfflineStatus()
+		}
 		NotificationCenter.default.post(name: XGNSLoggerNotification.ConnectChanged, object: self)
 	}
 
@@ -573,6 +685,10 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 					self.reconcileOnlineStatus()
 					if self.messageBeingSent == nil && self.messageQueue.count > 0 {
 						self.messageBeingSent = self.messageQueue.first
+						if let msg = self.messageBeingSent {
+							msg.updateSeq(self.messageSeq)
+							self.messageSeq = self.messageSeq + 1
+						}
 						self.sentCount = 0
 					}
 					if let msg = self.messageBeingSent {
@@ -590,6 +706,10 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 										self.messageQueue.remove(at: idx)
 									}
 									self.messageBeingSent = nil
+
+									self.queue.async {
+										self.writeMoreData()
+									}
 								}
 							}
 						}
@@ -608,7 +728,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 
 	func pushClientInfoToQueue() {
 		let bundle = Bundle.main
-		var encoder = MessageBuffer(0)
+		var encoder = MessageBuffer(true)
 		encoder.addInt32(UInt32(logMsgTypeClientInfo), key: partKeyMessageType)
 		if let version = bundle.infoDictionary?[kCFBundleVersionKey as String] as? String {
 			encoder.addString(version, key: partKeyClientVersion)
@@ -777,10 +897,10 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		if connected == true {
 			if self.messageBeingSent == nil {
 				if offlineBehavior == .runFile, let encoder = readFromRunFile() {
-					self.messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
+					self.messageQueue.orderedInsert(encoder) { $0.timestamp < $1.timestamp }
 				}
 				if offlineBehavior == .ringFile, let encoder = readFromRingFile() {
-					self.messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
+					self.messageQueue.orderedInsert(encoder) { $0.timestamp < $1.timestamp }
 				}
 			}
 		}
@@ -788,14 +908,13 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 
 	func pushMessageToQueue(_ encoder: MessageBuffer) {
 		queue.async {
-			self.messageQueue.orderedInsert(encoder) { $0.seq < $1.seq }
+			self.messageQueue.orderedInsert(encoder) { $0.timestamp < $1.timestamp }
 			self.writeMoreData()
 		}
 	}
 
 	func logMessage(_ message: String?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
-		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		let encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer()
 		encoder.addInt32(UInt32(logMsgTypeLog), key: partKeyMessageType)
 		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: partKeyTag)
@@ -821,8 +940,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	}
 
 	func logMark(_ message: String?) {
-		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		let encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer()
 		encoder.addInt32(UInt32(logMsgTypeMark), key: partKeyMessageType)
 		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: partKeyMessage)
@@ -836,8 +954,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	}
 
 	func logBlockStart(_ message: String?) {
-		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		let encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer()
 		encoder.addInt32(UInt32(logMsgTypeBlockStart), key: partKeyMessageType)
 		if let message = message, message.characters.count > 0 {
 			encoder.addString(message, key: partKeyMessage)
@@ -846,15 +963,13 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	}
 
 	func logBlockEnd() {
-		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		let encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer()
 		encoder.addInt32(UInt32(logMsgTypeBlockEnd), key: partKeyMessageType)
 		pushMessageToQueue(encoder)
 	}
 
 	func logImage(_ image: ImageType?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
-		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		let encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer()
 		encoder.addInt32(UInt32(logMsgTypeLog), key: partKeyMessageType)
 		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: partKeyTag)
@@ -898,8 +1013,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	}
 
 	func logData(_ data: Data?, filename: String?, lineNumber: Int?, functionName: String?, domain: String?, level: Int?) {
-		let seq = OSAtomicIncrement32Barrier(&messageSeq)
-		let encoder = MessageBuffer(seq)
+		let encoder = MessageBuffer()
 		encoder.addInt32(UInt32(logMsgTypeLog), key: partKeyMessageType)
 		if let domain = domain, domain.characters.count > 0 {
 			encoder.addString(domain, key: partKeyTag)

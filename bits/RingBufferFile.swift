@@ -105,6 +105,7 @@ public class RingBufferFile: CustomStringConvertible {
 			self.dataStartIndex = proposedDataStartIndex
 			self.dataEndIndex = proposedDataEndIndex
 			writeHeader(fp)
+			fp.closeFile()
 		}
 	}
 
@@ -153,7 +154,9 @@ public class RingBufferFile: CustomStringConvertible {
 				self.dataStartIndex = self.dataStartIndex + (entrySize + self.atomSize)
 				if self.dataStartIndex >= self.bufferEndIndex {
 					self.dataStartIndex = self.bufferStartIndex
-
+				}
+				if self.itemCount == 0 {
+					self.dataEndIndex = self.dataStartIndex
 				}
 				writeHeader(fp)
 				fp.closeFile()
