@@ -72,6 +72,10 @@ let loggerServiceDomain = "local."
 
 // ---
 
+public struct XGNSLoggerNotification {
+	public static let ConnectChanged = NSNotification.Name("XGNSLoggerNotification_ConnectChanged")
+}
+
 let ringBufferCapacity: UInt32 = 5000000 // 5 MB
 
 extension Array {
@@ -408,6 +412,29 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 
 	private var sentCount: Int = 0
 
+	public var isBrowsing: Bool {
+		get {
+			if self.browser == nil {
+				return true
+			}
+			return false
+		}
+	}
+
+	public var isConnected: Bool {
+		get {
+			return self.connected
+		}
+	}
+
+	#if DEBUG
+
+	public func resetSeq() {
+		messageSeq = 1
+	}
+
+	#endif
+
 	public func startBonjourBrowsing() {
 		self.browser = NetServiceBrowser()
 		if let browser = self.browser {
@@ -486,6 +513,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 					switch event {
 					case CFStreamEventType.openCompleted:
 						me.connected = true
+						NotificationCenter.default.post(name: XGNSLoggerNotification.ConnectChanged, object: me)
 						me.stopBonjourBrowsing()
 						me.pushClientInfoToQueue()
 						me.writeMoreData()
@@ -526,13 +554,15 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		return false
 	}
 
-	func disconnect() {
+	public func disconnect() {
 		if let logStream = self.logStream {
 			CFWriteStreamSetClient(logStream, 0, nil, nil)
 			CFWriteStreamClose(logStream)
 			CFWriteStreamUnscheduleFromRunLoop(logStream, CFRunLoopGetCurrent(), CFRunLoopMode.commonModes)
 			self.logStream = nil
 		}
+		self.connected = false
+		NotificationCenter.default.post(name: XGNSLoggerNotification.ConnectChanged, object: self)
 	}
 
 	func writeMoreData() {
@@ -570,7 +600,6 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	}
 
 	func streamTerminated() {
-		self.connected = false
 		disconnect()
 		if tryConnect() == false {
 			print("connection attempt failed")
