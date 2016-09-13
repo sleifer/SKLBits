@@ -29,6 +29,25 @@ public enum PrivacyAuthorizationType: Int {
 	case location
 }
 
+public enum PrivacyAuthorizationSimpleStatus {
+	case notAvailable
+	case notDetermined
+	case authorized
+	case unauthorized
+}
+
+public struct PrivacyAuthorizationStatus {
+	let eventStatus: PrivacyAuthorizationSimpleStatus
+	let reminderStatus: PrivacyAuthorizationSimpleStatus
+	let photosStatus: PrivacyAuthorizationSimpleStatus
+	let mediaStatus: PrivacyAuthorizationSimpleStatus
+	let microphoneStatus: PrivacyAuthorizationSimpleStatus
+	let siriStatus: PrivacyAuthorizationSimpleStatus
+	let cameraStatus: PrivacyAuthorizationSimpleStatus
+	let speechRecognizerStatus: PrivacyAuthorizationSimpleStatus
+	let locationStatus: PrivacyAuthorizationSimpleStatus
+}
+
 public struct PrivacyAuthorizationNotification {
 	public static let AuthorizationChanged = NSNotification.Name("PrivacyAuthorizationNotification_AuthorizationChanged")
 }
@@ -137,6 +156,8 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func notify(_ type: PrivacyAuthorizationType) {
 		NotificationCenter.default.post(name: PrivacyAuthorizationNotification.AuthorizationChanged, object: type)
 	}
+
+	// MARK: requestors
 
 	/*
 		Requires plist string NSCalendarsUsageDescription
@@ -295,6 +316,8 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 
+	// MARK: managers
+
 	public func eventStore() -> EKEventStore {
 		if _eventStore == nil {
 			_eventStore = EKEventStore()
@@ -309,24 +332,95 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		return _locationManager!
 	}
 
+	// MARK: authorization status
+
+	public func simpleStatus() -> PrivacyAuthorizationStatus {
+		let eventStatus = simpleEventStatus()
+		let reminderStatus = simpleReminderStatus()
+		let photoStatus = simplePhotosStatus()
+		let mediaStatus = simpleMediaStatus()
+		let microphoneStatus = simpleMicrophoneStatus()
+		let siriStatus = simpleSiriStatus()
+		let cameraStatus = simpleCameraStatus()
+		let speechStatus = simpleSpeechRecognizerStatus()
+		let locationStatus = simpleLocationStatus()
+
+		return PrivacyAuthorizationStatus(eventStatus: eventStatus, reminderStatus: reminderStatus, photosStatus: photoStatus, mediaStatus: mediaStatus, microphoneStatus: microphoneStatus, siriStatus: siriStatus, cameraStatus: cameraStatus, speechRecognizerStatus: speechStatus, locationStatus: locationStatus)
+	}
+
 	public func eventStatus() -> EKAuthorizationStatus {
 		return EKEventStore.authorizationStatus(for: .event)
+	}
+
+	public func simpleEventStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch EKEventStore.authorizationStatus(for: .event) {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorized:
+			return .authorized
+		}
 	}
 
 	public func reminderStatus() -> EKAuthorizationStatus {
 		return EKEventStore.authorizationStatus(for: .reminder)
 	}
 
+	public func simpleReminderStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch EKEventStore.authorizationStatus(for: .reminder) {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorized:
+			return .authorized
+		}
+	}
+
 	public func photosStatus() -> PHAuthorizationStatus {
 		return PHPhotoLibrary.authorizationStatus()
+	}
+
+	public func simplePhotosStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch PHPhotoLibrary.authorizationStatus() {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorized:
+			return .authorized
+		}
 	}
 
 	public func mediaStatus() -> MPMediaLibraryAuthorizationStatus {
 		return MPMediaLibrary.authorizationStatus()
 	}
 
+	public func simpleMediaStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch MPMediaLibrary.authorizationStatus() {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorized:
+			return .authorized
+		}
+	}
+
 	public func microphoneStatus() -> AVAuthorizationStatus {
 		return AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeAudio)
+	}
+
+	public func simpleMicrophoneStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeAudio) {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorized:
+			return .authorized
+		}
 	}
 
 	public func siriStatus() -> Int? {
@@ -337,8 +431,34 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 
+	public func simpleSiriStatus() -> PrivacyAuthorizationSimpleStatus {
+		if #available(iOS 10, *) {
+			switch INPreferences.siriAuthorizationStatus() {
+			case .notDetermined:
+				return .notDetermined
+			case .restricted, .denied:
+				return .unauthorized
+			case .authorized:
+				return .authorized
+			}
+		} else {
+			return .notAvailable
+		}
+	}
+
 	public func cameraStatus() -> AVAuthorizationStatus {
 		return AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
+	}
+
+	public func simpleCameraStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo) {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorized:
+			return .authorized
+		}
 	}
 
 	public func speechRecognizerStatus() -> SFSpeechRecognizerAuthorizationStatus? {
@@ -349,8 +469,34 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 
+	public func simpleSpeechRecognizerStatus() -> PrivacyAuthorizationSimpleStatus {
+		if #available(iOS 10, *) {
+			switch SFSpeechRecognizer.authorizationStatus() {
+			case .notDetermined:
+				return .notDetermined
+			case .restricted, .denied:
+				return .unauthorized
+			case .authorized:
+				return .authorized
+			}
+		} else {
+			return .notAvailable
+		}
+	}
+
 	public func locationStatus() -> CLAuthorizationStatus {
 		return CLLocationManager.authorizationStatus()
+	}
+
+	public func simpleLocationStatus() -> PrivacyAuthorizationSimpleStatus {
+		switch CLLocationManager.authorizationStatus() {
+		case .notDetermined:
+			return .notDetermined
+		case .restricted, .denied:
+			return .unauthorized
+		case .authorizedAlways, .authorizedWhenInUse:
+			return .authorized
+		}
 	}
 
 	// MARK: CLLocationManagerDelegate
