@@ -16,6 +16,23 @@ import Speech
 import AVFoundation
 import Intents
 
+public enum PrivacyAuthorizationType: Int {
+	case none
+	case event
+	case reminder
+	case photos
+	case media
+	case microphone
+	case siri
+	case camera
+	case speechRecognizer
+	case location
+}
+
+public struct PrivacyAuthorizationNotification {
+	public static let AuthorizationChanged = NSNotification.Name("PrivacyAuthorizationNotification_AuthorizationChanged")
+}
+
 public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 
 	typealias QueueAction = (Void) -> (Void)
@@ -117,6 +134,10 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 
+	func notify(_ type: PrivacyAuthorizationType) {
+		NotificationCenter.default.post(name: PrivacyAuthorizationNotification.AuthorizationChanged, object: type)
+	}
+
 	/*
 		Requires plist string NSCalendarsUsageDescription
 	*/
@@ -124,6 +145,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func requestEvent() {
 		if eventStatus() == .notDetermined {
 			eventStore().requestAccess(to: .event, completion: { (success: Bool, error: Error?) in
+				self.notify(.event)
 				self.startNextRequest()
 			})
 		} else {
@@ -138,6 +160,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func requestReminder() {
 		if reminderStatus() == .notDetermined {
 			eventStore().requestAccess(to: .reminder, completion: { (success: Bool, error: Error?) in
+				self.notify(.reminder)
 				self.startNextRequest()
 			})
 		} else {
@@ -152,6 +175,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func requestPhotos() {
 		if photosStatus() == .notDetermined {
 			PHPhotoLibrary.requestAuthorization({ (status: PHAuthorizationStatus) in
+				self.notify(.photos)
 				self.startNextRequest()
 			})
 		} else {
@@ -166,6 +190,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func requestMedia() {
 		if mediaStatus() == .notDetermined {
 			MPMediaLibrary.requestAuthorization({ (status: MPMediaLibraryAuthorizationStatus) in
+				self.notify(.media)
 				self.startNextRequest()
 			})
 		} else {
@@ -180,6 +205,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func requestMicrophone() {
 		if microphoneStatus() == .notDetermined {
 			AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeAudio, completionHandler: { (success: Bool) in
+				self.notify(.microphone)
 				self.startNextRequest()
 			})
 		} else {
@@ -196,6 +222,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		if #available(iOS 10, *) {
 			if siriStatus() == INSiriAuthorizationStatus.notDetermined.rawValue {
 				INPreferences.requestSiriAuthorization({ (status: INSiriAuthorizationStatus) in
+					self.notify(.siri)
 					self.startNextRequest()
 				})
 			} else {
@@ -213,6 +240,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	func requestCamera() {
 		if cameraStatus() == .notDetermined {
 			AVCaptureDevice.requestAccess(forMediaType: AVMediaTypeVideo, completionHandler: { (success: Bool) in
+				self.notify(.camera)
 				self.startNextRequest()
 			})
 		} else {
@@ -228,6 +256,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		if #available(iOS 10, *) {
 			if speechRecognizerStatus() == .notDetermined {
 				SFSpeechRecognizer.requestAuthorization({ (status: SFSpeechRecognizerAuthorizationStatus) in
+					self.notify(.speechRecognizer)
 					self.startNextRequest()
 				})
 			} else {
@@ -327,6 +356,7 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 	// MARK: CLLocationManagerDelegate
 
 	public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+		self.notify(.location)
 		startNextRequest()
 	}
 

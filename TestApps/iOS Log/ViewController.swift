@@ -69,12 +69,19 @@ class ViewController: UIViewController {
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(connectChanged(_:)), name: XGNSLoggerNotification.ConnectChanged, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(authorizationChanged(_:)), name: PrivacyAuthorizationNotification.AuthorizationChanged, object: nil)
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 
 		NotificationCenter.default.removeObserver(self)
+	}
+
+	func authorizationChanged(_ note: Notification) {
+		if let type = note.object as? PrivacyAuthorizationType {
+			log.debug("\(type)")
+		}
 	}
 
 	func connectChanged(_ note: Notification) {
