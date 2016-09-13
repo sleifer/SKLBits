@@ -75,7 +75,7 @@ public class DebugActionSheet {
 		}
 	}
 
-	public func addAction(_ name: String, handler: DebugActionSheetHandler) {
+	public func addAction(_ name: String, handler: @escaping DebugActionSheetHandler) {
 		let action = DebugActionSheetAction(title: name, action: handler)
 		actions.append(action)
 	}
