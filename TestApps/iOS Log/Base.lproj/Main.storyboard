@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16A313a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
@@ -78,9 +78,12 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cancel" translatesAutoresizingMaskIntoConstraints="NO" id="4GF-d8-gl9"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="group" translatesAutoresizingMaskIntoConstraints="NO" id="44O-H7-NTf"/>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="44O-H7-NTf" firstAttribute="leading" secondItem="4GF-d8-gl9" secondAttribute="trailing" constant="10" id="48O-30-EhR"/>
                             <constraint firstItem="X04-oQ-IXN" firstAttribute="top" secondItem="hyd-me-S6o" secondAttribute="bottom" constant="20" id="4Bz-sK-YQn"/>
                             <constraint firstItem="Qxk-5L-CCp" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="top" id="4zK-LI-jGk"/>
                             <constraint firstAttribute="leadingMargin" secondItem="YaU-uH-Vfy" secondAttribute="leading" id="6bs-Wi-rp7"/>
@@ -91,6 +94,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="hyd-me-S6o" secondAttribute="trailing" id="Vxe-Jn-Bx9"/>
                             <constraint firstItem="vYw-9f-FWo" firstAttribute="top" secondItem="YaU-uH-Vfy" secondAttribute="bottom" constant="15" id="Xed-x9-jD1"/>
                             <constraint firstItem="Rys-A5-Ip3" firstAttribute="top" secondItem="vYw-9f-FWo" secondAttribute="bottom" constant="30" id="Zfv-Vy-ubL"/>
+                            <constraint firstItem="4GF-d8-gl9" firstAttribute="top" secondItem="Rys-A5-Ip3" secondAttribute="bottom" constant="20" id="bNr-Pl-s8U"/>
                             <constraint firstAttribute="trailingMargin" secondItem="f4d-Q2-Gie" secondAttribute="trailing" id="cQ8-bv-coO"/>
                             <constraint firstItem="YaU-uH-Vfy" firstAttribute="top" secondItem="5En-er-gIS" secondAttribute="bottom" constant="15" id="iG1-VX-Tox"/>
                             <constraint firstItem="f4d-Q2-Gie" firstAttribute="centerY" secondItem="Rys-A5-Ip3" secondAttribute="centerY" id="lcI-gs-44V"/>
@@ -98,11 +102,15 @@
                             <constraint firstItem="f4d-Q2-Gie" firstAttribute="leading" secondItem="Rys-A5-Ip3" secondAttribute="trailing" constant="8" placeholder="YES" id="ogt-if-2hW"/>
                             <constraint firstItem="5En-er-gIS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="p5Y-dX-u6b"/>
                             <constraint firstAttribute="leadingMargin" secondItem="5En-er-gIS" secondAttribute="leading" id="r8r-As-OSF"/>
+                            <constraint firstItem="44O-H7-NTf" firstAttribute="top" secondItem="4GF-d8-gl9" secondAttribute="top" id="vgJ-u0-WRu"/>
+                            <constraint firstItem="4GF-d8-gl9" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="vo4-mY-0ea"/>
                             <constraint firstAttribute="leadingMargin" secondItem="vYw-9f-FWo" secondAttribute="leading" id="zyk-M6-UVP"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="feedbackLabel" destination="hyd-me-S6o" id="Y4B-5n-TDn"/>
+                        <outlet property="imageTint1" destination="4GF-d8-gl9" id="hb1-Ey-vRc"/>
+                        <outlet property="imageTint2" destination="44O-H7-NTf" id="V4K-7u-QJE"/>
                         <outlet property="layoutAndHiddenView1" destination="Rys-A5-Ip3" id="Bc5-ud-5ts"/>
                         <outlet property="layoutAndHiddenView2" destination="f4d-Q2-Gie" id="Imv-f8-S9i"/>
                         <outlet property="testLoggerButton" destination="5En-er-gIS" id="lgv-xh-hZy"/>
@@ -116,4 +124,8 @@
             <point key="canvasLocation" x="136.80000000000001" y="138.98050974512745"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="cancel" width="22" height="22"/>
+        <image name="group" width="20" height="17"/>
+    </resources>
 </document>

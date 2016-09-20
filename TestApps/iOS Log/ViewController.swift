@@ -17,6 +17,9 @@ class ViewController: UIViewController {
 	@IBOutlet weak var testPrivacyButton: UIButton!
 	@IBOutlet weak var testLoggerRingIssueButton: UIButton!
 
+	@IBOutlet weak var imageTint1: UIImageView!
+	@IBOutlet weak var imageTint2: UIImageView!
+
 	@IBOutlet weak var feedbackLabel: UILabel!
 
 	@IBOutlet weak var layoutAndHiddenView1: UIView!
@@ -57,6 +60,9 @@ class ViewController: UIViewController {
 		hiddenCollection = [hiddenCon]
 
 		visibleCollection.installConstraints()
+
+		imageTint1.image = UIImage(named: "cancel")?.tinted(UIColor.red)
+		imageTint2.image = UIImage(named: "group")?.tinted(UIColor.red)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
