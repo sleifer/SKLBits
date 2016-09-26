@@ -759,11 +759,11 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 
 			var u: utsname = utsname()
 			if uname(&u) == 0 {
-				osName = withUnsafePointer(&u.sysname, { (ptr) -> String? in
+				osName = withUnsafePointer(to: &u.sysname, { (ptr) -> String? in
 					let int8Ptr = unsafeBitCast(ptr, to: UnsafePointer<Int8>.self)
 					return String(validatingUTF8: int8Ptr)
 				})
-				osVersion = withUnsafePointer(&u.release, { (ptr) -> String? in
+				osVersion = withUnsafePointer(to: &u.release, { (ptr) -> String? in
 					let int8Ptr = unsafeBitCast(ptr, to: UnsafePointer<Int8>.self)
 					return String(validatingUTF8: int8Ptr)
 				})
