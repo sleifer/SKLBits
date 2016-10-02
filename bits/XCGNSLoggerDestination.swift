@@ -838,7 +838,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		return encoder
 	}
 
-	func createRingFile() {
+	func createRingFile() throws {
 		let fm = FileManager.default
 		let urls = fm.urls(for: .cachesDirectory, in: .userDomainMask)
 		let identifier = Bundle.main.bundleIdentifier
@@ -850,18 +850,18 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 		}
 	}
 
-	func appendToRingFile(_ encoder: MessageBuffer) {
+	func appendToRingFile(_ encoder: MessageBuffer) throws {
 		if ringFile == nil {
-			createRingFile()
+			try createRingFile()
 		}
 		if let ringFile = self.ringFile {
 			ringFile.push(encoder.raw())
 		}
 	}
 
-	func readFromRingFile() -> MessageBuffer? {
+	func readFromRingFile() throws -> MessageBuffer? {
 		if ringFile == nil {
-			createRingFile()
+			try createRingFile()
 		}
 		if let ringFile = self.ringFile {
 			if let data: [UInt8] = ringFile.pop() {
@@ -885,8 +885,12 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 				}
 				self.messageQueue.removeAll()
 			case .ringFile:
-				for msg in self.messageQueue {
-					appendToRingFile(msg)
+				do {
+					for msg in self.messageQueue {
+						try appendToRingFile(msg)
+					}
+				} catch {
+					print("Error: \(error)")
 				}
 				self.messageQueue.removeAll()
 			}
@@ -899,8 +903,12 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 				if offlineBehavior == .runFile, let encoder = readFromRunFile() {
 					self.messageQueue.orderedInsert(encoder) { $0.timestamp < $1.timestamp }
 				}
-				if offlineBehavior == .ringFile, let encoder = readFromRingFile() {
-					self.messageQueue.orderedInsert(encoder) { $0.timestamp < $1.timestamp }
+				do {
+					if offlineBehavior == .ringFile, let encoder = try readFromRingFile() {
+						self.messageQueue.orderedInsert(encoder) { $0.timestamp < $1.timestamp }
+					}
+				} catch {
+					print("Error: \(error)")
 				}
 			}
 		}

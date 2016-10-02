@@ -22,6 +22,10 @@ dataSize: UInt32
 data: UInt8[N]
 */
 
+public enum RingBufferFileError: Error {
+	case outOfDataWhileReading
+}
+
 public class RingBufferFile: CustomStringConvertible {
 	public private(set) var capacity: UInt32
 
@@ -31,15 +35,15 @@ public class RingBufferFile: CustomStringConvertible {
 
 	public let headerSize: UInt32
 
-	private var bufferStartIndex: UInt32 = 0
+	public private(set) var bufferStartIndex: UInt32 = 0
 
-	private var bufferEndIndex: UInt32 = 0
+	public private(set) var bufferEndIndex: UInt32 = 0
 
-	private var maxBufferEndIndex: UInt32 = 0
+	public private(set) var maxBufferEndIndex: UInt32 = 0
 
-	private var dataStartIndex: UInt32 = 0
+	public private(set) var dataStartIndex: UInt32 = 0
 
-	private var dataEndIndex: UInt32 = 0
+	public private(set) var dataEndIndex: UInt32 = 0
 
 	public private(set) var itemCount: UInt32 = 0
 
@@ -56,56 +60,95 @@ public class RingBufferFile: CustomStringConvertible {
 		return "\(type(of: self))\n  filePath: \(filePath)\n  capacity: \(capacity)\n  atomSize: \(atomSize)\n  headerSize: \(headerSize)\n  bufferStartIndex: \(bufferStartIndex)\n  bufferEndIndex: \(bufferEndIndex)\n  dataStartIndex: \(dataStartIndex)\n  dataEndIndex: \(dataEndIndex)\n  maxBufferEndIndex: \(maxBufferEndIndex)\n  itemCount: \(itemCount)\n---"
 	}
 
-	public func push(_ entry: [UInt8]) {
-		let fp = FileHandle(forUpdatingAtPath: self.filePath)
-		if let fp = fp {
-			let entrySize = UInt32(entry.count)
-			let totalSize = entrySize + atomSize
+	public func debugLogAllEntries() {
+		do {
+			var entry: [UInt8]?
+			if itemCount > 0 {
+				print("Buffer contents (\(itemCount)):")
+				let fp = FileHandle(forReadingAtPath: self.filePath)
+				if let fp = fp {
+					var start = self.dataStartIndex
+					for idx in 0..<itemCount {
+						fp.seek(toFileOffset: UInt64(start))
+						entry = try readEntry(fp)
+						if let entry = entry {
+							print("\(idx): \(entry)")
+							start = start + UInt32(entry.count) + atomSize
+							if start >= bufferEndIndex {
+								start = bufferStartIndex
+							}
+						}
+					}
+					fp.closeFile()
+				}
+			} else {
+				print("Buffer empty")
+			}
+		} catch {
+			print("Error: \(error)")
+		}
 
-			var proposedItemCount = self.itemCount
-			var proposedWriteStart = self.dataEndIndex + 1
-			if self.dataStartIndex == self.dataEndIndex {
-				proposedWriteStart = self.dataEndIndex
-			}
-			var proposedDataEndIndex = proposedWriteStart + totalSize - 1
-			var proposedDataStartIndex = self.dataStartIndex
-			var proposedBufferEndIndex = self.bufferEndIndex
-			var needDropCheck = false
-			if proposedDataEndIndex > self.maxBufferEndIndex {
-				// push would exceed capacity, write at start
-				proposedWriteStart = self.bufferStartIndex
-				proposedDataEndIndex = proposedWriteStart + totalSize - 1
-				needDropCheck = true
-			}
-			if self.dataEndIndex < self.dataStartIndex {
-				needDropCheck = true
-			}
-			if needDropCheck == true {
-				while proposedDataEndIndex >= proposedDataStartIndex {
-					// push would run over first entry, need to drop until we do not collide
-					fp.seek(toFileOffset: UInt64(proposedDataStartIndex))
-					let peekEntrySize = readAtom(fp)
-					proposedDataStartIndex = proposedDataStartIndex + (peekEntrySize + atomSize)
-					proposedItemCount = proposedItemCount - 1
-					if proposedDataStartIndex >= self.maxBufferEndIndex {
-						proposedDataStartIndex = self.bufferStartIndex
+	}
+
+	public func push(_ entry: [UInt8]) {
+		do {
+			let fp = FileHandle(forUpdatingAtPath: self.filePath)
+			if let fp = fp {
+				let entrySize = UInt32(entry.count) + atomSize
+
+				var newItemCount = self.itemCount
+				var newWriteStart = self.dataEndIndex + 1
+				if self.dataStartIndex == self.dataEndIndex {
+					newWriteStart = self.dataEndIndex
+				}
+				var newDataEndIndex = newWriteStart + entrySize - 1
+				var newDataStartIndex = self.dataStartIndex
+				var newBufferEndIndex = self.bufferEndIndex
+				var needDropCheck = false
+				if newDataEndIndex > self.maxBufferEndIndex {
+					// push would exceed capacity, write at start
+					newWriteStart = self.bufferStartIndex
+					newDataEndIndex = newWriteStart + entrySize - 1
+					needDropCheck = true
+					if self.dataStartIndex > self.dataEndIndex {
+						newDataStartIndex = self.bufferStartIndex
+						newBufferEndIndex = self.dataEndIndex
 					}
 				}
-			}
-			if proposedDataEndIndex > proposedBufferEndIndex {
-				proposedBufferEndIndex = proposedDataEndIndex
-			}
+				if self.dataEndIndex < self.dataStartIndex && newDataEndIndex >= self.dataStartIndex {
+					needDropCheck = true
+				}
+				if needDropCheck == true {
+					while newDataStartIndex <= newDataEndIndex {
+						// push would run over first entry, need to drop until we do not collide
+						fp.seek(toFileOffset: UInt64(newDataStartIndex))
+						let peekEntrySize = try readAtom(fp)
+						newDataStartIndex = newDataStartIndex + (peekEntrySize + atomSize)
+						newItemCount = newItemCount - 1
+						if newDataStartIndex >= self.maxBufferEndIndex || newDataStartIndex >= self.bufferEndIndex {
+							newDataStartIndex = self.bufferStartIndex
+							newBufferEndIndex = max(self.dataEndIndex, newDataEndIndex)
+							break
+						}
+					}
+				}
+				if newDataEndIndex > newBufferEndIndex {
+					newBufferEndIndex = newDataEndIndex
+				}
 
-			fp.seek(toFileOffset: UInt64(proposedWriteStart))
-			writeEntry(fp, entry: entry)
-			proposedItemCount = proposedItemCount + 1
+				fp.seek(toFileOffset: UInt64(newWriteStart))
+				writeEntry(fp, entry: entry)
+				newItemCount = newItemCount + 1
 
-			self.itemCount = proposedItemCount
-			self.bufferEndIndex = proposedBufferEndIndex
-			self.dataStartIndex = proposedDataStartIndex
-			self.dataEndIndex = proposedDataEndIndex
-			writeHeader(fp)
-			fp.closeFile()
+				self.itemCount = newItemCount
+				self.bufferEndIndex = newBufferEndIndex
+				self.dataStartIndex = newDataStartIndex
+				self.dataEndIndex = newDataEndIndex
+				writeHeader(fp)
+				fp.closeFile()
+			}
+		} catch {
+			print("Error: \(error)")
 		}
 	}
 
@@ -119,48 +162,62 @@ public class RingBufferFile: CustomStringConvertible {
 	}
 
 	public func peek() -> [UInt8]? {
-		var entry: [UInt8]?
-		if itemCount > 0 {
-			let fp = FileHandle(forReadingAtPath: self.filePath)
-			if let fp = fp {
-				fp.seek(toFileOffset: UInt64(self.dataStartIndex))
-				entry = readEntry(fp)
-				fp.closeFile()
+		do {
+			var entry: [UInt8]?
+			if itemCount > 0 {
+				let fp = FileHandle(forReadingAtPath: self.filePath)
+				if let fp = fp {
+					fp.seek(toFileOffset: UInt64(self.dataStartIndex))
+					entry = try readEntry(fp)
+					fp.closeFile()
+				}
 			}
+			return entry
+		} catch {
+			print("Error: \(error)")
 		}
-		return entry
+		return nil
 	}
 
 	public func peekSize() -> UInt32? {
-		var entrySize: UInt32?
-		if itemCount > 0 {
-			let fp = FileHandle(forReadingAtPath: self.filePath)
-			if let fp = fp {
-				fp.seek(toFileOffset: UInt64(self.dataStartIndex))
-				entrySize = readAtom(fp)
-				fp.closeFile()
+		do {
+			var entrySize: UInt32?
+			if itemCount > 0 {
+				let fp = FileHandle(forReadingAtPath: self.filePath)
+				if let fp = fp {
+					fp.seek(toFileOffset: UInt64(self.dataStartIndex))
+					entrySize = try readAtom(fp)
+					fp.closeFile()
+				}
 			}
+			return entrySize
+		} catch {
+			print("Error: \(error)")
 		}
-		return entrySize
+		return nil
 	}
 
 	public func drop() {
-		if itemCount > 0 {
-			let fp = FileHandle(forUpdatingAtPath: self.filePath)
-			if let fp = fp {
-				fp.seek(toFileOffset: UInt64(self.dataStartIndex))
-				let entrySize = readAtom(fp)
-				self.itemCount = self.itemCount - 1
-				self.dataStartIndex = self.dataStartIndex + (entrySize + self.atomSize)
-				if self.dataStartIndex >= self.bufferEndIndex {
-					self.dataStartIndex = self.bufferStartIndex
+		do {
+			if itemCount > 0 {
+				let fp = FileHandle(forUpdatingAtPath: self.filePath)
+				if let fp = fp {
+					fp.seek(toFileOffset: UInt64(self.dataStartIndex))
+					let entrySize = try readAtom(fp)
+					self.itemCount = self.itemCount - 1
+					self.dataStartIndex = self.dataStartIndex + (entrySize + self.atomSize)
+					if self.dataStartIndex >= self.bufferEndIndex {
+						self.dataStartIndex = self.bufferStartIndex
+					}
+					if self.itemCount == 0 {
+						self.dataEndIndex = self.dataStartIndex
+					}
+					writeHeader(fp)
+					fp.closeFile()
 				}
-				if self.itemCount == 0 {
-					self.dataEndIndex = self.dataStartIndex
-				}
-				writeHeader(fp)
-				fp.closeFile()
 			}
+		} catch {
+			print("Error: \(error)")
 		}
 	}
 
@@ -189,8 +246,11 @@ public class RingBufferFile: CustomStringConvertible {
 		writeAtom(fp, atom: self.capacity)
 	}
 
-	private func readAtom(_ fp: FileHandle) -> UInt32 {
+	private func readAtom(_ fp: FileHandle) throws -> UInt32 {
 		let atomData = fp.readData(ofLength: Int(atomSize))
+		if atomData.count != Int(atomSize) {
+			throw RingBufferFileError.outOfDataWhileReading
+		}
 		let atomValue = atomData.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> UInt32 in
 			return CFSwapInt32HostToBig(bytes.pointee)
 		}
@@ -203,13 +263,19 @@ public class RingBufferFile: CustomStringConvertible {
 		fp.write(data)
 	}
 
-	private func readEntry(_ fp: FileHandle) -> [UInt8]? {
+	private func readEntry(_ fp: FileHandle) throws -> [UInt8]? {
 		var entry: [UInt8]? = nil
 		let lengthData = fp.readData(ofLength: Int(atomSize))
+		if lengthData.count != Int(atomSize) {
+			throw RingBufferFileError.outOfDataWhileReading
+		}
 		let lengthValue = lengthData.withUnsafeBytes { (bytes: UnsafePointer<UInt32>) -> UInt32 in
 			return CFSwapInt32HostToBig(bytes.pointee)
 		}
 		let entryData = fp.readData(ofLength: Int(lengthValue))
+		if entryData.count != Int(lengthValue) {
+			throw RingBufferFileError.outOfDataWhileReading
+		}
 		entryData.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Void in
 			entry = [UInt8]()
 			entry?.append(contentsOf: UnsafeBufferPointer(start: bytes, count: Int(lengthValue)))
@@ -227,35 +293,42 @@ public class RingBufferFile: CustomStringConvertible {
 
 	private func loadOrCreate() {
 		let fm = FileManager.default
-		if fm.fileExists(atPath: self.filePath) {
-			let fp = FileHandle(forReadingAtPath: self.filePath)
-			if let fp = fp {
-				fp.seek(toFileOffset: 0)
-				self.bufferStartIndex = readAtom(fp)
-				self.bufferEndIndex = readAtom(fp)
-				self.dataStartIndex = readAtom(fp)
-				self.dataEndIndex = readAtom(fp)
-				self.itemCount = readAtom(fp)
-				self.capacity = readAtom(fp)
-				self.maxBufferEndIndex = self.bufferStartIndex + self.capacity
-				fp.closeFile()
-			}
-		} else {
-			let created = fm.createFile(atPath: self.filePath, contents: nil, attributes: nil)
-			if created {
-				self.itemCount = 0
-				self.bufferStartIndex = self.headerSize
-				self.bufferEndIndex = self.headerSize
-				self.dataStartIndex = self.headerSize
-				self.dataEndIndex = self.headerSize
-				self.maxBufferEndIndex = self.bufferStartIndex + self.capacity
 
-				let fp = FileHandle(forWritingAtPath: self.filePath)
+		do {
+			if fm.fileExists(atPath: self.filePath) {
+				let fp = FileHandle(forReadingAtPath: self.filePath)
 				if let fp = fp {
-					writeHeader(fp)
+					fp.seek(toFileOffset: 0)
+					self.bufferStartIndex = try readAtom(fp)
+					self.bufferEndIndex = try readAtom(fp)
+					self.dataStartIndex = try readAtom(fp)
+					self.dataEndIndex = try readAtom(fp)
+					self.itemCount = try readAtom(fp)
+					self.capacity = try readAtom(fp)
+					self.maxBufferEndIndex = self.bufferStartIndex + self.capacity
 					fp.closeFile()
+					return
 				}
 			}
+		} catch {
+			print("Error: \(error)")
+		}
+
+		let created = fm.createFile(atPath: self.filePath, contents: nil, attributes: nil)
+		if created {
+			self.itemCount = 0
+			self.bufferStartIndex = self.headerSize
+			self.bufferEndIndex = self.headerSize
+			self.dataStartIndex = self.headerSize
+			self.dataEndIndex = self.headerSize
+			self.maxBufferEndIndex = self.bufferStartIndex + self.capacity
+
+			let fp = FileHandle(forWritingAtPath: self.filePath)
+			if let fp = fp {
+				writeHeader(fp)
+				fp.closeFile()
+			}
+
 		}
 	}
 }

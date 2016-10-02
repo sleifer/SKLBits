@@ -174,42 +174,103 @@ class ViewController: UIViewController {
 		let buffer = RingBufferFile(capacity: capacity, filePath: testFilePath)
 		buffer.clear()
 		print(buffer)
-		buffer.push([1, 2, 3, 4])
-		print(buffer)
-		buffer.push([5, 6, 7])
-		print(buffer)
-		buffer.push([8, 9])
-		print(buffer)
-		buffer.push([10])
-		print(buffer)
-		buffer.push([11, 12, 13, 14, 15])
-		print(buffer)
-		buffer.push([16, 17, 18, 19])
-		print(buffer)
-		buffer.push([20, 21, 22])
-		print(buffer)
-		buffer.push([23, 24])
-		print(buffer)
-		buffer.push([25])
-		print(buffer)
-		buffer.push([26, 27, 29, 29, 30])
-		print(buffer)
-		buffer.push([31, 32, 33, 34])
-		print(buffer)
-		// will wrap and drop oldest starting with next push
-		buffer.push([35, 36, 37])
-		print(buffer)
-		buffer.push([38, 39])
-		print(buffer)
-		buffer.push([40])
-		print(buffer)
-		print("peekSize: ", buffer.peekSize())
-		print("peek: ", buffer.peek())
+
+		var testArrayValue: UInt8 = 0
+
+		let make = { (_ count: Int) -> ([UInt8]) in
+			testArrayValue = testArrayValue + 1
+			return [UInt8](repeating: testArrayValue, count: count)
+		}
+
+		let doPush = { (data: [UInt8]) in
+			buffer.push(data)
+			print("push: \(data) | Bd: \(buffer.dataStartIndex)/\(buffer.dataEndIndex) | Bb: \(buffer.bufferStartIndex)/\(buffer.bufferEndIndex)")
+		}
+
+		let doPeekSize = {
+			let value = buffer.peekSize()
+			print("peekSize: \(value) | Bd: \(buffer.dataStartIndex)/\(buffer.dataEndIndex) | Bb: \(buffer.bufferStartIndex)/\(buffer.bufferEndIndex)")
+		}
+
+		let doPeek = {
+			let value = buffer.peek()
+			print("peek: \(value) | Bd: \(buffer.dataStartIndex)/\(buffer.dataEndIndex) | Bb: \(buffer.bufferStartIndex)/\(buffer.bufferEndIndex)")
+		}
+
+		let doPop = {
+			let value = buffer.pop()
+			print("pop: \(value) | Bd: \(buffer.dataStartIndex)/\(buffer.dataEndIndex) | Bb: \(buffer.bufferStartIndex)/\(buffer.bufferEndIndex)")
+		}
+
+		print("Test 1 (\(testArrayValue))...")
+		doPush(make(4))
+		doPush(make(3))
+		doPush(make(2))
+		doPush(make(1))
+		doPush(make(5))
+		doPush(make(4))
+		doPush(make(3))
+		doPush(make(2))
+		doPush(make(1))
+		doPush(make(5))
+		doPush(make(4))
+		print("will wrap and drop oldest starting with next push")
+		doPush(make(3))
+		doPush(make(2))
+		doPush(make(1))
+		doPeekSize()
+		doPeek()
 		buffer.drop()
 		while buffer.itemCount > 0 {
-			print("pop: ", buffer.pop())
-			print(buffer)
+			doPop()
 		}
+
+		print("Test 2 (\(testArrayValue))...")
+		// test full buffer where new push falls over to start and requires drop (of 2)
+		buffer.clear()
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(4))
+		buffer.debugLogAllEntries()
+		print("buffer should be full - 2, next should go at start of buffer removing 2 entries")
+		doPush(make(7))
+		buffer.debugLogAllEntries()
+
+		print("Test 3 (\(testArrayValue))...")
+		// test an already wrapped buffer where push requires drop of start items that are past data end in buffer
+		buffer.clear()
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(4))
+		doPop()
+		doPop()
+		doPop()
+		doPop()
+		doPop()
+		doPop()
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(6))
+		doPush(make(4))
+		buffer.debugLogAllEntries()
+		print("buffer should be wrapped with one entry after a gap after the data end, push should drop 1 leaving start at start of buffer")
+		doPush(make(10))
+		buffer.debugLogAllEntries()
+
+		print("Done.")
+
 	}
 
 	func connect() {
