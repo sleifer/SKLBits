@@ -100,3 +100,49 @@ public class DebugActionSheet {
 		UIApplication.shared.keyWindow?.visibleViewController()?.present(alert, animated: true, completion: nil)
 	}
 }
+
+extension UIAlertController {
+
+	class func simpleInput(title: String?, message: String?, action: String, defaultText: String? = nil, placeholder: String, validator: ((_ text: String?) -> (Bool))? = nil, handler: @escaping (_ text: String?) -> (Void)) -> UIAlertController {
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+		let loginAction = UIAlertAction(title: action, style: .default) { (_) in
+			let valueTextField = alertController.textFields![0] as UITextField
+
+			handler(valueTextField.text)
+		}
+
+		loginAction.isEnabled = false
+
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+			handler(nil)
+		}
+
+		alertController.addTextField { (textField) in
+			textField.placeholder = placeholder
+			if let text = defaultText {
+				textField.text = text
+				
+				if let validator = validator {
+					loginAction.isEnabled = validator(textField.text)
+				} else {
+					loginAction.isEnabled = textField.text != ""
+				}
+			}
+
+			NotificationCenter.default.addObserver(forName: NSNotification.Name.UITextFieldTextDidChange, object: textField, queue: OperationQueue.main) { (notification) in
+				if let validator = validator {
+					loginAction.isEnabled = validator(textField.text)
+				} else {
+					loginAction.isEnabled = textField.text != ""
+				}
+			}
+		}
+
+		alertController.addAction(loginAction)
+		alertController.addAction(cancelAction)
+
+		return alertController
+	}
+	
+}
