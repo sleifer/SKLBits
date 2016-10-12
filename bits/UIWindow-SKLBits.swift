@@ -10,6 +10,10 @@
 
 import UIKit
 
+	func visibleViewController() -> UIViewController? {
+		return UIApplication.shared.keyWindow?.visibleViewController()
+	}
+
 public extension UIWindow {
 
 	public func visibleViewController() -> UIViewController? {
