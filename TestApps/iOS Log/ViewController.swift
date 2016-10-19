@@ -25,6 +25,8 @@ class ViewController: UIViewController {
 	@IBOutlet weak var layoutAndHiddenView1: UIView!
 	@IBOutlet weak var layoutAndHiddenView2: UIView!
 
+	@IBOutlet weak var focusTestView: UIView!
+
 	var auth: PrivacyAuthorization?
 
 	let semaphore = DispatchSemaphore(value: 0)
@@ -125,6 +127,23 @@ class ViewController: UIViewController {
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
+	}
+
+	@IBAction func logSomethingAction() {
+		print("LOG SOMETHING")
+	}
+
+	@IBAction func focusTestAction() {
+		if let window = self.view.window as? FocusedTouchWindow {
+			self.focusTestView.isHidden = false
+			var views = focusTestView.subviews
+			views.append(focusTestView)
+			let viewSet = Set(views)
+			window.focusTouch(to: viewSet, missHandler: {
+				self.focusTestView.isHidden = true
+				window.unfocusTouch()
+			})
+		}
 	}
 
 	@IBAction func testPrivacyAuth() {

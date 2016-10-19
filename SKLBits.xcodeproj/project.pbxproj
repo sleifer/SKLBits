@@ -55,6 +55,7 @@
 		DB88B0C11D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
 		DB88B0C21D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
 		DB88B0C31D47C0DE00A71885 /* StoredProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */; };
+		DBC63E171DB6FFAF000536EC /* FocusedTouchWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC63E161DB6FFAF000536EC /* FocusedTouchWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,7 @@
 		DB7EA01F1D41CA92000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB7EA02E1D41CB79000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB88B0BF1D47C0DE00A71885 /* StoredProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoredProperties.swift; sourceTree = "<group>"; };
+		DBC63E161DB6FFAF000536EC /* FocusedTouchWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusedTouchWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +190,7 @@
 				DB14BFBE1D4BEF9C00E29F86 /* UIImage-SKLBits.swift */,
 				DB48230E1D43973C00903D52 /* CGRect-SKLBits.swift */,
 				DB6BCCEB1D689F1200515DDE /* UIWindow-SKLBits.swift */,
+				DBC63E161DB6FFAF000536EC /* FocusedTouchWindow.swift */,
 				DB243A761D57740C009894CE /* DebugActionSheet.swift */,
 				DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift */,
 				DB7EA0061D41C8EE000046CF /* RingBufferFile.swift */,
@@ -432,6 +435,7 @@
 				DB88B0C01D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB14BFBF1D4BEF9C00E29F86 /* UIImage-SKLBits.swift in Sources */,
 				DB4D88AB1D4B882000B1E350 /* PrivacyAuthorization.swift in Sources */,
+				DBC63E171DB6FFAF000536EC /* FocusedTouchWindow.swift in Sources */,
 				DB4823101D43973C00903D52 /* CGRect-SKLBits.swift in Sources */,
 				DB7EA00A1D41C8EE000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA00B1D41C8EE000046CF /* XCGLogger.swift in Sources */,

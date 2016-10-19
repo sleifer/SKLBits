@@ -15,7 +15,14 @@ var logger: XCGNSLoggerDestination?
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-	var window: UIWindow?
+	var customWindow: FocusedTouchWindow?
+	var window: UIWindow? {
+		get {
+			customWindow = customWindow ?? FocusedTouchWindow(frame: UIScreen.main.bounds)
+			return customWindow
+		}
+		set { }
+	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
 
