@@ -122,7 +122,7 @@ extension UIAlertController {
 			textField.placeholder = placeholder
 			if let text = defaultText {
 				textField.text = text
-				
+
 				if let validator = validator {
 					loginAction.isEnabled = validator(textField.text)
 				} else {
@@ -144,5 +144,5 @@ extension UIAlertController {
 
 		return alertController
 	}
-	
+
 }
