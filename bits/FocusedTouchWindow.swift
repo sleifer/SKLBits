@@ -10,25 +10,24 @@ import UIKit
 
 public class FocusedTouchWindow: UIWindow {
 
-	private var touchableViews: Set<UIView>?
+	private var touchableView: UIView?
 	private var focusMissHandler: ((Void) -> (Void))?
 
-	public func focusTouch(to views: Set<UIView>, missHandler: @escaping (Void) -> (Void)) {
-		self.touchableViews = views
+	public func focusTouch(to view: UIView, missHandler: @escaping (Void) -> (Void)) {
+		self.touchableView = view
 		self.focusMissHandler = missHandler
 	}
 
-	public
-	func unfocusTouch() {
-		self.touchableViews = nil
+	public func unfocusTouch() {
+		self.touchableView = nil
 		self.focusMissHandler = nil
 	}
 
 	override public func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 		let nominalView = super.hitTest(point, with: event)
 
-		if let touchableViews = touchableViews, let nominalView = nominalView {
-			if touchableViews.contains(nominalView) {
+		if let touchableView = touchableView, let nominalView = nominalView {
+			if touchableView.isParent(of: nominalView) {
 				return nominalView
 			} else {
 				return self
@@ -40,7 +39,7 @@ public class FocusedTouchWindow: UIWindow {
 
 	func haveLiveTouches(_ touches: Set<UITouch>) -> Bool {
 		for oneTouch in touches {
-			if oneTouch.view == nil || touchableViews?.contains(oneTouch.view!) == false {
+			if oneTouch.view == nil || touchableView?.isParent(of: oneTouch.view!) == false {
 				if oneTouch.phase != .ended && oneTouch.phase != .cancelled {
 					return true
 				}
@@ -50,7 +49,7 @@ public class FocusedTouchWindow: UIWindow {
 	}
 
 	func processTouches(_ touches: Set<UITouch>) {
-		if let focusMissHandler = focusMissHandler, touchableViews != nil, haveLiveTouches(touches) == true {
+		if let focusMissHandler = focusMissHandler, touchableView != nil, haveLiveTouches(touches) == true {
 			focusMissHandler()
 		}
 	}

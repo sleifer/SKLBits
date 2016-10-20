@@ -136,10 +136,7 @@ class ViewController: UIViewController {
 	@IBAction func focusTestAction() {
 		if let window = self.view.window as? FocusedTouchWindow {
 			self.focusTestView.isHidden = false
-			var views = focusTestView.subviews
-			views.append(focusTestView)
-			let viewSet = Set(views)
-			window.focusTouch(to: viewSet, missHandler: {
+			window.focusTouch(to: focusTestView, missHandler: {
 				self.focusTestView.isHidden = true
 				window.unfocusTouch()
 			})

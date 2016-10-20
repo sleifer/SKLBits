@@ -136,6 +136,31 @@ public extension ViewType {
 		return views
 	}
 
+	public func isParent(of view: ViewType) -> Bool {
+		if self == view {
+			return true
+		}
+		if view.allSuperviews().contains(self) {
+			return true
+		}
+		return false
+	}
+
+	public func allSubviews(_ includeSelf: Bool = true) -> [ViewType] {
+		var views: [ViewType] = []
+
+		for view in self.subviews {
+			views.append(view)
+			views.append(contentsOf: view.allSubviews())
+		}
+
+		if includeSelf {
+			views.append(self)
+		}
+
+		return views
+	}
+
 	public func referencingConstraintsInSuperviews() -> [NSLayoutConstraint] {
 		var constraints = [NSLayoutConstraint]()
 		for view in allSuperviews() {
