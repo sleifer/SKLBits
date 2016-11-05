@@ -42,13 +42,13 @@ public extension NSLayoutConstraint {
 #endif
 
 	public func referes(_ toView: ViewType) -> Bool {
-		if let view = self.firstItem as? NSObject, view == toView {
+		if let view = self.firstItem as? ViewType, view == toView {
 			return true
 		}
 		if self.secondItem == nil {
 			return false
 		}
-		if let view = self.secondItem as? NSObject, view == toView {
+		if let view = self.secondItem as? ViewType, view == toView {
 			return true
 		}
 		return false
@@ -165,7 +165,7 @@ public extension ViewType {
 		var constraints = [NSLayoutConstraint]()
 		for view in allSuperviews() {
 			for constraint in view.constraints {
-				if constraint.isMember(of:object_getClass(NSLayoutConstraint.self)) == false && constraint.shouldBeArchived == false {
+				if type(of: constraint) != NSLayoutConstraint.self && constraint.shouldBeArchived == false {
 					continue
 				}
 				if constraint.referes(self) {
@@ -179,7 +179,7 @@ public extension ViewType {
 	public func referencingConstraints() -> [NSLayoutConstraint] {
 		var constraints = referencingConstraintsInSuperviews()
 		for constraint in self.constraints {
-			if constraint.isMember(of:object_getClass(NSLayoutConstraint.self)) == false && constraint.shouldBeArchived == false {
+			if type(of: constraint) != NSLayoutConstraint.self && constraint.shouldBeArchived == false {
 				continue
 			}
 			if constraint.referes(self) {
