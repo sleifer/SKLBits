@@ -6,6 +6,8 @@
 //  Copyright © 2016 droolingcat.com. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 public class FocusedTouchWindow: UIWindow {
@@ -79,3 +81,5 @@ public class FocusedTouchWindow: UIWindow {
 	}
 
 }
+
+#endif
