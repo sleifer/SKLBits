@@ -64,9 +64,7 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
 
     // MARK: - CustomDebugStringConvertible
     public var debugDescription: String {
-        get {
-            return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel) showLogIdentifier: \(showLogIdentifier) showFunctionName: \(showFunctionName) showThreadName: \(showThreadName) showLogLevel: \(showLogLevel) showFileName: \(showFileName) showLineNumber: \(showLineNumber) showDate: \(showDate)"
-        }
+		return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel) showLogIdentifier: \(showLogIdentifier) showFunctionName: \(showFunctionName) showThreadName: \(showThreadName) showLogLevel: \(showLogLevel) showFileName: \(showFileName) showLineNumber: \(showLineNumber) showDate: \(showDate)"
     }
 
     // MARK: - Life Cycle
@@ -512,7 +510,7 @@ public class XCGLogger: CustomDebugStringConvertible {
         }
     }
 
-    public var logDestinations: Array<XCGLogDestinationProtocol> = []
+    public var logDestinations: [XCGLogDestinationProtocol] = []
 
     // MARK: - Life Cycle
     public init(identifier: String = "", includeDefaultDestinations: Bool = true) {
@@ -636,7 +634,7 @@ public class XCGLogger: CustomDebugStringConvertible {
         let processInfo: ProcessInfo = ProcessInfo.processInfo
         let XCGLoggerVersionNumber = XCGLogger.Constants.versionString
 
-        let logDetails: Array<XCGLogDetails> = [XCGLogDetails(logLevel: .info, date: date, logMessage: "\(processInfo.processName) \(buildString)PID: \(processInfo.processIdentifier)", functionName: "", fileName: "", lineNumber: 0),
+        let logDetails: [XCGLogDetails] = [XCGLogDetails(logLevel: .info, date: date, logMessage: "\(processInfo.processName) \(buildString)PID: \(processInfo.processIdentifier)", functionName: "", fileName: "", lineNumber: 0),
             XCGLogDetails(logLevel: .info, date: date, logMessage: "XCGLogger Version: \(XCGLoggerVersionNumber) - LogLevel: \(outputLogLevel)", functionName: "", fileName: "", lineNumber: 0)]
 
         for logDestination in (selectedLogDestination != nil ? [selectedLogDestination!] : logDestinations) {
@@ -858,14 +856,12 @@ public class XCGLogger: CustomDebugStringConvertible {
 
     // MARK: - DebugPrintable
     public var debugDescription: String {
-        get {
-            var description: String = "\(extractClassName(self)): \(identifier) - logDestinations: \r"
-            for logDestination in logDestinations {
-                description += "\t \(logDestination.debugDescription)\r"
-            }
+		var description: String = "\(extractClassName(self)): \(identifier) - logDestinations: \r"
+		for logDestination in logDestinations {
+			description += "\t \(logDestination.debugDescription)\r"
+		}
 
-            return description
-        }
+		return description
     }
 }
 

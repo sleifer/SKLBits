@@ -438,9 +438,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	public var outputLogLevel: XCGLogger.LogLevel = .debug
 
 	public override var debugDescription: String {
-		get {
-			return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel)"
-		}
+		return "\(extractClassName(self)): \(identifier) - LogLevel: \(outputLogLevel)"
 	}
 
 	public init(owner: XCGLogger, identifier: String = "") {
@@ -521,18 +519,14 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 	private var sentCount: Int = 0
 
 	public var isBrowsing: Bool {
-		get {
-			if self.browser == nil {
-				return true
-			}
-			return false
+		if self.browser == nil {
+			return true
 		}
+		return false
 	}
 
 	public var isConnected: Bool {
-		get {
-			return self.connected
-		}
+		return self.connected
 	}
 
 	#if DEBUG
