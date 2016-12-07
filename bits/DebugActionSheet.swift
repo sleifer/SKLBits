@@ -6,6 +6,8 @@
 //  Copyright © 2016 droolingcat.com. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 private var debugActionSheetsKey: UInt8 = 0
@@ -146,3 +148,5 @@ extension UIAlertController {
 	}
 
 }
+
+#endif
