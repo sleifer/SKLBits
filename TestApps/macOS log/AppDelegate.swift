@@ -10,6 +10,7 @@ import Cocoa
 import SKLBits
 
 let log = XCGLogger.defaultInstance()
+var logger: XCGNSLoggerDestination?
 
 var appDelegate: AppDelegate?
 
@@ -31,13 +32,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	func setupLogger() {
 		log.setup(.verbose, showThreadName: true)
 
-		let logger: XCGNSLoggerDestination = XCGNSLoggerDestination(owner: log)
-		logger.outputLogLevel = .verbose
-		logger.offlineBehavior = .ringFile
-		if log.addLogDestination(logger) {
-		}
+		logger = XCGNSLoggerDestination(owner: log)
+		if let logger = logger {
+			logger.outputLogLevel = .verbose
+			logger.offlineBehavior = .ringFile
+			if log.addLogDestination(logger) {
+			}
 
-		logger.startBonjourBrowsing()
+			logger.startBonjourBrowsing()
+		}
 	}
 
 	func testLogger() {
@@ -52,20 +55,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		log.severe("A severe error occurred, we are likely about to crash now")
 		let image = NSImage(named: "test")
 		log.info(image)
-		let data = NSMutableData()
+		var data = Data()
 		let small: [UInt8] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-		data.append(UnsafePointer<Void>(small), length: small.count)
+		data.append(UnsafePointer(small), count: small.count)
 		log.info(data)
 	}
 
 	func testRing() {
 		let capacity: UInt32 = 80
 		let fm = FileManager.default
-		let urls = fm.urlsForDirectory(.desktopDirectory, inDomains: .userDomainMask)
+		let urls = fm.urls(for: .desktopDirectory, in: .userDomainMask)
 		let fileName = "ring.xcgnsring"
 		var url = urls[0]
 		url.appendPathComponent(fileName)
-		let testFilePath = url.path!
+		let testFilePath = url.path
 
 		let buffer = RingBufferFile(capacity: capacity, filePath: testFilePath)
 		buffer.clear()
