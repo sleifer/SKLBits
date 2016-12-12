@@ -102,11 +102,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		print(buffer)
 		buffer.push([40])
 		print(buffer)
-		print("peekSize: ", buffer.peekSize())
-		print("peek: ", buffer.peek())
+		print("peekSize: \(buffer.peekSize())")
+		print("peek: \(buffer.peek())")
 		buffer.drop()
 		while buffer.itemCount > 0 {
-			print("pop: ", buffer.pop())
+			print("pop: \(buffer.pop())")
 			print(buffer)
 		}
 	}

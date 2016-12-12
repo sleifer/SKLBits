@@ -461,11 +461,18 @@ public class PrivacyAuthorization: NSObject, CLLocationManagerDelegate {
 		}
 	}
 
-	public func speechRecognizerStatus() -> SFSpeechRecognizerAuthorizationStatus? {
+	public func speechRecognizerStatus() -> PrivacyAuthorizationSimpleStatus {
 		if #available(iOS 10, *) {
-			return SFSpeechRecognizer.authorizationStatus()
+			switch SFSpeechRecognizer.authorizationStatus() {
+			case .notDetermined:
+				return .notDetermined
+			case .denied, .restricted:
+				return .unauthorized
+			case .authorized:
+				return .authorized
+			}
 		} else {
-			return nil
+			return .notAvailable
 		}
 	}
 
