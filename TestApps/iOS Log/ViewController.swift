@@ -27,7 +27,7 @@ class ViewController: UIViewController {
 
 	@IBOutlet weak var focusTestView: UIView!
 
-	var auth: PrivacyAuthorization?
+//	var auth: PrivacyAuthorization?
 
 	let semaphore = DispatchSemaphore(value: 0)
 
@@ -77,7 +77,7 @@ class ViewController: UIViewController {
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(connectChanged(_:)), name: XGNSLoggerNotification.ConnectChanged, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(authorizationChanged(_:)), name: PrivacyAuthorizationNotification.AuthorizationChanged, object: nil)
+//		NotificationCenter.default.addObserver(self, selector: #selector(authorizationChanged(_:)), name: PrivacyAuthorizationNotification.AuthorizationChanged, object: nil)
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
@@ -86,11 +86,11 @@ class ViewController: UIViewController {
 		NotificationCenter.default.removeObserver(self)
 	}
 
-	func authorizationChanged(_ note: Notification) {
-		if let type = note.object as? PrivacyAuthorizationType {
-			log.debug("\(type)")
-		}
-	}
+//	func authorizationChanged(_ note: Notification) {
+//		if let type = note.object as? PrivacyAuthorizationType {
+//			log.debug("\(type)")
+//		}
+//	}
 
 	func connectChanged(_ note: Notification) {
 		semaphore.signal()
@@ -144,20 +144,20 @@ class ViewController: UIViewController {
 	}
 
 	@IBAction func testPrivacyAuth() {
-		if auth == nil {
-			auth = PrivacyAuthorization()
-		}
-
-		auth?.wantEvent = true
-		auth?.wantReminder = true
-		auth?.wantPhotos = true
-		auth?.wantLocationWhenInUse = true
-		auth?.wantMedia = true
-		auth?.wantSpeechRecognizer = true
-		auth?.wantMicrophone = true
-		auth?.wantCamera = true
-		auth?.wantSiri = true
-		auth?.requestAccess()
+//		if auth == nil {
+//			auth = PrivacyAuthorization()
+//		}
+//
+//		auth?.wantEvent = true
+//		auth?.wantReminder = true
+//		auth?.wantPhotos = true
+//		auth?.wantLocationWhenInUse = true
+//		auth?.wantMedia = true
+//		auth?.wantSpeechRecognizer = true
+//		auth?.wantMicrophone = true
+//		auth?.wantCamera = true
+//		auth?.wantSiri = true
+//		auth?.requestAccess()
 	}
 
 	@IBAction func testLogger() {

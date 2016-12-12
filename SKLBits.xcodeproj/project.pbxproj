@@ -29,7 +29,6 @@
 		DB243A771D57740C009894CE /* DebugActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB243A761D57740C009894CE /* DebugActionSheet.swift */; };
 		DB48230F1D43973C00903D52 /* CGPoint-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230D1D43973C00903D52 /* CGPoint-SKLBits.swift */; };
 		DB4823101D43973C00903D52 /* CGRect-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230E1D43973C00903D52 /* CGRect-SKLBits.swift */; };
-		DB4D88AB1D4B882000B1E350 /* PrivacyAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */; };
 		DB6BCCEC1D689F1200515DDE /* UIWindow-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BCCEB1D689F1200515DDE /* UIWindow-SKLBits.swift */; };
 		DB7E9FFE1D41C8B9000046CF /* SKLBits.h in Headers */ = {isa = PBXBuildFile; fileRef = DB7E9FFC1D41C8B9000046CF /* SKLBits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift */; };
@@ -434,7 +433,6 @@
 				DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */,
 				DB88B0C01D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB14BFBF1D4BEF9C00E29F86 /* UIImage-SKLBits.swift in Sources */,
-				DB4D88AB1D4B882000B1E350 /* PrivacyAuthorization.swift in Sources */,
 				DBC63E171DB6FFAF000536EC /* FocusedTouchWindow.swift in Sources */,
 				DB4823101D43973C00903D52 /* CGRect-SKLBits.swift in Sources */,
 				DB7EA00A1D41C8EE000046CF /* RingBufferFile.swift in Sources */,
