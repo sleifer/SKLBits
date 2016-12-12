@@ -1,6 +1,6 @@
 ###SKLBits
 
-A collection of reusable code bits.
+A collection of reusable code bits. I wrote these for myself, but anyone is welcome to the code.
 
 The code is in the ```bits``` directory.
 
