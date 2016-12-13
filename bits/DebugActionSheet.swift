@@ -105,7 +105,7 @@ public class DebugActionSheet {
 
 extension UIAlertController {
 
-	class func simpleInput(title: String?, message: String?, action: String, defaultText: String? = nil, placeholder: String, validator: ((_ text: String?) -> (Bool))? = nil, handler: @escaping (_ text: String?) -> (Void)) -> UIAlertController {
+	public class func simpleInput(title: String?, message: String?, action: String, defaultText: String? = nil, placeholder: String, validator: ((_ text: String?) -> (Bool))? = nil, handler: @escaping (_ text: String?) -> (Void)) -> UIAlertController {
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
 		let loginAction = UIAlertAction(title: action, style: .default) { (_) in
