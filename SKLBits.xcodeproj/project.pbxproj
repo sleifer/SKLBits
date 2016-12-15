@@ -29,6 +29,10 @@
 		DB243A771D57740C009894CE /* DebugActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB243A761D57740C009894CE /* DebugActionSheet.swift */; };
 		DB48230F1D43973C00903D52 /* CGPoint-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230D1D43973C00903D52 /* CGPoint-SKLBits.swift */; };
 		DB4823101D43973C00903D52 /* CGRect-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB48230E1D43973C00903D52 /* CGRect-SKLBits.swift */; };
+		DB67366E1E0301D4002A1363 /* DeferredAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB67366D1E0301D4002A1363 /* DeferredAction.swift */; };
+		DB67366F1E0304F7002A1363 /* DeferredAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB67366D1E0301D4002A1363 /* DeferredAction.swift */; };
+		DB6736701E0304FA002A1363 /* DeferredAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB67366D1E0301D4002A1363 /* DeferredAction.swift */; };
+		DB6736711E0304FB002A1363 /* DeferredAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB67366D1E0301D4002A1363 /* DeferredAction.swift */; };
 		DB6BCCEC1D689F1200515DDE /* UIWindow-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BCCEB1D689F1200515DDE /* UIWindow-SKLBits.swift */; };
 		DB7E9FFE1D41C8B9000046CF /* SKLBits.h in Headers */ = {isa = PBXBuildFile; fileRef = DB7E9FFC1D41C8B9000046CF /* SKLBits.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7EA0051D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift */; };
@@ -95,6 +99,7 @@
 		DB48230D1D43973C00903D52 /* CGPoint-SKLBits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint-SKLBits.swift"; sourceTree = "<group>"; };
 		DB48230E1D43973C00903D52 /* CGRect-SKLBits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGRect-SKLBits.swift"; sourceTree = "<group>"; };
 		DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyAuthorization.swift; sourceTree = "<group>"; };
+		DB67366D1E0301D4002A1363 /* DeferredAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeferredAction.swift; sourceTree = "<group>"; };
 		DB6BCCEB1D689F1200515DDE /* UIWindow-SKLBits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIWindow-SKLBits.swift"; sourceTree = "<group>"; };
 		DB7E9FF91D41C8B9000046CF /* SKLBits.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SKLBits.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB7E9FFC1D41C8B9000046CF /* SKLBits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SKLBits.h; sourceTree = "<group>"; };
@@ -186,6 +191,7 @@
 			children = (
 				DB48230D1D43973C00903D52 /* CGPoint-SKLBits.swift */,
 				DB4D88AA1D4B882000B1E350 /* PrivacyAuthorization.swift */,
+				DB67366D1E0301D4002A1363 /* DeferredAction.swift */,
 				DB14BFBE1D4BEF9C00E29F86 /* UIImage-SKLBits.swift */,
 				DB48230E1D43973C00903D52 /* CGRect-SKLBits.swift */,
 				DB6BCCEB1D689F1200515DDE /* UIWindow-SKLBits.swift */,
@@ -429,6 +435,7 @@
 			files = (
 				DB6BCCEC1D689F1200515DDE /* UIWindow-SKLBits.swift in Sources */,
 				DB48230F1D43973C00903D52 /* CGPoint-SKLBits.swift in Sources */,
+				DB67366E1E0301D4002A1363 /* DeferredAction.swift in Sources */,
 				DB7EA00C1D41C8EE000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA0091D41C8EE000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */,
 				DB88B0C01D47C0DE00A71885 /* StoredProperties.swift in Sources */,
@@ -447,6 +454,7 @@
 			files = (
 				DB7EA03A1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA0371D424960000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */,
+				DB6736711E0304FB002A1363 /* DeferredAction.swift in Sources */,
 				DB88B0C11D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB7EA0381D424960000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA0391D424960000046CF /* XCGLogger.swift in Sources */,
@@ -459,6 +467,7 @@
 			files = (
 				DB7EA03E1D424960000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA03B1D424960000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */,
+				DB6736701E0304FA002A1363 /* DeferredAction.swift in Sources */,
 				DB88B0C21D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB7EA03C1D424960000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA03D1D424960000046CF /* XCGLogger.swift in Sources */,
@@ -471,6 +480,7 @@
 			files = (
 				DB7EA0421D424961000046CF /* XCGNSLoggerDestination.swift in Sources */,
 				DB7EA03F1D424961000046CF /* NSLayoutConstraint-SKLBits.swift in Sources */,
+				DB67366F1E0304F7002A1363 /* DeferredAction.swift in Sources */,
 				DB88B0C31D47C0DE00A71885 /* StoredProperties.swift in Sources */,
 				DB7EA0401D424961000046CF /* RingBufferFile.swift in Sources */,
 				DB7EA0411D424961000046CF /* XCGLogger.swift in Sources */,

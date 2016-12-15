@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11542"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -716,14 +716,75 @@
                                     <action selector="logAction:" target="XfG-lQ-9wD" id="8JO-g2-zWs"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pcN-4o-d11">
+                                <rect key="frame" x="14" y="144" width="61" height="32"/>
+                                <buttonCell key="cell" type="push" title="Set" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Cxr-7s-Uy2">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="deferSet:" target="XfG-lQ-9wD" id="L3s-Uj-EfS"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cuA-SC-dg0">
+                                <rect key="frame" x="83" y="144" width="75" height="32"/>
+                                <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Anz-uq-Otr">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="deferReset:" target="XfG-lQ-9wD" id="Vgb-UV-lC5"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ovE-mV-JGZ">
+                                <rect key="frame" x="166" y="144" width="63" height="32"/>
+                                <buttonCell key="cell" type="push" title="Fire" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fAT-4h-YSg">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="deferFire:" target="XfG-lQ-9wD" id="s36-dJ-nRb"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="onB-H3-nbd">
+                                <rect key="frame" x="237" y="144" width="82" height="32"/>
+                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xJa-i9-72i">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="deferCancel:" target="XfG-lQ-9wD" id="IGK-7e-QcE"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UeJ-we-XX9">
+                                <rect key="frame" x="18" y="192" width="96" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="DeferredAction" id="No9-Q7-j1J">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="onB-H3-nbd" firstAttribute="centerY" secondItem="ovE-mV-JGZ" secondAttribute="centerY" id="2Cd-Uv-z05"/>
                             <constraint firstItem="gCH-bm-QkD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="94j-4c-fAO"/>
                             <constraint firstItem="8Nq-Ra-uzg" firstAttribute="leading" secondItem="vC3-dW-TJc" secondAttribute="trailing" constant="10" id="CwT-M9-9yp"/>
                             <constraint firstItem="vC3-dW-TJc" firstAttribute="centerY" secondItem="gCH-bm-QkD" secondAttribute="centerY" id="HZe-oU-ON7"/>
+                            <constraint firstItem="UeJ-we-XX9" firstAttribute="top" secondItem="gCH-bm-QkD" secondAttribute="bottom" constant="20" id="IF9-Sf-7Km"/>
+                            <constraint firstItem="cuA-SC-dg0" firstAttribute="leading" secondItem="pcN-4o-d11" secondAttribute="trailing" constant="20" id="IYU-Ls-p2c"/>
                             <constraint firstItem="gCH-bm-QkD" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="M23-Un-5Wo"/>
+                            <constraint firstItem="UeJ-we-XX9" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="MSx-dz-dUH"/>
                             <constraint firstItem="8Nq-Ra-uzg" firstAttribute="centerY" secondItem="vC3-dW-TJc" secondAttribute="centerY" id="NSO-mT-J6A"/>
+                            <constraint firstItem="cuA-SC-dg0" firstAttribute="centerY" secondItem="pcN-4o-d11" secondAttribute="centerY" id="QwM-9T-VmO"/>
+                            <constraint firstItem="pcN-4o-d11" firstAttribute="top" secondItem="UeJ-we-XX9" secondAttribute="bottom" constant="20" id="ZQZ-Do-SEd"/>
+                            <constraint firstItem="pcN-4o-d11" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="gsA-Pp-aep"/>
+                            <constraint firstItem="ovE-mV-JGZ" firstAttribute="centerY" secondItem="cuA-SC-dg0" secondAttribute="centerY" id="jot-HD-8Ao"/>
+                            <constraint firstItem="ovE-mV-JGZ" firstAttribute="leading" secondItem="cuA-SC-dg0" secondAttribute="trailing" constant="20" id="miX-5F-CPp"/>
                             <constraint firstItem="vC3-dW-TJc" firstAttribute="leading" secondItem="gCH-bm-QkD" secondAttribute="trailing" constant="10" id="pf8-gh-LLY"/>
+                            <constraint firstItem="onB-H3-nbd" firstAttribute="leading" secondItem="ovE-mV-JGZ" secondAttribute="trailing" constant="20" id="sAS-yr-kME"/>
                         </constraints>
                     </view>
                 </viewController>
