@@ -318,7 +318,7 @@ public class XCGLogger: CustomDebugStringConvertible {
         public static let nsdataFormatterCacheIdentifier = "com.cerebralgardens.xcglogger.nsdataFormatterCache"
         public static let versionString = "3.3"
     }
-    public typealias constants = Constants // Preserve backwards compatibility: Constants should be capitalized since it's a type
+//    public typealias constants = Constants // Preserve backwards compatibility: Constants should be capitalized since it's a type
 
     // MARK: - Enums
     public enum LogLevel: Int, Comparable, CustomStringConvertible {
