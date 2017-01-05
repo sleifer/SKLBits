@@ -318,7 +318,10 @@ public class XCGLogger: CustomDebugStringConvertible {
         public static let nsdataFormatterCacheIdentifier = "com.cerebralgardens.xcglogger.nsdataFormatterCache"
         public static let versionString = "3.3"
     }
-//    public typealias constants = Constants // Preserve backwards compatibility: Constants should be capitalized since it's a type
+
+	// swiftlint:disable type_name
+    public typealias constants = Constants // Preserve backwards compatibility: Constants should be capitalized since it's a type
+	// swiftlint:enable type_name
 
     // MARK: - Enums
     public enum LogLevel: Int, Comparable, CustomStringConvertible {
@@ -606,11 +609,11 @@ public class XCGLogger: CustomDebugStringConvertible {
         }
     }
 
-    public class func exec(_ logLevel: LogLevel = .debug, closure: () -> () = {}) {
+    public class func exec(_ logLevel: LogLevel = .debug, closure: () -> Void = {}) {
         self.defaultInstance().exec(logLevel, closure: closure)
     }
 
-    public func exec(_ logLevel: LogLevel = .debug, closure: () -> () = {}) {
+    public func exec(_ logLevel: LogLevel = .debug, closure: () -> Void = {}) {
         if isEnabledForLogLevel(logLevel) == false {
             return
         }
@@ -753,56 +756,56 @@ public class XCGLogger: CustomDebugStringConvertible {
 
     // MARK: - Exec Methods
     // MARK: * Verbose
-    public class func verboseExec(_ closure: () -> () = {}) {
+    public class func verboseExec(_ closure: () -> Void = {}) {
         self.defaultInstance().exec(XCGLogger.LogLevel.verbose, closure: closure)
     }
 
-    public func verboseExec(_ closure: () -> () = {}) {
+    public func verboseExec(_ closure: () -> Void = {}) {
         self.exec(XCGLogger.LogLevel.verbose, closure: closure)
     }
 
     // MARK: * Debug
-    public class func debugExec(_ closure: () -> () = {}) {
+    public class func debugExec(_ closure: () -> Void = {}) {
         self.defaultInstance().exec(XCGLogger.LogLevel.debug, closure: closure)
     }
 
-    public func debugExec(_ closure: () -> () = {}) {
+    public func debugExec(_ closure: () -> Void = {}) {
         self.exec(XCGLogger.LogLevel.debug, closure: closure)
     }
 
     // MARK: * Info
-    public class func infoExec(_ closure: () -> () = {}) {
+    public class func infoExec(_ closure: () -> Void = {}) {
         self.defaultInstance().exec(XCGLogger.LogLevel.info, closure: closure)
     }
 
-    public func infoExec(_ closure: () -> () = {}) {
+    public func infoExec(_ closure: () -> Void = {}) {
         self.exec(XCGLogger.LogLevel.info, closure: closure)
     }
 
     // MARK: * Warning
-    public class func warningExec(_ closure: () -> () = {}) {
+    public class func warningExec(_ closure: () -> Void = {}) {
         self.defaultInstance().exec(XCGLogger.LogLevel.warning, closure: closure)
     }
 
-    public func warningExec(_ closure: () -> () = {}) {
+    public func warningExec(_ closure: () -> Void = {}) {
         self.exec(XCGLogger.LogLevel.warning, closure: closure)
     }
 
     // MARK: * Error
-    public class func errorExec(_ closure: () -> () = {}) {
+    public class func errorExec(_ closure: () -> Void = {}) {
         self.defaultInstance().exec(XCGLogger.LogLevel.error, closure: closure)
     }
 
-    public func errorExec(_ closure: () -> () = {}) {
+    public func errorExec(_ closure: () -> Void = {}) {
         self.exec(XCGLogger.LogLevel.error, closure: closure)
     }
 
     // MARK: * Severe
-    public class func severeExec(_ closure: () -> () = {}) {
+    public class func severeExec(_ closure: () -> Void = {}) {
         self.defaultInstance().exec(XCGLogger.LogLevel.severe, closure: closure)
     }
 
-    public func severeExec(_ closure: () -> () = {}) {
+    public func severeExec(_ closure: () -> Void = {}) {
         self.exec(XCGLogger.LogLevel.severe, closure: closure)
     }
 

@@ -132,7 +132,7 @@ extension UIAlertController {
 				}
 			}
 
-			NotificationCenter.default.addObserver(forName: NSNotification.Name.UITextFieldTextDidChange, object: textField, queue: OperationQueue.main) { (notification) in
+			NotificationCenter.default.addObserver(forName: NSNotification.Name.UITextFieldTextDidChange, object: textField, queue: OperationQueue.main) { (_) in
 				if let validator = validator {
 					loginAction.isEnabled = validator(textField.text)
 				} else {
