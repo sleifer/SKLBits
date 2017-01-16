@@ -38,7 +38,7 @@ class ViewController: NSViewController {
 	}
 
 	@IBAction func deferSet(_ sender: AnyObject) {
-		deferred = DeferredAction(after: 5) { [weak self] (action: DeferredAction) in
+		deferred = DeferredAction(after: 5) { [weak self] (_ action: DeferredAction) in
 			self?.logDeferMessage()
 			self?.deferred = nil
 		}
