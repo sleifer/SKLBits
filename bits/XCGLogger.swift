@@ -163,8 +163,8 @@ public class XCGBaseLogDestination: XCGLogDestinationProtocol, CustomDebugString
 // - A standard log destination that outputs log details to the console
 public class XCGConsoleLogDestination: XCGBaseLogDestination {
     // MARK: - Properties
-    public var logQueue: DispatchQueue? = nil
-    public var xcodeColors: [XCGLogger.LogLevel: XCGLogger.XcodeColor]? = nil
+    public var logQueue: DispatchQueue?
+    public var xcodeColors: [XCGLogger.LogLevel: XCGLogger.XcodeColor]?
 
     // MARK: - Misc Methods
     public override func output(_ logDetails: XCGLogDetails, text: String) {
@@ -192,8 +192,8 @@ public class XCGConsoleLogDestination: XCGBaseLogDestination {
 // - A standard log destination that outputs log details to the console using NSLog instead of println
 public class XCGNSLogDestination: XCGBaseLogDestination {
     // MARK: - Properties
-    public var logQueue: DispatchQueue? = nil
-    public var xcodeColors: [XCGLogger.LogLevel: XCGLogger.XcodeColor]? = nil
+    public var logQueue: DispatchQueue?
+    public var xcodeColors: [XCGLogger.LogLevel: XCGLogger.XcodeColor]?
 
     public override var showDate: Bool {
         get {
@@ -230,13 +230,13 @@ public class XCGNSLogDestination: XCGBaseLogDestination {
 // - A standard log destination that outputs log details to a file
 public class XCGFileLogDestination: XCGBaseLogDestination {
     // MARK: - Properties
-    public var logQueue: DispatchQueue? = nil
+    public var logQueue: DispatchQueue?
     private var writeToFileURL: URL? = nil {
         didSet {
             openFile()
         }
     }
-    private var logFileHandle: FileHandle? = nil
+    private var logFileHandle: FileHandle?
 
     // MARK: - Life Cycle
     public init(owner: XCGLogger, writeToFile: AnyObject, identifier: String = "") {
@@ -359,8 +359,8 @@ public class XCGLogger: CustomDebugStringConvertible {
         public static let resetBg = "\u{001b}[bg;"
         public static let reset = "\u{001b}[;"
 
-        public var fg: (Int, Int, Int)? = nil
-        public var bg: (Int, Int, Int)? = nil
+        public var fg: (Int, Int, Int)?
+        public var bg: (Int, Int, Int)?
 
         public func format() -> String {
             guard fg != nil || bg != nil else {
@@ -494,7 +494,7 @@ public class XCGLogger: CustomDebugStringConvertible {
         return Statics.logQueue
     }
 
-    private var _dateFormatter: DateFormatter? = nil
+    private var _dateFormatter: DateFormatter?
     public var dateFormatter: DateFormatter? {
         get {
             if _dateFormatter != nil {

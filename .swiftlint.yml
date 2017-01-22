@@ -10,3 +10,7 @@ variable_name:
   min_length:
     - 2
     - 2
+
+large_tuple:
+  warning: 4
+  error: 5
