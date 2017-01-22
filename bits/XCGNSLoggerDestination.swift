@@ -681,7 +681,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 						self.messageBeingSent = self.messageQueue.first
 						if let msg = self.messageBeingSent {
 							msg.updateSeq(self.messageSeq)
-							self.messageSeq = self.messageSeq + 1
+							self.messageSeq += 1
 						}
 						self.sentCount = 0
 					}
@@ -694,7 +694,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 								print("CFWriteStreamWrite returned error: \(written)")
 								self.messageBeingSent = nil
 							} else {
-								self.sentCount = self.sentCount + written
+								self.sentCount += written
 								if self.sentCount == msg.count() {
 									if let idx = self.messageQueue.index(where: { $0 == self.messageBeingSent }) {
 										self.messageQueue.remove(at: idx)
@@ -810,7 +810,7 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			let data2 = Data(bytesNoCopy: encoder.ptr(), count: encoder.count(), deallocator: .none)
 			fp?.write(data2)
 			fp?.closeFile()
-			self.runFileCount = self.runFileCount + 1
+			self.runFileCount += 1
 		}
 	}
 
@@ -821,8 +821,8 @@ public class XCGNSLoggerDestination: NSObject, XCGLogDestinationProtocol, NetSer
 			fp?.seek(toFileOffset: runFileIndex)
 			encoder = MessageBuffer(fp)
 			if let encoder = encoder {
-				self.runFileCount = self.runFileCount - 1
-				self.runFileIndex = self.runFileIndex + UInt64(encoder.count() + MemoryLayout<Int32>.size)
+				self.runFileCount -= 1
+				self.runFileIndex += UInt64(encoder.count() + MemoryLayout<Int32>.size)
 				if self.runFileCount == 0 {
 					fp?.truncateFile(atOffset: 0)
 				}

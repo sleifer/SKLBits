@@ -73,7 +73,7 @@ public class RingBufferFile: CustomStringConvertible {
 						entry = try readEntry(fp)
 						if let entry = entry {
 							print("\(idx): \(entry)")
-							start = start + UInt32(entry.count) + atomSize
+							start += UInt32(entry.count) + atomSize
 							if start >= bufferEndIndex {
 								start = bufferStartIndex
 							}
@@ -123,8 +123,8 @@ public class RingBufferFile: CustomStringConvertible {
 						// push would run over first entry, need to drop until we do not collide
 						fp.seek(toFileOffset: UInt64(newDataStartIndex))
 						let peekEntrySize = try readAtom(fp)
-						newDataStartIndex = newDataStartIndex + (peekEntrySize + atomSize)
-						newItemCount = newItemCount - 1
+						newDataStartIndex += (peekEntrySize + atomSize)
+						newItemCount -= 1
 						if newDataStartIndex >= self.maxBufferEndIndex || newDataStartIndex >= self.bufferEndIndex {
 							newDataStartIndex = self.bufferStartIndex
 							newBufferEndIndex = max(self.dataEndIndex, newDataEndIndex)
@@ -138,7 +138,7 @@ public class RingBufferFile: CustomStringConvertible {
 
 				fp.seek(toFileOffset: UInt64(newWriteStart))
 				writeEntry(fp, entry: entry)
-				newItemCount = newItemCount + 1
+				newItemCount += 1
 
 				self.itemCount = newItemCount
 				self.bufferEndIndex = newBufferEndIndex
@@ -204,8 +204,8 @@ public class RingBufferFile: CustomStringConvertible {
 				if let fp = fp {
 					fp.seek(toFileOffset: UInt64(self.dataStartIndex))
 					let entrySize = try readAtom(fp)
-					self.itemCount = self.itemCount - 1
-					self.dataStartIndex = self.dataStartIndex + (entrySize + self.atomSize)
+					self.itemCount -= 1
+					self.dataStartIndex += (entrySize + self.atomSize)
 					if self.dataStartIndex >= self.bufferEndIndex {
 						self.dataStartIndex = self.bufferStartIndex
 					}

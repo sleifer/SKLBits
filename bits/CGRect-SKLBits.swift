@@ -21,10 +21,10 @@ public extension CGRect {
 		r.size.width = floor(r.size.width)
 		r.size.height = floor(r.size.height)
 		if r.maxX > self.maxX {
-			r.size.width = r.size.width - 1
+			r.size.width -= 1
 		}
 		if r.maxY > self.maxY {
-			r.size.height = r.size.height - 1
+			r.size.height -= 1
 		}
 		return r
 	}

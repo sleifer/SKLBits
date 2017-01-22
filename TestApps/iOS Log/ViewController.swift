@@ -194,7 +194,7 @@ class ViewController: UIViewController {
 		var testArrayValue: UInt8 = 0
 
 		let make = { (_ count: Int) -> ([UInt8]) in
-			testArrayValue = testArrayValue + 1
+			testArrayValue += 1
 			return [UInt8](repeating: testArrayValue, count: count)
 		}
 
