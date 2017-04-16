@@ -270,7 +270,7 @@ public class XCGFileLogDestination: XCGBaseLogDestination {
             do {
                 logFileHandle = try FileHandle(forWritingTo: writeToFileURL)
             } catch let error as NSError {
-                owner._logln("Attempt to open log file for writing failed: \(error.localizedDescription)", logLevel: .error)
+                owner.logln("Attempt to open log file for writing failed: \(error.localizedDescription)", logLevel: .error)
                 logFileHandle = nil
                 return
             }
@@ -278,7 +278,7 @@ public class XCGFileLogDestination: XCGBaseLogDestination {
             owner.logAppDetails(self)
 
             let logDetails = XCGLogDetails(logLevel: .info, date: Date(), logMessage: "XCGLogger writing to log to: \(writeToFileURL)", functionName: "", fileName: "", lineNumber: 0)
-            owner._logln(logDetails.logMessage, logLevel: logDetails.logLevel)
+            owner.logln(logDetails.logMessage, logLevel: logDetails.logLevel)
             processInternalLogDetails(logDetails)
         }
     }
@@ -843,7 +843,7 @@ public class XCGLogger: CustomDebugStringConvertible {
     }
 
     // MARK: - Private methods
-    internal func _logln(_ logMessage: String, logLevel: LogLevel = .debug) {
+    internal func logln(_ logMessage: String, logLevel: LogLevel = .debug) {
 
         var logDetails: XCGLogDetails? = nil
         for logDestination in self.logDestinations {
